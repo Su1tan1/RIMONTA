@@ -1,0 +1,2381 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Запчасти">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<title>Запчасти RIMONTA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@600;700&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a parts ledger — car switcher, totals strip, parts grouped by status or assembly with unfoldable seller offers, then one-seller bundles compared against buying separately */
+:root{
+  --bg:#ECEFF3; --surface:#FFFFFF; --sunken:#F5F7F9; --ink:#15202B; --muted:#5A6774; --line:#D5DBE1;
+  --accent:#1F57D6; --accent-ink:#FFFFFF; --accent-soft:#E2EAFB;
+  --violet:#6A3FD4; --violet-soft:#EFE9FF; --violet-line:#CDBDF6;
+  --st-verify-fg:#7A5B00; --st-verify-bg:#FCEFC4;
+  --st-need-fg:#A83C08;   --st-need-bg:#FFE2D1;
+  --st-ordered-fg:#1F57D6;--st-ordered-bg:#DFE8FB;
+  --st-arrived-fg:#0B6F57;--st-arrived-bg:#D2F0E6;
+  --st-installed-fg:#3E4954;--st-installed-bg:#E3E7EC;
+  --st-returned-fg:#AE2033;--st-returned-bg:#FADCE0;
+  --good:#0B6F57; --danger:#B42335; --shadow:0 1px 2px rgba(21,32,43,.06),0 4px 16px rgba(21,32,43,.06);
+  --f-display:"Fira Sans Extra Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E141A; --surface:#17202A; --sunken:#121A22; --ink:#E5EAF0; --muted:#94A2AF; --line:#29343F;
+  --accent:#7AA2FF; --accent-ink:#0E141A; --accent-soft:#1E2A44;
+  --violet:#B9A3FF; --violet-soft:#29213F; --violet-line:#4B3E7C;
+  --st-verify-fg:#F2CE5C; --st-verify-bg:#3A3112;
+  --st-need-fg:#FF9E6B;   --st-need-bg:#43230F;
+  --st-ordered-fg:#8FB0FF;--st-ordered-bg:#1C2B4D;
+  --st-arrived-fg:#5FD3AE;--st-arrived-bg:#123A2F;
+  --st-installed-fg:#B4C0CB;--st-installed-bg:#26313B;
+  --st-returned-fg:#FF8A98;--st-returned-bg:#45171F;
+  --good:#5FD3AE; --danger:#FF8A98; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E141A; --surface:#17202A; --sunken:#121A22; --ink:#E5EAF0; --muted:#94A2AF; --line:#29343F;
+  --accent:#7AA2FF; --accent-ink:#0E141A; --accent-soft:#1E2A44;
+  --violet:#B9A3FF; --violet-soft:#29213F; --violet-line:#4B3E7C;
+  --st-verify-fg:#F2CE5C; --st-verify-bg:#3A3112;
+  --st-need-fg:#FF9E6B;   --st-need-bg:#43230F;
+  --st-ordered-fg:#8FB0FF;--st-ordered-bg:#1C2B4D;
+  --st-arrived-fg:#5FD3AE;--st-arrived-bg:#123A2F;
+  --st-installed-fg:#B4C0CB;--st-installed-bg:#26313B;
+  --st-returned-fg:#FF8A98;--st-returned-bg:#45171F;
+  --good:#5FD3AE; --danger:#FF8A98; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,38px);line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--surface)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+
+.cars{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.car-chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;white-space:nowrap}
+.car-chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.car-chip.add{border-style:dashed;background:transparent;color:var(--muted)}
+
+.summary{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.car-name{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.05;margin:0}
+.car-sub{color:var(--muted);font-size:13px;margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.vin{font-family:var(--f-mono);font-size:12.5px;color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:6px;padding:1px 6px;letter-spacing:.03em}
+.metric .label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.metric .value{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric .hint{font-size:12.5px;color:var(--muted)}
+.bar{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+.bar-track{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--sunken)}
+.bar-track span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.legend b{color:var(--ink);font-variant-numeric:tabular-nums}
+.transit{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.transit b{color:var(--ink)}
+.transit .late{color:var(--danger);font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search{flex:1 1 220px;min-width:0;position:relative}
+.search input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px 9px 34px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.view{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);flex:0 0 auto}
+.view button{border:0;background:transparent;padding:8px 12px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.view button+button{border-left:1px solid var(--line)}
+.view button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;max-width:100%;flex-basis:100%}
+.f-chip{border:1px solid transparent;background:transparent;border-radius:8px;padding:6px 10px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.f-chip .n{font-variant-numeric:tabular-nums;opacity:.75;margin-left:4px}
+.f-chip[aria-pressed="true"]{background:var(--surface);border-color:var(--line);color:var(--ink)}
+
+.groups{display:flex;flex-direction:column;gap:14px}
+.group{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.g-head{width:100%;border:0;background:transparent;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;text-align:left}
+.g-head:hover{background:var(--sunken)}
+.g-left{display:flex;align-items:center;gap:8px;min-width:0}
+.g-chev{color:var(--muted);transition:transform .15s;flex:0 0 auto}
+[aria-expanded="false"] .g-chev{transform:rotate(-90deg)}
+.g-title{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.g-meta{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 170px 44px 124px 136px;gap:12px;align-items:center;padding:11px 18px;border-top:1px solid var(--line)}
+.row.done .p-name{color:var(--muted)}
+.p-main{min-width:0;display:flex;flex-direction:column;gap:4px}
+.p-name{background:none;border:0;padding:0;text-align:left;font-weight:700;font-size:16px;line-height:1.3;letter-spacing:-.005em;color:var(--ink);display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
+.p-name:hover .t{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.side{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.06em;border:1.5px solid currentColor;border-radius:5px;padding:0 5px;line-height:16px;color:var(--muted)}
+.p-meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-width:0}
+.p-meta .note{overflow-wrap:anywhere}
+.cond{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.03em;border:1px solid var(--line);border-radius:5px;padding:0 5px;line-height:17px;color:var(--muted);white-space:nowrap}
+.chip-btn{border:1px dashed var(--line);background:transparent;border-radius:7px;padding:1px 8px;font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+.chip-btn[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip-btn.has{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--violet-line);background:var(--violet-soft);color:var(--violet);padding:2px 6px 2px 8px}
+.chip-btn.has:hover{border-color:var(--violet)}
+.chip-btn.has .cnt{background:var(--violet);color:var(--surface);border-radius:99px;padding:0 6px;font-size:11.5px;line-height:16px;font-variant-numeric:tabular-nums}
+.chip-btn.has .g-chev{color:currentColor;transform:rotate(-90deg)}
+.chip-btn.has[aria-expanded="true"]{background:var(--violet);color:var(--surface);border-color:var(--violet)}
+.chip-btn.has[aria-expanded="true"] .cnt{background:var(--surface);color:var(--violet)}
+.chip-btn.has[aria-expanded="true"] .g-chev{transform:none}
+.ph-chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:7px;padding:1px 7px;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--surface);font-variant-numeric:tabular-nums}
+.ph-chip:hover{border-color:var(--accent);color:var(--accent)}
+.fix-chip{border:1px solid var(--st-verify-fg);background:var(--st-verify-bg);color:var(--st-verify-fg);border-radius:7px;padding:1px 8px;font-size:12.5px;font-weight:600}
+.field.invalid input{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
+.field .req{color:var(--danger)}
+.chip-btn.bundle{color:var(--muted);border-style:solid}
+.chip-btn.bundle.on{background:var(--good);border-color:var(--good);color:var(--surface)}
+.ship{display:inline-flex;align-items:center;gap:6px;border-radius:7px;padding:1px 8px;font-size:12.5px;font-weight:600;background:var(--st-ordered-bg);color:var(--st-ordered-fg);flex-wrap:wrap}
+.ship.late{background:var(--st-returned-bg);color:var(--st-returned-fg)}
+.ship code{font-family:var(--f-mono);font-size:11.5px;font-weight:600}
+.ship .icon-btn{color:inherit;padding:2px}
+.tk{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-display);font-weight:700;font-size:12.5px;letter-spacing:.03em;padding:0 7px;border-radius:5px;background:var(--tk-bg);color:var(--tk-fg);line-height:19px;white-space:nowrap;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.tk.generic{--tk-bg:var(--surface);--tk-fg:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.warr{display:inline-block;font-size:11px;font-weight:600;border-radius:5px;padding:0 5px;line-height:17px;white-space:nowrap;border:1px solid currentColor}
+.warr.yes{color:var(--good)}
+.warr.no{color:var(--muted)}
+.b-scroll{overflow-x:auto;border-radius:10px;background:var(--sunken)}
+.b-table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;min-width:460px}
+.b-table th{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right;padding:8px 12px 6px;white-space:nowrap}
+.b-table th:first-child,.b-table td:first-child{text-align:left}
+.b-table td{padding:6px 12px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+.b-table td:first-child{white-space:normal}
+.b-table tfoot td{font-weight:700;border-top:1.5px solid var(--muted)}
+.b-table .more{color:var(--danger)}
+.b-table .less{color:var(--good)}
+.b-table .na{color:var(--muted)}
+.verdict{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-size:13.5px}
+.verdict b{font-size:16px}
+.verdict .more{color:var(--danger)}
+.verdict .less{color:var(--good)}
+.verdict .s{color:var(--muted);font-size:12.5px}
+.verdict .warn{color:var(--st-verify-fg);font-size:12.5px;flex-basis:100%}
+.oem{display:flex;align-items:center;gap:4px;min-width:0}
+.oem code{font-family:var(--f-mono);font-size:13.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.oem .none{font-size:12.5px;color:var(--muted);font-style:italic}
+.icon-btn{border:0;background:transparent;color:var(--muted);border-radius:6px;padding:4px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.icon-btn:hover{color:var(--ink);background:var(--sunken)}
+.qty{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;text-align:right}
+.price{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.price .from{font-weight:500;color:var(--muted);font-size:13px}
+.price small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.status{appearance:none;-webkit-appearance:none;border:0;border-radius:999px;padding:6px 26px 6px 12px;font-size:13px;font-weight:600;width:100%;
+  background-repeat:no-repeat;background-position:right 10px center;background-size:9px 6px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6'%3E%3Cpath d='M1 1l3.5 3.5L8 1' fill='none' stroke='%23889' stroke-width='1.6'/%3E%3C/svg%3E")}
+.s-pill{display:inline-block;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600}
+[data-st="verify"]{color:var(--st-verify-fg);background-color:var(--st-verify-bg)}
+[data-st="need"]{color:var(--st-need-fg);background-color:var(--st-need-bg)}
+[data-st="ordered"]{color:var(--st-ordered-fg);background-color:var(--st-ordered-bg)}
+[data-st="arrived"]{color:var(--st-arrived-fg);background-color:var(--st-arrived-bg)}
+[data-st="installed"]{color:var(--st-installed-fg);background-color:var(--st-installed-bg)}
+[data-st="returned"]{color:var(--st-returned-fg);background-color:var(--st-returned-bg)}
+.carname{display:inline-flex;align-items:center;font-size:12px;font-weight:600;color:var(--muted);background:var(--sunken);border:1px solid var(--line);border-radius:5px;padding:0 6px;line-height:18px}
+.unitname{font-weight:500;color:var(--muted)}
+
+.offers{background:var(--sunken);border-top:1px dashed var(--line);padding:12px 18px 14px;display:flex;flex-direction:column;gap:10px}
+.o-title{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.o-list{display:flex;flex-direction:column;gap:6px}
+.o-row{display:grid;grid-template-columns:30px 118px minmax(0,1fr) auto;gap:4px 12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 10px 12px}
+.o-row.picked{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.o-row.editing{display:block;padding:12px;border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.o-radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--surface);padding:0;margin-top:1px;position:relative;flex:0 0 auto}
+button.o-radio:hover{border-color:var(--good)}
+.o-radio[aria-pressed="true"]{border-color:var(--good);background:var(--good)}
+.o-radio[aria-pressed="true"]::after{content:"";position:absolute;left:6px;top:2.5px;width:5px;height:10px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.o-radio[disabled]{opacity:.4;cursor:not-allowed}
+.o-note{font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+.o-addbtn{align-self:flex-start;border-style:dashed;color:var(--accent)}
+.o-more{grid-column:1/-1;border-top:1px dashed var(--line);padding-top:8px}
+.o-more summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);padding:2px 0}
+.o-more-grid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,.7fr) minmax(0,1fr) minmax(0,1.4fr);gap:8px;margin-top:8px}
+.offers.flash{box-shadow:inset 0 0 0 3px var(--accent)}
+/* drag to reorder */
+.p-top{display:flex;align-items:baseline;gap:4px;min-width:0}
+.grip{display:inline-flex;align-items:center;justify-content:center;width:22px;height:24px;margin-left:-10px;flex:0 0 auto;color:var(--muted);fill:currentColor;opacity:.45;cursor:grab;touch-action:none;border-radius:6px;vertical-align:middle;align-self:center}
+.grip:hover{opacity:1;background:var(--sunken)}
+td .grip{margin-left:-6px;margin-right:2px;vertical-align:-6px}
+.item.dragging,tr.dragging{position:relative;z-index:20;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.22);opacity:.97;transition:none!important}
+.item.dragging .row{background:var(--accent-soft)}
+tr.dragging td{background:var(--accent-soft)}
+.is-dragging [data-drag]:not(.dragging){transition:transform .15s ease}
+.is-dragging,.is-dragging *{user-select:none!important;-webkit-user-select:none!important;cursor:grabbing!important}
+.b-table td.act{width:1%;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.is-dragging [data-drag]{transition:none!important}}
+.num{display:inline-block;min-width:20px;text-align:right;margin-right:6px;font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.p-top .num{align-self:baseline}
+.pl-total small.pl-count{display:block;margin-top:2px}
+/* one-table order plan */
+.plan-card{padding:12px}
+.pl-table .pl-sec td{background:var(--surface);padding:12px 10px 8px;border-top:0}
+.pl-table tbody+tbody .pl-sec td,.pl-table thead+tbody .pl-sec td{border-top:10px solid var(--surface)}
+.pl-sechead{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;white-space:normal}
+.pl-sechead .t{font-size:15.5px}
+.pl-sechead .sp{flex:1}
+.pl-sechead b:not(.t){font-family:var(--f-display);font-size:19px;font-variant-numeric:tabular-nums}
+.pl-table tr.pl-newseller td{border-top:2px solid var(--muted)}
+.pl-table td.seller{text-align:left;white-space:normal;max-width:180px}
+.pl-table .pl-pick{display:block;margin-top:5px;max-width:300px;width:100%;font-size:12.5px;padding:4px 8px;border:1px solid var(--violet-line);border-radius:7px;background:var(--violet-soft);color:var(--ink)}
+.pl-table .pl-pick.undecided{border-style:dashed;color:var(--muted)}
+.pl-table .pl-pick:focus-visible{outline:2px solid var(--violet);outline-offset:1px}
+.pl-table .pl-chk{width:17px;height:17px;vertical-align:-3px;margin:0 8px 0 0;accent-color:var(--accent)}
+.pl-table td.seller .sname{font-weight:600}
+.pl-table th:nth-child(2){text-align:left}
+.pl-table tfoot td{font-weight:600}
+.pl-table tfoot tr.pl-grand td{font-weight:700;font-size:15px;border-top:2px solid var(--ink)}
+.pl-table tfoot tr.pl-grand td:nth-child(2){font-family:var(--f-display);font-size:20px}
+@media (pointer:coarse){[data-drag]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}}
+[data-drag]{cursor:default}
+/* ordered bundle block */
+.ob{border-top:1px solid var(--line);padding:12px 18px 14px;background:var(--sunken)}
+.ob+.ob{border-top:1px dashed var(--line)}
+.ob-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px 14px;flex-wrap:wrap;margin-bottom:8px}
+.ob-who{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ob-title{font-weight:700;font-size:15.5px}
+.ob-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.ob-sum{font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
+.ob-table{background:var(--surface);min-width:520px}
+.ob-table td code{font-family:var(--f-mono);font-size:12.5px}
+.ob-table td.ob-st{width:150px}
+.ob-table td.ob-st .status{padding:4px 24px 4px 10px;font-size:12.5px}
+.ob-table td:first-child small{display:block;font-size:11.5px;color:var(--muted)}
+@media (max-width:760px){.ob{padding:12px 16px 14px}}
+/* arrival date */
+.arr{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:0 3px 0 8px;font-size:12.5px;font-weight:600;background:var(--st-arrived-bg);color:var(--st-arrived-fg);text-transform:none;letter-spacing:0}
+.arr input[type=date]{border:0;background:transparent;color:inherit;font:inherit;font-weight:600;padding:2px 2px;min-width:0;width:auto;cursor:pointer;color-scheme:inherit}
+.arr input[type=date]:focus-visible{outline:2px solid var(--st-arrived-fg);border-radius:5px}
+.ob-table td.ob-arr{width:1%;white-space:nowrap}
+.ob-table td.ob-arr .arr{padding-left:3px}
+/* order plan */
+.plan{display:flex;flex-direction:column;gap:10px}
+.plan .sec-head{align-items:baseline}
+.pl-group{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.pl-group.bundle{border:1.5px solid var(--good)}
+.pl-group.none{background:var(--sunken);box-shadow:none;border:1.5px dashed var(--line)}
+.pl-head{display:flex;justify-content:space-between;align-items:center;gap:10px 14px;padding:12px 18px;flex-wrap:wrap}
+.pl-who{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pl-title{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.pl-sub{font-size:12.5px;color:var(--muted)}
+.pl-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.pl-sum{font-family:var(--f-display);font-weight:700;font-size:21px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl-body{padding:0 12px 12px}
+.pl-body .b-table td:first-child{white-space:normal}
+.pl-body .b-table td:first-child small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.pl-body .b-table .linkish{font-weight:600}
+.pl-body .from{font-weight:500;color:var(--muted);font-size:12.5px}
+.pl-body .pl-chk{vertical-align:-3px;margin-right:8px}
+.b-table tfoot td small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.pl-chk{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.pl-name{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pl-name .linkish{font-weight:600}
+.pl-src{font-size:12px;color:var(--muted)}
+.pl-price{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl-price .from{font-weight:500;color:var(--muted);font-size:13px}
+.pl-offer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border:1.5px dashed var(--good);border-radius:12px;padding:10px 14px;font-size:14px}
+.pl-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 18px;font-weight:600}
+.pl-total b{font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
+.pl-total small{font-weight:500;opacity:.75;font-size:12.5px}
+.pl-bar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}
+.pl-bar input{flex:1 1 180px;min-width:0;border:1px solid var(--line);background:var(--sunken);border-radius:9px;padding:7px 10px}
+.pl-cnt{font-weight:600;font-size:14px}
+.or-items{display:flex;flex-direction:column;gap:6px}
+.or-item{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:8px;align-items:center;font-size:14px;color:var(--ink)!important;text-transform:none!important;letter-spacing:0!important;font-weight:500!important}
+.or-item input.bad{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
+.row{transition:background-color .4s,box-shadow .4s;scroll-margin-top:16px}
+.row.flash{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.o-from{border:1px solid var(--violet-line);background:var(--violet-soft);color:var(--violet);border-radius:6px;padding:0 6px;font-size:11.5px;font-weight:600;line-height:18px;white-space:nowrap}
+.o-from:hover{border-color:var(--violet)}
+.o-row.from-bundle{background:var(--sunken);border-style:dashed}
+.o-photos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.thumb{position:relative;width:72px;height:50px;border-radius:7px;overflow:hidden;border:1px solid var(--line);background:var(--sunken);padding:0;flex:0 0 auto;display:block}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb:hover{border-color:var(--accent)}
+.thumb.more,.thumb.loading{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted)}
+.thumb.loading{border-style:dashed;animation:pulse 1.2s ease-in-out infinite}
+.thumb.broken img{display:none}
+.thumb.broken::after{content:"нет фото";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)}
+.thumb-wrap{position:relative}
+.thumb-rm{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--danger);font-size:13px;line-height:17px;padding:0;font-weight:700}
+@keyframes pulse{50%{opacity:.5}}
+.o-photo-field{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
+.o-photo-field .lbl{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.drop{border:1.5px dashed var(--line);border-radius:9px;padding:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.drop .o-photos{margin-top:0}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .btn{cursor:pointer}
+/* full-screen photo viewer: one committed dark look, independent of the page theme */
+#photoDialog{width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;inset:0;border-radius:0;padding:0;background:#0A0E13;color:#FFFFFF;box-shadow:none}
+#photoDialog::backdrop{background:#0A0E13}
+.lb{position:relative;width:100%;height:100%;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:zoom-in}
+.lb.zoomed{cursor:grab}
+.lb-img{position:absolute;left:0;top:0;max-width:none!important;transform-origin:0 0;visibility:hidden;image-rendering:auto;will-change:transform}
+.lb-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B8C2CC;font-size:14px}
+.lb-bar,.lb-foot{position:absolute;left:0;right:0;display:flex;align-items:center;gap:8px;z-index:2;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.lb-bar{top:0;justify-content:space-between;padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:18px;background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,0))}
+.lb-foot{bottom:0;justify-content:center;padding-top:18px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.65))}
+.lb-grp{display:flex;gap:6px;align-items:center}
+.lb-cap{font-size:13.5px;color:#DDE3E9;font-variant-numeric:tabular-nums}
+.lb-btn{background:rgba(255,255,255,.14);color:#FFFFFF;border:0;border-radius:10px;min-width:40px;height:40px;padding:0 12px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.lb-btn:hover{background:rgba(255,255,255,.26)}
+.lb-btn[disabled]{opacity:.35;cursor:default}
+.lb-btn:focus-visible{outline:2px solid #FFFFFF;outline-offset:2px}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:46px;height:64px;font-size:28px;padding:0}
+.lb-prev{left:max(10px,env(safe-area-inset-left,0px))}
+.lb-next{right:max(10px,env(safe-area-inset-right,0px))}
+.lb-pct{min-width:56px;text-align:center;font-size:13px;color:#DDE3E9;font-variant-numeric:tabular-nums}
+.p-note{font-size:13px;color:var(--muted);overflow-wrap:anywhere;max-width:70ch}
+.linkish{border:0;background:none;padding:0;text-align:left;color:var(--ink);font:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.linkish:hover{text-decoration-color:var(--accent);color:var(--accent)}
+.b-table td small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;white-space:normal}
+.o-pick{border:1px solid var(--line);background:transparent;border-radius:7px;padding:5px 0;font-size:12.5px;font-weight:600;color:var(--muted);width:100%;text-align:center}
+button.o-pick:hover{border-color:var(--good);color:var(--good)}
+.o-pick[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:var(--surface)}
+.o-pick[disabled]{opacity:.5;cursor:not-allowed}
+.o-main{min-width:0;display:flex;flex-direction:column;gap:2px}
+.o-seller{font-weight:600;display:flex;flex-wrap:wrap;gap:6px;align-items:center;overflow-wrap:anywhere}
+.o-best{font-size:11px;font-weight:600;color:var(--good);white-space:nowrap}
+.o-meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 10px;overflow-wrap:anywhere}
+.o-contact{font-family:var(--f-mono);font-size:12px;color:var(--ink);user-select:all}
+.o-price{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.o-price small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.o-actions{display:flex;gap:2px;align-items:center}
+.armed{color:var(--danger)!important;font-size:12px;font-weight:600;padding:4px 6px}
+.o-empty,.o-lock{font-size:13px;color:var(--muted)}
+.o-form{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) minmax(0,.8fr);gap:8px;align-items:end}
+.o-form .span2{grid-column:span 2}
+.o-form .full{grid-column:1/-1}
+.o-form .o-btns{display:flex;gap:6px;justify-content:flex-end;grid-column:1/-1;align-items:center}
+.o-form .o-btns .err{margin-right:auto}
+
+/* bundles */
+.bundles{display:flex;flex-direction:column;gap:10px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sec-toggle{border:0;background:transparent;display:flex;align-items:center;gap:8px;padding:0}
+.sec-title{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0}
+.sec-sub{font-size:13px;color:var(--muted);max-width:68ch}
+.b-card{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:14px 18px;display:flex;flex-direction:column;gap:12px;border:1.5px solid transparent;scroll-margin:24px}
+.b-card.picked{border-color:var(--good)}
+.b-card.flash{outline:3px solid var(--accent);outline-offset:2px}
+.b-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.b-who{display:flex;flex-direction:column;gap:3px;min-width:0}
+.b-seller{font-weight:700;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.b-meta{font-size:12.5px;color:var(--muted);display:flex;gap:2px 10px;flex-wrap:wrap}
+.b-total{text-align:right;font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
+.b-total small{display:block;font-family:var(--f-body);font-weight:500;font-size:12px;color:var(--muted)}
+.b-parts{display:flex;flex-wrap:wrap;gap:6px}
+.b-part{font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--sunken)}
+.cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:var(--sunken);border-radius:10px;padding:10px 12px}
+.cmp .k{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cmp .v{font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.cmp .v.more{color:var(--danger)}
+.cmp .v.less{color:var(--good)}
+.cmp .s{font-size:12px;color:var(--muted)}
+.cmp .warn{grid-column:1/-1;font-size:12.5px;color:var(--st-verify-fg)}
+.b-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.b-foot .right{margin-left:auto;display:flex;gap:2px}
+
+.empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;padding:24px 20px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
+.empty strong{color:var(--ink);font-size:16px}
+.gh-setup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;display:flex;flex-direction:column;gap:8px}
+.gh-setup[hidden]{display:none}
+.gh-setup h2{margin:0;font-size:18px}
+.gh-setup p{margin:0;font-size:14px;line-height:1.45}
+.gh-setup code{font-family:var(--f-mono);font-size:12.5px}
+.gh-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.gh-row input{flex:1 1 220px;min-width:0;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:16px;background:var(--sunken);color:var(--ink)}
+.gh-row input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.gh-msg{font-size:13.5px;color:var(--muted)}
+.gh-msg.bad{color:var(--danger)}
+.gh-hint{font-size:12.5px!important;color:var(--muted)}
+.gh-foot{margin:6px 0 0;font-size:12.5px;color:var(--muted);text-align:center}
+.gh-foot a{color:inherit}
+.gh-foot button{border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+.gh-report{background:var(--st-arrived-bg);color:var(--st-arrived-fg);border-radius:12px;padding:12px 16px;font-size:14px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.gh-report[hidden]{display:none}
+.gh-report.bad{background:var(--st-verify-bg);color:var(--st-verify-fg)}
+.gh-report p{margin:0}
+.gh-report ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
+.gh-report small{display:block;font-size:12px;opacity:.8}
+.gh-report .btn{margin-top:4px;color:var(--ink)}
+#ghDrop{margin-left:4px}
+.notice{background:var(--st-verify-bg);color:var(--st-verify-fg);border-radius:10px;padding:10px 14px;font-size:13.5px}
+
+.help{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:4px 18px}
+.help summary{cursor:pointer;font-weight:600;padding:10px 0;list-style-position:inside}
+.help ol{margin:0 0 14px;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--muted);max-width:72ch}
+.help ol b{color:var(--ink)}
+
+dialog{border:0;border-radius:16px;padding:0;width:min(600px,calc(100vw - 32px));max-height:calc(100dvh - 32px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(9,14,20,.5)}
+.d-form{display:flex;flex-direction:column;gap:14px;padding:20px}
+.d-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.d-head h2{font-family:var(--f-display);font-weight:700;font-size:24px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.wide{grid-column:1/-1}
+.field label,.field .lbl{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--sunken);border-radius:9px;padding:9px 11px;width:100%;min-width:0}
+.field input[disabled]{opacity:.6}
+.o-form .field input,.o-form .field select{background:var(--sunken);padding:7px 10px}
+.field textarea{resize:vertical;min-height:64px}
+.field input.mono{font-family:var(--f-mono);letter-spacing:.03em;text-transform:uppercase}
+.field .hint{font-size:12px;color:var(--muted)}
+.fs{grid-column:1/-1;border-top:1px solid var(--line);padding-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fs-title{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.fs-title b{font-family:var(--f-display);font-weight:700;font-size:17px}
+.fs-title span{font-size:12.5px;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--sunken)}
+.seg label{flex:1;text-align:center;padding:8px 0;font-size:14px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer;border-left:1px solid var(--line)}
+.seg label:first-child{border-left:0}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--surface);color:var(--ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.checklist{display:flex;flex-direction:column;gap:2px;max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:9px;padding:6px;background:var(--sunken)}
+.field input[type="checkbox"],.check input[type="checkbox"]{width:18px;height:18px;padding:0;margin:0;flex:0 0 auto;accent-color:var(--accent)}
+.cl-row{display:grid;grid-template-columns:minmax(0,1fr) auto 112px;gap:8px;align-items:center;padding:4px 6px;border-radius:7px}
+.cl-row:hover{background:var(--surface)}
+.cl-name{display:flex;gap:10px;align-items:center;font-size:14px;text-transform:none!important;letter-spacing:0!important;color:var(--ink)!important;font-weight:500!important;cursor:pointer;min-width:0}
+.cl-row .bp{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.field .cl-row input.cl-price{padding:6px 8px;background:var(--surface);font-variant-numeric:tabular-nums}
+.field .cl-row input.cl-price[disabled]{opacity:.4}
+.opts{display:flex;flex-wrap:wrap;gap:8px 18px}
+.d-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.d-foot .right{display:flex;gap:8px;margin-left:auto}
+.err{color:var(--danger);font-size:13.5px}
+.small{font-size:12.5px;color:var(--muted)}
+.owner-text{width:100%;min-height:300px;border:1px solid var(--line);background:var(--sunken);border-radius:10px;padding:12px;font-size:14px;line-height:1.5;resize:vertical}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:var(--shadow);transition:opacity .2s;pointer-events:none;max-width:calc(100vw - 32px)}
+
+@media (max-width:760px){
+  .summary{grid-template-columns:1fr 1fr}
+  .summary .carinfo{grid-column:1/-1}
+  .row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"main main" "oem oem" "price status";gap:6px 12px;padding:12px 16px}
+  .p-main{grid-area:main}.oem{grid-area:oem}.price{grid-area:price;text-align:left}.st-cell{grid-area:status;min-width:130px}
+  .qty{display:none}
+  .price small{display:inline;margin-left:6px}
+  .g-head{padding:12px 16px}
+  .offers{padding:12px 16px 14px}
+  .o-row{grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"pick price actions" "pick main main"}
+  .o-radio{grid-area:pick}.o-main{grid-area:main}.o-price{grid-area:price;text-align:left}.o-actions{grid-area:actions;justify-self:end}
+  .o-more-grid{grid-template-columns:1fr 1fr}
+  .o-form{grid-template-columns:1fr 1fr}
+  .o-form .seller{grid-column:1/-1}
+  .cmp{grid-template-columns:1fr 1fr}
+  .cmp .res{grid-column:1/-1}
+  .b-card{padding:14px 16px}
+}
+@media (max-width:480px){.grid,.fs{grid-template-columns:1fr}.o-form{grid-template-columns:1fr}.o-form .span2{grid-column:auto}
+  .cl-row{grid-template-columns:minmax(0,1fr) 96px;grid-template-areas:"name price" "bp price"}.cl-name{grid-area:name}.cl-row .bp{grid-area:bp;padding-left:28px}.cl-row .cl-price{grid-area:price}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow">Учёт деталей по машинам</span>
+      <h1>Запчасти RIMONTA</h1>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="ownerBtn" type="button">Сводка для владельца</button>
+      <button class="btn primary" id="addPartBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Деталь
+      </button>
+    </div>
+  </header>
+
+  <div id="notice" class="notice" hidden></div>
+  <section id="ghReport" class="gh-report" hidden aria-live="polite"></section>
+  <section class="gh-setup" id="ghSetup" hidden>
+    <div id="ghKeyBox">
+      <h2>Подключение к GitHub</h2>
+      <p>Детали, цены и фото хранятся в вашем закрытом репозитории <b>Su1tan1/rimonta-data</b>. Вставьте ключ доступа <code>github_pat_…</code>. Это нужно один раз на каждом устройстве.</p>
+      <form id="ghForm" class="gh-row" novalidate><input id="ghToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…" aria-label="Ключ GitHub"><button class="btn primary" type="submit">Подключить</button></form>
+      <p class="gh-msg bad" id="ghErr" hidden></p>
+      <p class="gh-hint">Ключ хранится только в этом браузере. Никому его не пересылайте.</p>
+    </div>
+    <div id="ghImportBox" hidden>
+      <h2>База на GitHub пока пустая</h2>
+      <p>Перенесите данные из старого трекера: выберите файл <b>rimonta-backup.json</b>.</p>
+      <div class="gh-row"><label class="btn primary">Выбрать файл<input id="ghImport" type="file" accept=".json,application/json" hidden></label><button class="btn ghost" id="ghEmpty" type="button">Начать с пустой базы</button></div>
+      <p class="gh-msg" id="ghImpMsg" hidden></p>
+    </div>
+  </section>
+  <nav class="cars" id="cars" aria-label="Машины"></nav>
+  <section class="summary" id="summary" aria-live="polite"></section>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Поиск: название, номер, продавец, трек" autocomplete="off" aria-label="Поиск">
+    </div>
+    <div class="view" role="group" aria-label="Группировка">
+      <button type="button" data-view="status" id="v-status">По статусу</button>
+      <button type="button" data-view="unit" id="v-unit">По узлам</button>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="Фильтр по статусу"></div>
+  </div>
+
+  <main class="groups" id="groups"></main>
+
+  <section class="bundles" id="bundles" aria-labelledby="bTitle"></section>
+
+  <section class="plan" id="plan" aria-labelledby="plTitle"></section>
+
+  <details class="help" id="help">
+    <summary>Как пользоваться</summary>
+    <ol>
+      <li><b>Нашли номер</b>: «Деталь» → название, сторона, номер оригинала. «Уточнить» — номер ещё не сверен, «Нужно» — сверен.</li>
+      <li><b>Нашли продавцов</b>: «+ вариант» под деталью. Указывайте цену и доставку со сроком, тогда «дешевле всех» считается вместе с доставкой.</li>
+      <li><b>Скриншот с zzap или фото детали</b>: значок фотоаппарата в строке варианта или поле «Скриншоты и фото» в форме. Можно вставить скриншот через Ctrl+V или перетащить файл. Нажмите на миниатюру, чтобы открыть крупно.</li>
+      <li><b>Решили, где брать</b>: «Выбрать» у варианта. Его цена и продавец станут ценой детали.</li>
+      <li><b>Несколько деталей у одного продавца одной ценой</b>: «+ Комплект» внизу. Трекер сравнит комплект с покупкой тех же деталей по отдельности. Выбрали комплект — цена разложится по деталям, доставка ведётся в комплекте.</li>
+      <li><b>Заказали</b>: выберите статус «Заказано», откроется окно заказа. Обязательно: продавец, откуда, транспортная компания и окончательная цена. Трек и дату можно добавить позже. Комплект заказывается кнопкой «Оформить заказ» в его карточке. Если у заказа чего-то не хватает, в строке будет жёлтая плашка «Дополните заказ».</li>
+      <li><b>Фото</b>: значок фотоаппарата с числом в строке детали открывает все её фото во весь экран. Увеличение колёсиком мыши, щипком или двойным нажатием, перетаскивание при увеличении, листание стрелками или свайпом.</li>
+      <li><b>Сводка для владельца</b>: готовый текст, что куплено, что едет, что осталось и сколько стоит. Скопируйте и отправьте в мессенджер. Продавцов можно не показывать.</li>
+    </ol>
+  </details>
+  <p class="gh-foot" id="ghFoot" hidden><span id="ghSync"></span><button type="button" id="ghDrop" hidden> (отменить неотправленные)</button> · <a href="https://github.com/Su1tan1/rimonta-data/commits" target="_blank" rel="noopener">история изменений на GitHub</a> · <button type="button" id="ghLogout">убрать ключ с устройства</button></p>
+</div>
+
+<dialog id="partDialog" aria-labelledby="pdTitle">
+  <form class="d-form" id="partForm" method="dialog" novalidate>
+    <div class="d-head">
+      <h2 id="pdTitle">Новая деталь</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="grid">
+      <div class="field wide"><label for="f-name">Деталь</label><input id="f-name" required placeholder="Крыло переднее"></div>
+      <div class="field"><label for="f-car">Машина</label><select id="f-car"></select></div>
+      <div class="field"><label for="f-unit">Узел</label><input id="f-unit" list="units" placeholder="Кузов"></div>
+      <div class="field"><span class="lbl">Сторона</span>
+        <div class="seg" role="radiogroup" aria-label="Сторона">
+          <label><input type="radio" name="side" value="" checked><span>—</span></label>
+          <label><input type="radio" name="side" value="Л"><span>Л</span></label>
+          <label><input type="radio" name="side" value="П"><span>П</span></label>
+        </div>
+      </div>
+      <div class="field"><label for="f-qty">Кол-во</label><input id="f-qty" type="number" min="1" step="1" inputmode="numeric" value="1"></div>
+      <div class="field"><label for="f-oem">Номер оригинала</label><input id="f-oem" class="mono" placeholder="41007497113" autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="f-status">Статус</label><select id="f-status"></select></div>
+      <div class="field" id="f-arrived-wrap"><label for="f-arrived">Приехало</label><input id="f-arrived" type="date"></div>
+      <div class="field"><label for="f-price">Цена за шт., ₽</label><input id="f-price" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><span class="hint" id="f-price-hint"></span></div>
+      <div class="field"><label for="f-supplier">Продавец</label><input id="f-supplier" placeholder="zzap · HAN Parts, Москва"></div>
+      <div class="field wide"><label for="f-note">Заметка</label><textarea id="f-note" placeholder="Что сказал мастер, что идёт в комплекте"></textarea></div>
+      <div class="field wide o-photo-field" id="f-photos"></div>
+      <div class="fs" id="f-ship">
+        <div class="fs-title"><b>Доставка</b><span id="f-ship-hint">после заказа</span></div>
+        <div class="field"><label for="f-carrier">Транспортная компания</label><input id="f-carrier" list="carriers" placeholder="СДЭК"></div>
+        <div class="field"><label for="f-from">Откуда</label><input id="f-from" placeholder="Москва"></div>
+        <div class="field"><label for="f-track">Трек-номер</label><input id="f-track" class="mono" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="f-eta">Ждём к</label><input id="f-eta" type="date"></div>
+        <div class="field"><label for="f-shipcost">Стоимость доставки, ₽</label><input id="f-shipcost" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+      </div>
+    </div>
+    <div class="err" id="pdErr" hidden></div>
+    <div class="d-foot">
+      <button type="button" class="btn ghost danger" id="pdDelete" hidden>Удалить</button>
+      <button type="button" class="btn ghost danger sm" id="pdDeleteAll" hidden>Удалить деталь целиком</button>
+      <span class="small" id="pdStamp"></span>
+      <div class="right">
+        <button type="button" class="btn" data-close>Отмена</button>
+        <button type="submit" class="btn primary" id="pdSave">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="bundleDialog" aria-labelledby="bdTitle">
+  <form class="d-form" id="bundleForm" method="dialog" novalidate>
+    <div class="d-head">
+      <h2 id="bdTitle">Комплект у одного продавца</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="grid">
+      <div class="field"><label for="b-name">Название</label><input id="b-name" placeholder="Ходовая"></div>
+      <div class="field"><label for="b-seller">Продавец</label><input id="b-seller" placeholder="HAN Parts, Москва"></div>
+      <div class="field"><label for="b-total">Цена комплекта, ₽</label><input id="b-total" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><span class="hint" id="b-sum"></span></div>
+      <div class="field"><label for="b-cond">Состояние</label><select id="b-cond"><option value="">—</option><option value="new">Новая</option><option value="used">Б/у</option><option value="analog">Аналог</option></select></div>
+      <div class="field"><label for="b-ship">Доставка, ₽</label><input id="b-ship" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label for="b-days">Срок</label><input id="b-days" placeholder="2–4 дня"></div>
+      <div class="field"><label for="b-contact">Телефон</label><input id="b-contact" inputmode="tel" placeholder="8 (495) …"></div>
+      <div class="field"><label for="b-link">Ссылка</label><input id="b-link" type="url" placeholder="https://…"></div>
+      <div class="field wide"><span class="lbl">Что входит</span><div class="checklist" id="b-parts"></div><span class="hint">Отметьте минимум две детали и впишите цену каждой у этого продавца. Цена комплекта посчитается сама. Серым — лучшая цена той же детали по отдельности.</span></div>
+      <div class="field wide"><label for="b-note">Заметка</label><input id="b-note" placeholder="Гарантия, с какой машины, условия"></div>
+      <div class="fs">
+        <div class="fs-title"><b>Доставка</b><span>после заказа</span></div>
+        <div class="field"><label for="b-carrier">Транспортная компания</label><input id="b-carrier" list="carriers" placeholder="СДЭК"></div>
+        <div class="field"><label for="b-from">Откуда</label><input id="b-from" placeholder="Москва"></div>
+        <div class="field"><label for="b-track">Трек-номер</label><input id="b-track" class="mono" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="b-eta">Ждём к</label><input id="b-eta" type="date"></div>
+      </div>
+    </div>
+    <div class="err" id="bdErr" hidden></div>
+    <div class="d-foot">
+      <button type="button" class="btn ghost danger" id="bdDelete" hidden>Удалить</button>
+      <div class="right">
+        <button type="button" class="btn" data-close>Отмена</button>
+        <button type="submit" class="btn primary" id="bdSave">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="carDialog" aria-labelledby="cdTitle">
+  <form class="d-form" id="carForm" method="dialog" novalidate>
+    <div class="d-head">
+      <h2 id="cdTitle">Новая машина</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="grid">
+      <div class="field wide"><label for="c-name">Название</label><input id="c-name" required placeholder="BMW X5 G05"></div>
+      <div class="field wide"><label for="c-vin">VIN</label><input id="c-vin" class="mono" maxlength="17" placeholder="17 символов" autocomplete="off" spellcheck="false"></div>
+      <div class="field wide"><label for="c-spec">Комплектация</label><input id="c-spec" placeholder="xDrive30d · 05/2023"></div>
+    </div>
+    <div class="err" id="cdErr" hidden></div>
+    <div class="d-foot"><div class="right">
+      <button type="button" class="btn" data-close>Отмена</button>
+      <button type="submit" class="btn primary" id="cdSave">Добавить</button>
+    </div></div>
+  </form>
+</dialog>
+
+<dialog id="ownerDialog" aria-labelledby="odTitle">
+  <div class="d-form">
+    <div class="d-head">
+      <h2 id="odTitle">Сводка для владельца</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="opts">
+      <label class="check"><input type="checkbox" id="od-th"> Цены в тысячах (25т)</label>
+      <label class="check"><input type="checkbox" id="od-sellers"> Продавцы</label>
+      <label class="check"><input type="checkbox" id="od-bought"> Купленное и в пути</label>
+    </div>
+    <textarea class="owner-text" id="od-text" readonly aria-label="Текст сводки"></textarea>
+    <div class="d-foot"><span class="small">Можно поправить после вставки в мессенджер.</span><div class="right">
+      <button type="button" class="btn" data-close>Закрыть</button>
+      <button type="button" class="btn primary" id="od-copy">Скопировать</button>
+    </div></div>
+  </div>
+</dialog>
+
+<datalist id="units">
+  <option value="Кузов"><option value="Безопасность (SRS)"><option value="Подвеска двигателя"><option value="Трансмиссия">
+  <option value="Ходовая"><option value="Электрика"><option value="Двигатель"><option value="Оптика"><option value="Салон"><option value="Расходники">
+</datalist>
+<datalist id="carriers">
+  <option value="СДЭК"><option value="ПЭК"><option value="Деловые линии"><option value="Байкал Сервис"><option value="КИТ"><option value="Энергия">
+  <option value="Почта России"><option value="Яндекс Доставка"><option value="Boxberry"><option value="DPD"><option value="Курьер продавца"><option value="Самовывоз">
+</datalist>
+
+<dialog id="photoDialog" aria-label="Просмотр фото">
+  <div class="lb" id="lb">
+    <img class="lb-img" id="lb-img" alt="Скриншот или фото варианта" draggable="false">
+    <div class="lb-load" id="lb-load">Загрузка…</div>
+    <div class="lb-bar">
+      <span class="lb-cap" id="lb-cap"></span>
+      <div class="lb-grp">
+        <button type="button" class="lb-btn" id="lb-fs" aria-label="Во весь экран" title="Во весь экран"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="lb-btn" data-close aria-label="Закрыть"><svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+    <button type="button" class="lb-btn lb-nav lb-prev" id="lb-prev" aria-label="Предыдущее фото">‹</button>
+    <button type="button" class="lb-btn lb-nav lb-next" id="lb-next" aria-label="Следующее фото">›</button>
+    <div class="lb-foot">
+      <button type="button" class="lb-btn" id="lb-out" aria-label="Уменьшить">−</button>
+      <span class="lb-pct" id="lb-pct"></span>
+      <button type="button" class="lb-btn" id="lb-in" aria-label="Увеличить">+</button>
+      <button type="button" class="lb-btn" id="lb-fit">По экрану</button>
+      <button type="button" class="lb-btn" id="lb-100">100%</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="orderDialog" aria-labelledby="orTitle">
+  <form class="d-form" id="orderForm" method="dialog" novalidate>
+    <div class="d-head">
+      <h2 id="orTitle">Оформить заказ</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <p class="small" id="orSub" style="margin:0"></p>
+    <div class="grid">
+      <div class="field"><label for="or-seller">Продавец <span class="req">*</span></label><input id="or-seller" placeholder="HAN Parts"></div>
+      <div class="field"><label for="or-from">Откуда <span class="req">*</span></label><input id="or-from" placeholder="Москва"></div>
+      <div class="field"><label for="or-carrier">Транспортная компания <span class="req">*</span></label><input id="or-carrier" list="carriers" placeholder="СДЭК"><span class="hint" id="or-badge"></span></div>
+      <div class="field"><label for="or-price" id="or-price-l">Окончательная цена, ₽ <span class="req">*</span></label><input id="or-price" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><span class="hint" id="or-price-h"></span></div>
+      <div class="field"><label for="or-ship">Доставка, ₽</label><input id="or-ship" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label for="or-eta">Ждём к</label><input id="or-eta" type="date"></div>
+      <div class="field wide" id="or-items-wrap" hidden><span class="lbl">Окончательные цены <span class="req">*</span></span><div class="or-items" id="or-items"></div><span class="hint">Доставка учтётся один раз, у первой детали</span></div>
+      <div class="field wide"><label for="or-track">Трек-номер</label><input id="or-track" class="mono" autocomplete="off" spellcheck="false" placeholder="можно добавить позже"></div>
+    </div>
+    <div class="err" id="orErr" hidden></div>
+    <div class="d-foot"><span class="small"><span class="req" style="color:var(--danger)">*</span> обязательно</span><div class="right">
+      <button type="button" class="btn" data-close>Отмена</button>
+      <button type="submit" class="btn primary" id="orSave">Заказано</button>
+    </div></div>
+  </form>
+</dialog>
+<input type="file" id="photoInput" accept="image/*" multiple hidden>
+
+<div class="toast" id="toast" style="opacity:0" role="status"></div>
+
+<script>
+const STATUSES=[
+  {id:"verify",label:"Уточнить"},{id:"need",label:"Нужно"},{id:"ordered",label:"Заказано"},
+  {id:"arrived",label:"Пришло"},{id:"installed",label:"Установлено"},{id:"returned",label:"Возврат"}];
+const ST_ORDER=Object.fromEntries(STATUSES.map((s,i)=>[s.id,i]));
+const ST_LABEL=Object.fromEntries(STATUSES.map(s=>[s.id,s.label]));
+const SPENT=new Set(["ordered","arrived","installed"]);
+const TODO=new Set(["verify","need"]);
+const COND={new:"Новая",used:"Б/у",analog:"Аналог"};
+const ALL="__all";
+
+const $=id=>document.getElementById(id);
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function loadSet(k,def){try{const v=localStorage.getItem(k);return new Set(v?JSON.parse(v):def)}catch(e){return new Set(def)}}
+
+const S={db:null,cars:[],parts:[],bundles:[],carsLoaded:false,partsLoaded:false,canWrite:true,editing:null,editingBundle:null,
+  carId:load("rimonta.car")||null,filter:"all",q:"",groupBy:load("rimonta.group")||"status",
+  collapsed:loadSet("rimonta.collapsed",["status:installed","status:returned"]),
+  open:loadSet("rimonta.open",[]),planSort:load("rimonta.plsort")||"manual",bundlesOpen:load("rimonta.bopen")!=="0",oedit:null,oadd:null,odel:null,bdel:null,busy:false,assets:null,fp:{},sel:new Set()};
+function focusForm(pid,oid){
+  const f=document.querySelector(`[data-oform="${CSS.escape(pid)}"]${oid?`[data-oid="${CSS.escape(oid)}"]`:":not([data-oid])"}`);
+  if(!f)return;const i=f.querySelector('input[name="price"]');if(i)i.focus({preventScroll:true});
+  f.scrollIntoView({block:"nearest",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}
+function showOffers(id){
+  const p=partById(id);if(!p)return;
+  if(S.oadd===id)S.oadd=null;
+  if(visibleOffers(p).length){S.open.add(id);store("rimonta.open",JSON.stringify([...S.open]))}
+  if(S.filter!=="all"&&p.status!==S.filter)S.filter="all";
+  if(S.q){S.q="";$("q").value=""}
+  const k=groupOf(p)[0];if(S.collapsed.delete(k))store("rimonta.collapsed",JSON.stringify([...S.collapsed]));
+  render();
+  const el=$("row-"+id);if(!el)return;
+  el.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+  el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600);
+}
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const normOem=s=>String(s||"").replace(/[\s.\-]/g,"").toUpperCase();
+const fmtOem=s=>normOem(s);
+const CARRIERS=[
+  {k:["сдэк","cdek"],t:"СДЭК",bg:"#1AB248",fg:"#FFFFFF"},
+  {k:["пэк","pecom"],t:"ПЭК",bg:"#0B4EA2",fg:"#FFFFFF"},
+  {k:["деловые","дл"],t:"Деловые Линии",bg:"#FFD200",fg:"#1B1B1B"},
+  {k:["байкал"],t:"Байкал Сервис",bg:"#1460AA",fg:"#FFFFFF"},
+  {k:["кит"],t:"КИТ",bg:"#F28C1A",fg:"#FFFFFF"},
+  {k:["энерги"],t:"Энергия",bg:"#E31E24",fg:"#FFFFFF"},
+  {k:["почта"],t:"Почта России",bg:"#0055A6",fg:"#FFFFFF"},
+  {k:["яндекс"],t:"Яндекс Доставка",bg:"#FC3F1D",fg:"#FFFFFF"},
+  {k:["boxberry","боксберри"],t:"Boxberry",bg:"#E4005B",fg:"#FFFFFF"},
+  {k:["dpd"],t:"DPD",bg:"#DC0032",fg:"#FFFFFF"}];
+const truckIcon=`<svg width="13" height="11" viewBox="0 0 16 13" aria-hidden="true"><path d="M1 2h8v7H1zM9 5h3.5L15 7.5V9H9z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="4" cy="10.5" r="1.4" fill="currentColor"/><circle cx="12" cy="10.5" r="1.4" fill="currentColor"/></svg>`;
+function carrierBadge(name){
+  const n=String(name||"").trim(),l=n.toLowerCase();
+  const c=n&&CARRIERS.find(c=>c.k.some(k=>k.length<3?l===k:l.includes(k)));
+  if(c)return `<span class="tk" style="--tk-bg:${c.bg};--tk-fg:${c.fg}">${esc(c.t)}</span>`;
+  return `<span class="tk generic">${truckIcon}${esc(n||"Доставка")}</span>`;
+}
+const tys=n=>{const v=Math.round(num(n)/100)/10;return String(v).replace(".",",")+"т"};
+const cap=s=>{s=String(s||"");return s.charAt(0).toUpperCase()+s.slice(1)};
+const warrBadge=w=>w===true?`<span class="warr yes">гарантия</span>`:w===false?`<span class="warr no">без гарантии</span>`:"";
+const offerTitle=o=>o.seller||o.note||"Вариант";
+/* ---------- storage on GitHub: db.json + photos/<id> in the private repo Su1tan1/rimonta-data ---------- */
+const GH={owner:"Su1tan1",repo:"rimonta-data",file:"db.json",api:"https://api.github.com"};
+const ghRepoUrl=`https://github.com/${GH.owner}/${GH.repo}`;
+const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}};
+const lsSet=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}};
+const ghToken=()=>lsGet("rimonta.ghtoken");
+function ghErr(status){const e=new Error("GitHub "+status);e.status=status;
+  e.code=status===0?"offline":status===401?"auth":status===403||status===404?"not_granted":status===409||status===422?"conflict":status===413?"too_large":"failed";return e}
+async function gh(path,opt={},token){
+  try{return await fetch(GH.api+path,{cache:"no-store",...opt,headers:{Authorization:"Bearer "+(token||ghToken()),Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28",...(opt.headers||{})}})}
+  catch(e){throw ghErr(0)}
+}
+const repoPath=p=>`/repos/${GH.owner}/${GH.repo}/contents/${p}`;
+const bytesToB64=bytes=>{let s="";for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s)};
+const b64ToBytes=b64=>Uint8Array.from(atob(String(b64).replace(/\s/g,"")),c=>c.charCodeAt(0));
+const textToB64=t=>bytesToB64(new TextEncoder().encode(t));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const rid=(n=20)=>{const a="abcdefghijklmnopqrstuvwxyz0123456789",r=crypto.getRandomValues(new Uint8Array(n));return Array.from(r,x=>a[x%36]).join("")};
+const hexId=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,"0")).join("");
+/* GitHub rejects two commits racing on one branch, so every write goes through one queue */
+let ghChain=Promise.resolve();
+const ghSerial=fn=>{const p=ghChain.then(fn,fn);ghChain=p.catch(()=>{});return p};
+
+/* human-readable names for queued edits, shown in the "sent / not sent" report */
+const FIELD_RU={status:"статус",price:"цена",supplier:"продавец",note:"заметка",offers:"варианты",delivery:"доставка",arrivedAt:"дата прихода",sort:"порядок",photos:"фото",name:"название",oem:"номер",qty:"кол-во",unit:"узел",side:"сторона",prevMain:"основная цена",picked:"выбор комплекта",parts:"состав",prices:"цены",total:"итог",seller:"продавец",ship:"доставка",vin:"VIN",spec:"комплектация"};
+function makeGhStore(onStatus,onReport){
+  const empty=()=>({cars:{},parts:{},bundles:{}});
+  let remote=empty(),sha=null,etag=null,loaded=false,inflight=[],pending=[],timer=0,lastErr="";
+  const seen=new Set(),subs={cars:[],parts:[],bundles:[]};
+  let data=empty();
+  /* returns false when an edit no longer has a target (the record was deleted on another device) */
+  const apply=(d,op)=>{const [c,id]=op.path.split("/");if(!d[c])d[c]={};
+    if(op.kind==="delete"){delete d[c][id];return true}
+    if(op.kind==="set"){d[c][id]=clone(op.data);return true}
+    if(!d[c][id])return false;
+    d[c][id]={...d[c][id],...clone(op.data)};return true};
+  const labelOf=op=>{const [c,id]=op.path.split("/"),doc=(data[c]||{})[id]||(op.data||{});
+    const nm=c==="parts"?(doc.name||"деталь")+(doc.side?" · "+doc.side:""):c==="bundles"?"комплект «"+(doc.name||"")+"»":"машина «"+(doc.name||"")+"»";
+    if(op.kind==="delete")return nm+": удалено";
+    if(op.kind==="set")return nm+((data[c]||{})[id]?": изменено":": добавлено");
+    const f=Object.keys(op.data||{}).filter(k=>k!=="updated").map(k=>FIELD_RU[k]||k);
+    return nm+(f.length?": "+[...new Set(f)].join(", "):"")};
+  const saveOutbox=()=>lsSet("rimonta.outbox",inflight.length||pending.length?JSON.stringify([...inflight,...pending].map(({op,label,at})=>({op,label,at}))):"");
+  const rebuild=()=>{data=clone(remote);for(const b of [...inflight,...pending])apply(data,b.op)};
+  const kick=()=>{if(!timer&&!inflight.length&&pending.length)timer=setTimeout(flush,60)};
+  const snap=c=>({docs:Object.entries(data[c]||{}).map(([id,v])=>({id,data:()=>clone(v)}))});
+  const emit=only=>{if(!loaded)return;for(const c in subs)if(!only||only===c)subs[c].forEach(cb=>cb(snap(c)))};
+  const saveCache=()=>lsSet("rimonta.cache",JSON.stringify({data:remote,sha,at:new Date().toISOString()}));
+  const setSha=s=>{if(sha&&s!==sha)seen.add(sha);sha=s};
+  const busy=()=>inflight.length||pending.length;
+
+  async function pull(force){
+    let r;
+    try{r=await gh(repoPath(GH.file),{headers:!force&&etag?{"If-None-Match":etag}:{}})}
+    catch(e){onStatus("offline");return "offline"}
+    if(r.status===304){onStatus("ok");if(lastErr&&lastErr!=="nowrite"&&pending.length&&!inflight.length){lastErr="";kick()}return "ok"}
+    if(r.status===401){onStatus("auth");return "auth"}
+    if(r.status===404){
+      const rr=await gh(`/repos/${GH.owner}/${GH.repo}`).catch(()=>null);
+      const st=rr&&rr.ok?"missing":"norepo";onStatus(st);return st}
+    if(!r.ok){onStatus("failed");return "failed"}
+    const j=await r.json();
+    if(seen.has(j.sha))return "ok";               /* stale copy of a file we already replaced */
+    let text;
+    if(j.content)text=new TextDecoder().decode(b64ToBytes(j.content));
+    else{const raw=await gh(repoPath(GH.file),{headers:{Accept:"application/vnd.github.raw"}});text=await raw.text()}
+    let parsed;try{parsed=JSON.parse(text)}catch(e){onStatus("broken");return "broken"}
+    remote={...empty(),...parsed};setSha(j.sha);etag=r.headers.get("ETag");saveCache();
+    rebuild();loaded=true;emit();onStatus("ok");
+    if(lastErr&&lastErr!=="nowrite"&&pending.length&&!inflight.length){lastErr="";kick()}
+    return "ok";
+  }
+
+  async function flush(){
+    timer=0;if(inflight.length||!pending.length)return;
+    inflight=pending;pending=[];onStatus("saving");
+    let err=null,skipped=[];
+    for(let attempt=0;attempt<4;attempt++){
+      const next=clone(remote);skipped=inflight.filter(b=>!apply(next,b.op));
+      const paths=[...new Set(inflight.map(b=>b.op.path))];
+      const body={message:"Трекер: "+paths.slice(0,4).join(", ")+(paths.length>4?` и ещё ${paths.length-4}`:""),content:textToB64(JSON.stringify(next,null,1))};
+      if(sha)body.sha=sha;
+      let r;try{r=await ghSerial(()=>gh(repoPath(GH.file),{method:"PUT",body:JSON.stringify(body)}))}catch(e){err=e;break}
+      if(r.ok){const j=await r.json();remote=next;setSha(j.content.sha);etag=null;saveCache();err=null;break}
+      if(r.status===409||r.status===422){const st=await pull(true);if(st!=="ok"){err=ghErr(st==="offline"?0:st==="auth"?401:409);break}continue}
+      err=ghErr(r.status);break;
+    }
+    const done=inflight;inflight=[];
+    if(err){
+      /* nothing is lost: the edits stay on this device and go out on the next try */
+      done.forEach(b=>{b.off=true});pending=[...done,...pending];saveOutbox();lastErr=err.code;rebuild();emit();
+      onStatus(err.code==="offline"?"offline":err.code==="auth"?"auth":err.code==="not_granted"?"nowrite":"retry");
+      return;
+    }
+    lastErr="";saveOutbox();
+    const late=done.filter(b=>b.off);
+    if(late.length||skipped.length){
+      const sk=new Set(skipped);
+      onReport({at:new Date().toISOString(),
+        sent:late.filter(b=>!sk.has(b)).map(b=>({label:b.label,at:b.at})),
+        failed:skipped.map(b=>({label:b.label,at:b.at,why:"запись удалили на другом устройстве"}))});
+    }
+    if(skipped.length){rebuild();emit()}
+    onStatus(pending.length?"saving":"ok");
+    if(pending.length)flush();
+  }
+  function queue(op){
+    const entry={op,label:labelOf(op),at:new Date().toISOString(),off:!!lastErr};
+    pending.push(entry);apply(data,op);saveOutbox();emit(op.path.split("/")[0]);
+    if(!lastErr||lastErr==="retry"||lastErr==="conflict"||lastErr==="failed")kick();
+    else onStatus(lastErr==="offline"?"offline":lastErr==="auth"?"auth":"nowrite");
+    return Promise.resolve();   /* kept on the device right away; GitHub gets it as soon as it can */
+  }
+  const db={
+    doc:path=>({update:d=>queue({kind:"update",path,data:d}),set:d=>queue({kind:"set",path,data:d}),delete:()=>queue({kind:"delete",path})}),
+    collection:c=>({add:d=>{const id=rid();return queue({kind:"set",path:c+"/"+id,data:d}).then(()=>({id}))},
+      onSnapshot:cb=>{(subs[c]=subs[c]||[]).push(cb);if(loaded)cb(snap(c));return ()=>{}}})
+  };
+  async function putFile(path,b64,message){
+    for(let attempt=0;attempt<3;attempt++){
+      const r=await ghSerial(()=>gh(repoPath(path),{method:"PUT",body:JSON.stringify({message,content:b64})}));
+      if(r.ok||r.status===422&&attempt>0)return;           /* 422 after a retry: the file is already there */
+      if(r.status!==409&&r.status!==422)throw ghErr(r.status);
+      await new Promise(z=>setTimeout(z,800));
+    }
+    throw ghErr(409);
+  }
+  const assets={
+    upload:async f=>{
+      if(f.size>20e6)throw {code:"too_large"};
+      const id=hexId(),bytes=new Uint8Array(await f.arrayBuffer());
+      await putFile("photos/"+id,bytesToB64(bytes),"Фото "+id);
+      photoReady(id,new Blob([bytes],{type:f.type||sniffType(bytes)}),true);
+      return {id};
+    },
+    delete:id=>ghSerial(async()=>{
+      const r=await gh(repoPath("photos/"+id));if(!r.ok)return;const j=await r.json();
+      await gh(repoPath("photos/"+id),{method:"DELETE",body:JSON.stringify({message:"Удалено фото "+id,sha:j.sha})});
+    })
+  };
+  return {db,assets,pull,putFile,busy,
+    outbox:()=>pending.length+inflight.length,
+    retry:()=>{lastErr="";if(pending.length)kick();else pull()},
+    dropOutbox:()=>{const n=pending.length;pending=[];saveOutbox();rebuild();emit();onStatus("ok");return n},
+    start:async()=>{
+      try{const c=JSON.parse(lsGet("rimonta.cache")||"null");if(c&&c.data){remote={...empty(),...c.data};sha=c.sha||null}}catch(e){}
+      try{const o=JSON.parse(lsGet("rimonta.outbox")||"[]");pending=o.filter(x=>x&&x.op).map(x=>({...x,off:true}))}catch(e){}
+      if(sha||pending.length){rebuild();loaded=true;emit()}
+      const st=await pull(true);
+      if(st==="ok"&&pending.length)kick();
+      else if(pending.length&&st!=="ok")lastErr=st==="offline"?"offline":st==="auth"?"auth":"retry";
+      return st;
+    },
+    cachedAt:()=>{try{return (JSON.parse(lsGet("rimonta.cache")||"null")||{}).at||""}catch(e){return ""}},
+    isLoaded:()=>loaded};
+}
+
+/* photos live in the private repo, so they are fetched with the key and kept in the browser cache */
+const PIX="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const blobCache={},blobWait={};
+function sniffType(b){if(b[0]===0x89&&b[1]===0x50)return "image/png";if(b[0]===0xFF&&b[1]===0xD8)return "image/jpeg";if(b[0]===0x47&&b[1]===0x49)return "image/gif";if(b[8]===0x57&&b[9]===0x45)return "image/webp";return "application/octet-stream"}
+const photoKey=id=>location.origin+"/__photo/"+id;
+async function photoReady(id,blob,store){
+  blobCache[id]=URL.createObjectURL(blob);
+  document.querySelectorAll(`img[data-bid="${id}"]`).forEach(i=>{i.src=blobCache[id]});
+  if(store)try{const c=await caches.open("rimonta-photos");await c.put(photoKey(id),new Response(blob,{headers:{"Content-Type":blob.type}}))}catch(e){}
+  return blobCache[id];
+}
+function ensureBlob(id){
+  if(blobCache[id])return Promise.resolve(blobCache[id]);
+  if(blobWait[id])return blobWait[id];
+  return blobWait[id]=(async()=>{
+    try{const c=await caches.open("rimonta-photos");const hit=await c.match(photoKey(id));if(hit)return photoReady(id,await hit.blob(),false)}catch(e){}
+    const r=await gh(repoPath("photos/"+id),{headers:{Accept:"application/vnd.github.raw"}});
+    if(!r.ok)throw ghErr(r.status);
+    const bytes=new Uint8Array(await r.arrayBuffer());
+    return photoReady(id,new Blob([bytes],{type:sniffType(bytes)}),true);
+  })().catch(e=>{delete blobWait[id];throw e});
+}
+const blobUrl=id=>{if(blobCache[id])return blobCache[id];ensureBlob(id).catch(()=>{});return PIX};
+const photosOf=o=>Array.isArray(o&&o.photos)?o.photos:[];
+const camIcon=`<svg width="15" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M1.5 4.5A1.5 1.5 0 0 1 3 3h1.6l1-1.5h4.8l1 1.5H13a1.5 1.5 0 0 1 1.5 1.5v6.5A1.5 1.5 0 0 1 13 12.5H3A1.5 1.5 0 0 1 1.5 11z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="7.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>`;
+function thumbsHtml(ids,pid,oid){
+  if(!ids.length)return "";
+  return `<div class="o-photos">${ids.slice(0,4).map((id,i)=>`<button class="thumb" type="button" data-photo="${pid}|${esc(oid)}|${i}" aria-label="Открыть фото ${i+1}"><img src="${esc(blobUrl(id))}" data-bid="${esc(id)}" alt="" loading="lazy"></button>`).join("")}${ids.length>4?`<button class="thumb more" type="button" data-photo="${pid}|${esc(oid)}|4" aria-label="Ещё фото">+${ids.length-4}</button>`:""}</div>`;
+}
+function fpState(key,ids){if(!S.fp[key])S.fp[key]={ids:[...ids],added:[],removed:[],up:0};return S.fp[key]}
+function formThumbs(key){
+  const st=S.fp[key];if(!st)return "";
+  return st.ids.map((id,i)=>`<span class="thumb-wrap"><button class="thumb" type="button" data-fpview="${esc(key)}|${i}" aria-label="Открыть фото ${i+1}"><img src="${esc(blobUrl(id))}" data-bid="${esc(id)}" alt="" loading="lazy"></button>${S.assets?`<button class="thumb-rm" type="button" data-fprm="${esc(key)}|${i}" aria-label="Убрать фото ${i+1}">×</button>`:""}</span>`).join("")
+    +Array.from({length:st.up},()=>`<span class="thumb loading">загрузка</span>`).join("");
+}
+function drawStrip(key){const el=document.querySelector(`[data-fpstrip="${CSS.escape(key)}"]`);if(el)el.innerHTML=formThumbs(key)}
+const assetErr=e=>({too_large:"Файл слишком большой, до 20 МБ",unsupported_type:"Нужен PNG, JPG или WebP",quota_or_state:"Место для фото закончилось",rate_limited:"Слишком часто, попробуйте через минуту",not_granted:"Нет доступа к GitHub: проверьте ключ",auth:"Ключ GitHub не подходит или истёк",offline:"Нет интернета, фото не загрузилось",conflict:"GitHub занят, попробуйте ещё раз"})[e&&e.code]||"Фото не загрузилось, попробуйте ещё раз";
+async function uploadImages(files){
+  const ids=[];
+  for(const f of files){
+    if(!/^image\/(png|jpe?g|webp|gif)$/i.test(f.type)){toast(f.type?"Нужен PNG, JPG или WebP":"Не похоже на картинку");continue}
+    try{const r=await S.assets.upload(f);ids.push(r.id)}catch(err){toast(assetErr(err))}
+  }
+  return ids;
+}
+async function addFormPhotos(key,files){
+  const st=S.fp[key];if(!st||!S.assets)return;
+  const list=[...files].filter(f=>f&&/^image\//.test(f.type));if(!list.length){toast("Нужна картинка: скриншот или фото");return}
+  st.up+=list.length;drawStrip(key);
+  const ids=await uploadImages(list);
+  st.up-=list.length;st.ids.push(...ids);st.added.push(...ids);drawStrip(key);
+}
+function dropAssets(ids){if(!S.assets)return;ids.forEach(id=>S.assets.delete(id).catch(()=>{}))}
+const usedElsewhere=(id,pid,oid)=>S.parts.some(p=>(!(p.id===pid&&(oid==null||oid==="part"))&&photosOf(p).includes(id))
+  ||offersOf(p).some(o=>!(p.id===pid&&(oid==null||o.id===oid))&&photosOf(o).includes(id)));
+function photoField(key,hint){
+  const ek=esc(key);
+  return `<span class="lbl">${hint||"Скриншоты и фото"}</span>
+    <div class="drop" data-drop="${ek}"><div class="o-photos" data-fpstrip="${ek}">${formThumbs(key)}</div>
+    ${S.assets?`<label class="btn sm">${camIcon} Добавить<input type="file" accept="image/*" multiple hidden data-fpinput="${ek}"></label><span>или вставьте скриншот (Ctrl+V), или перетащите сюда</span>`:`<span>Загружать фото может только владелец трекера</span>`}</div>`;
+}
+const dropUnused=(ids,pid,oid)=>dropAssets(ids.filter(id=>!usedElsewhere(id,pid,oid)));
+function discardForms(){for(const k of Object.keys(S.fp)){dropAssets(S.fp[k].added);delete S.fp[k]}}
+/* full-screen viewer with zoom and pan */
+const LB={ids:[],i:0,nw:0,nh:0,base:1,s:1,x:0,y:0,ptr:new Map(),pinch:null,lastTap:0,start:null};
+function openLightbox(ids,i){
+  if(!ids.length)return;LB.ids=ids;LB.i=Math.min(Math.max(0,i),ids.length-1);
+  const d=$("photoDialog");if(!d.open)d.showModal();loadLB();
+}
+function loadLB(){
+  const img=$("lb-img");LB.nw=0;img.style.visibility="hidden";
+  $("lb-load").textContent="Загрузка…";$("lb-load").hidden=false;
+  const bid=LB.ids[LB.i];ensureBlob(bid).then(u=>{if(LB.ids[LB.i]===bid)img.src=u},()=>{if(LB.ids[LB.i]===bid)$("lb-load").textContent="Фото не загрузилось. Проверьте интернет."});
+  $("lb-cap").textContent=LB.ids.length>1?`Фото ${LB.i+1} из ${LB.ids.length}`:"";
+  $("lb-prev").hidden=$("lb-next").hidden=LB.ids.length<2;
+}
+function lbView(){const r=$("lb").getBoundingClientRect();return {w:r.width,h:r.height,l:r.left,t:r.top}}
+function fitLB(){
+  if(!LB.nw)return;const v=lbView();
+  LB.base=Math.min((v.w-16)/LB.nw,(v.h-16)/LB.nh,2);LB.s=LB.base;
+  LB.x=(v.w-LB.nw*LB.s)/2;LB.y=(v.h-LB.nh*LB.s)/2;applyLB();
+}
+function applyLB(){
+  const v=lbView(),w=LB.nw*LB.s,h=LB.nh*LB.s;
+  LB.x=w<=v.w?(v.w-w)/2:Math.min(0,Math.max(v.w-w,LB.x));
+  LB.y=h<=v.h?(v.h-h)/2:Math.min(0,Math.max(v.h-h,LB.y));
+  $("lb-img").style.transform=`translate(${LB.x}px,${LB.y}px) scale(${LB.s})`;
+  const zoomed=LB.s>LB.base*1.01;$("lb").classList.toggle("zoomed",zoomed);
+  $("lb-fit").disabled=!zoomed;$("lb-100").disabled=Math.abs(LB.s-1)<.01;$("lb-out").disabled=!zoomed;
+  $("lb-pct").textContent=LB.nw?Math.round(LB.s*100)+"%":"";
+}
+function zoomLB(ns,px,py){
+  if(!LB.nw)return;const v=lbView();if(px==null){px=v.w/2;py=v.h/2}
+  ns=Math.min(Math.max(LB.base*8,4),Math.max(LB.base,ns));
+  LB.x=px-(px-LB.x)*(ns/LB.s);LB.y=py-(py-LB.y)*(ns/LB.s);LB.s=ns;applyLB();
+}
+function toggleZoomLB(cx,cy){const v=lbView();if(LB.s>LB.base*1.05)fitLB();else zoomLB(Math.max(1,LB.base*2.5),cx-v.l,cy-v.t)}
+function navLB(d){if(LB.ids.length<2)return;LB.i=(LB.i+d+LB.ids.length)%LB.ids.length;loadLB()}
+const rub=n=>Math.round(n).toLocaleString("ru-RU")+" ₽";
+const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
+const qtyOf=p=>Math.max(1,num(p.qty)||1);
+const nowIso=()=>new Date().toISOString();
+function plural(n,a,b,c){const m=n%10,h=n%100;return m===1&&h!==11?a:m>=2&&m<=4&&(h<12||h>14)?b:c}
+const newId=()=>Math.random().toString(36).slice(2,9);
+const safeUrl=u=>/^https?:\/\//i.test(u||"")?u:"";
+const fixUrl=u=>{u=(u||"").trim();return u&&!/^https?:\/\//i.test(u)?"https://"+u:u};
+const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmtDate=s=>s?new Date(s+"T00:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"}):"";
+const daysLate=eta=>eta?Math.round((new Date(todayStr()+"T00:00:00")-new Date(eta+"T00:00:00"))/864e5):0;
+
+/* money model */
+/* spreadsheet-style recalculation: inputs live in the database, every derived number is a formula
+   computed in the browser and cached until the data changes (bump) */
+let CV=0,MEMO={v:-1};const bump=()=>{CV++};
+function memo(key,fn){if(MEMO.v!==CV)MEMO={v:CV};if(!(key in MEMO))MEMO[key]=fn();return MEMO[key]}
+const offersOf=p=>Array.isArray(p.offers)?p.offers:[];
+/* manual order set by dragging; parts never dragged keep the automatic order */
+const sortKey=p=>Number.isFinite(p.sort)?p.sort:1e9;
+const numTag=n=>n?`<span class="num">${n}</span>`:"";
+const unitKey=p=>String(p.unit||"").trim().toLowerCase();
+/* units in alphabetical order, parts without a unit last */
+const unitCmp=(a,b)=>{const x=unitKey(a),y=unitKey(b);return x===y?0:!x?1:!y?-1:x.localeCompare(y,"ru")};
+const byOrder=(a,b)=>sortKey(a)-sortKey(b);
+const GRIP=`<span class="grip" data-grip title="Перетащить: зажмите и тяните" aria-hidden="true"><svg width="10" height="16" viewBox="0 0 10 16"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span>`;
+const pickedOf=p=>offersOf(p).find(o=>o.picked);
+const partById=id=>S.parts.find(p=>p.id===id);
+const carById=id=>S.cars.find(c=>c.id===id);
+const bundleById=id=>S.bundles.find(b=>b.id===id);
+const partBundles=()=>memo("pb",()=>{const m=new Map();for(const b of S.bundles)for(const id of (b.parts||[])){if(!m.has(id))m.set(id,[]);m.get(id).push(b)}return m});
+const bundlesOfPart=p=>partBundles().get(p.id)||[];
+const activeBundle=p=>bundlesOfPart(p).find(b=>b.picked)||null;
+/* a picked bundle's price, spread over its parts: given per-part prices first, the rest by their separate prices */
+function allocate(b){
+  const members=(b.parts||[]).map(partById).filter(Boolean),pr=b.prices||{},T=bundleTotalOf(b);
+  const given=members.filter(p=>num(pr[p.id])>0),rest=members.filter(p=>!(num(pr[p.id])>0)),shares={};
+  given.forEach(p=>shares[p.id]=num(pr[p.id]));
+  if(rest.length){
+    const pool=Math.max(0,T-given.reduce((s,p)=>s+num(pr[p.id]),0));
+    const w=rest.map(p=>separateOf(p)),useW=w.every(x=>x>0),W=useW?w.reduce((a,c)=>a+c,0):rest.reduce((a,p)=>a+qtyOf(p),0);
+    let left=pool;rest.forEach((p,i)=>{const v=i===rest.length-1?left:Math.round(pool*(useW?w[i]:qtyOf(p))/(W||1));left-=v;shares[p.id]=v});
+  }else{
+    const sum=given.reduce((s,p)=>s+shares[p.id],0);
+    if(sum>0&&T>0&&sum!==T){let left=T;given.forEach((p,i)=>{const v=i===given.length-1?left:Math.round(T*shares[p.id]/sum);left-=v;shares[p.id]=v})}
+  }
+  return shares;
+}
+const sharesOf=b=>memo("sh:"+b.id,()=>allocate(b));
+const offerTotal=(p,o)=>num(o.price)*qtyOf(p)+num(o.ship);
+function bestOffer(p){let best=null,bv=Infinity;for(const o of offersOf(p)){if(num(o.price)<=0||coveredByBundle(p,o))continue;const v=offerTotal(p,o);if(v<bv){bv=v;best=o}}return best}
+const unitPrice=p=>{const ab=activeBundle(p);if(ab)return num(sharesOf(ab)[p.id])/qtyOf(p);if(SPENT.has(p.status)&&num(p.price)>0)return num(p.price);const pk=pickedOf(p);return pk&&num(pk.price)>0?num(pk.price):num(p.price)};
+function orderMissing(p){
+  if(p.status!=="ordered")return [];
+  const ab=activeBundle(p),d=deliveryOf(p),m=[];
+  if(!(ab?ab.seller:p.supplier))m.push("продавец");
+  if(!d.from)m.push("откуда");
+  if(!d.carrier)m.push("ТК");
+  if(!(ab?num(ab.total)>0:num(p.price)>0))m.push("цена");
+  return m;
+}
+const cityOf=s=>{const m=String(s||"").split(",");return m.length>1?m[m.length-1].trim():""};
+const shipCost=p=>activeBundle(p)?0:(num(p.delivery&&p.delivery.cost)||num(pickedOf(p)&&pickedOf(p).ship));
+const partCost=p=>unitPrice(p)*qtyOf(p)+shipCost(p);
+function worstOffer(p){let w=null,wv=-1;for(const o of offersOf(p)){if(num(o.price)<=0||coveredByBundle(p,o))continue;const v=offerTotal(p,o);if(v>wv){wv=v;w=o}}return w}
+/* undecided part: count its most expensive variant, so a «≈» total never undershoots */
+const partEst=p=>{if(unitPrice(p)>0)return partCost(p);const w=worstOffer(p);return w?offerTotal(p,w):0};
+const deliveryOf=p=>{const b=activeBundle(p);return (b?b.delivery:p.delivery)||{}};
+const bundleShip=b=>num(b.ship);
+
+/* "по отдельности" for a part = what you'd pay buying it on its own:
+   the picked variant, else the part's own price, else the cheapest variant.
+   A picked bundle never overwrites it: its share is computed, not stored. */
+function ownPriceOf(p){return num(p.price)}
+/* bundle total is "auto" while it equals the sum of per-part prices — then it follows the parts that still exist;
+   otherwise it is a price typed by hand and only loses the price of a removed part */
+function isManualTotal(b){const sum=Object.values(b.prices||{}).reduce((s,v)=>s+num(v),0);return !(sum>0&&Math.round(sum)===Math.round(num(b.total)))}
+function bundleTotalOf(b){
+  const pr=b.prices||{},ids=b.parts||[];
+  if(isManualTotal(b)){const stale=ids.filter(id=>!partById(id)).reduce((s,id)=>s+num(pr[id]),0);return Math.max(0,num(b.total)-stale)}
+  return ids.filter(id=>partById(id)).reduce((s,id)=>s+num(pr[id]),0);
+}
+function separateBest(p){
+  const q=qtyOf(p),mk=(o)=>({total:num(o.price)*q,ship:num(o.ship),key:(o.seller||"").trim().toLowerCase()||(p.id+":"+o.id),label:offerTitle(o),seller:o.seller||""});
+  const pk=pickedOf(p);
+  if(pk&&num(pk.price)>0)return mk(pk);
+  const own=ownPriceOf(p);
+  if(own>0){const sup=p.supplier||"";
+    return {total:own*q,ship:num(p.delivery&&p.delivery.cost),key:sup.trim().toLowerCase()||("p:"+p.id),label:sup||"цена детали",seller:sup}}
+  const wo=worstOffer(p);return wo?mk(wo):null;
+}
+const separateOf=p=>{const x=separateBest(p);return x?x.total:0};
+function compareBundle(b){
+  const members=(b.parts||[]).map(partById).filter(Boolean);
+  let sum=0;const sellers=new Map(),missing=[],best={};
+  for(const p of members){
+    const x=separateBest(p);if(!x){missing.push(p);continue}
+    best[p.id]=x;sum+=x.total;sellers.set(x.key,Math.max(sellers.get(x.key)||0,x.ship));
+  }
+  const ship=[...sellers.values()].reduce((a,c)=>a+c,0);
+  const separate=sum+ship,bundleTotal=bundleTotalOf(b)+bundleShip(b);
+  return {members,sum,ship,separate,sellers:sellers.size,missing,best,bundleTotal,diff:bundleTotal-separate};
+}
+
+function toast(msg){const t=$("toast");t.textContent=msg;t.style.opacity="1";clearTimeout(toast._t);toast._t=setTimeout(()=>t.style.opacity="0",2000)}
+const canEdit=()=>S.canWrite&&!!S.db;
+const scopeParts=()=>S.carId===ALL?S.parts:S.parts.filter(p=>p.car===S.carId);
+const scopeBundles=()=>S.carId===ALL?S.bundles:S.bundles.filter(b=>b.car===S.carId);
+function matches(p){
+  if(S.filter!=="all"&&p.status!==S.filter)return false;
+  if(!S.q)return true;
+  const q=S.q.toLowerCase(),qn=normOem(S.q),d=deliveryOf(p);
+  const hay=[p.name,p.unit,p.supplier,p.note,d.carrier,d.from,d.track,...offersOf(p).flatMap(o=>[o.seller,o.note,o.contact])];
+  return hay.some(v=>String(v||"").toLowerCase().includes(q))||(qn.length>2&&normOem(p.oem).includes(qn));
+}
+
+const copyIcon=`<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6.5A1.5 1.5 0 0 0 3 11h.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
+const extIcon=`<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 2h5v5M14 2L7 9M12 10v3.5A.5.5 0 0 1 11.5 14h-9a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const penIcon=`<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 2.5l2.5 2.5L6 12.5H3.5V10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const xIcon=`<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+const chev=`<svg class="g-chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+
+/* render */
+function renderCars(){
+  if(S.carId!==ALL&&!carById(S.carId))S.carId=S.cars[0]?.id||ALL;
+  const chips=S.cars.map(c=>`<button class="car-chip" type="button" data-car="${esc(c.id)}" aria-pressed="${c.id===S.carId}">${esc(c.name||"Без названия")}</button>`);
+  if(S.cars.length>1)chips.push(`<button class="car-chip" type="button" data-car="${ALL}" aria-pressed="${S.carId===ALL}">Все машины</button>`);
+  if(canEdit())chips.push(`<button class="car-chip add" type="button" id="addCarBtn">+ Машина</button>`);
+  $("cars").innerHTML=chips.join("");
+}
+
+function totals(parts,bundles){
+  let spent=0,todo=0,noPrice=0;const counts=Object.fromEntries(STATUSES.map(s=>[s.id,0]));
+  for(const p of parts){counts[p.status]=(counts[p.status]||0)+1;
+    if(SPENT.has(p.status))spent+=partCost(p);
+    if(TODO.has(p.status)){const e=partEst(p);if(e>0)todo+=e;else noPrice++}}
+  const ids=new Set(parts.map(p=>p.id));
+  for(const b of bundles){if(!b.picked)continue;const m=(b.parts||[]).map(partById).filter(p=>p&&ids.has(p.id));
+    if(m.some(p=>SPENT.has(p.status)))spent+=bundleShip(b);else if(m.some(p=>TODO.has(p.status)))todo+=bundleShip(b)}
+  return {spent,todo,noPrice,counts};
+}
+
+function renderSummary(){
+  const parts=scopeParts(),car=S.carId===ALL?null:carById(S.carId);
+  const {spent,todo,noPrice,counts}=totals(parts,scopeBundles());
+  const total=parts.length||1;
+  const ordered=parts.filter(p=>p.status==="ordered");
+  const etas=ordered.map(p=>deliveryOf(p).eta).filter(Boolean).sort();
+  const late=ordered.filter(p=>daysLate(deliveryOf(p).eta)>0).length;
+  const info=car?`<div class="carinfo"><h2 class="car-name">${esc(car.name)}</h2><div class="car-sub">${car.spec?esc(car.spec):""}${car.vin?`<span class="vin">${esc(car.vin)}</span><button class="icon-btn" type="button" data-copy="${esc(car.vin)}" aria-label="Скопировать VIN">${copyIcon}</button>`:""}</div></div>`
+    :`<div class="carinfo"><h2 class="car-name">${S.cars.length?"Все машины":"Машин пока нет"}</h2><div class="car-sub">${parts.length} ${plural(parts.length,"деталь","детали","деталей")}</div></div>`;
+  $("summary").innerHTML=info+
+    `<div class="metric"><div class="label">Потрачено</div><div class="value">${rub(spent)}</div><div class="hint">с доставкой: заказано, пришло, установлено</div></div>`+
+    `<div class="metric"><div class="label">Ещё нужно</div><div class="value">≈ ${rub(todo)}</div><div class="hint">${noPrice?`и ${noPrice} ${plural(noPrice,"деталь","детали","деталей")} без цены`:"по выбранным и лучшим ценам"}</div></div>`+
+    `<div class="bar"><div class="bar-track" aria-hidden="true">${STATUSES.map(s=>counts[s.id]?`<span style="width:${counts[s.id]/total*100}%;background:var(--st-${s.id}-fg)"></span>`:"").join("")}</div>`+
+    `<div class="legend">${STATUSES.map(s=>`<span><i class="dot" style="background:var(--st-${s.id}-fg)"></i>${s.label} <b>${counts[s.id]}</b></span>`).join("")}</div>`+
+    (ordered.length?`<div class="transit"><span>В пути: <b>${ordered.length}</b></span>${etas.length?`<span>ближайшая доставка: <b>${fmtDate(etas[0])}</b></span>`:""}${late?`<span class="late">опаздывает: ${late}</span>`:""}${ordered.length-ordered.filter(p=>deliveryOf(p).eta).length?`<span>без даты: ${ordered.length-ordered.filter(p=>deliveryOf(p).eta).length}</span>`:""}</div>`:"")+`</div>`;
+}
+
+function renderToolbar(){
+  const parts=scopeParts();const c=Object.fromEntries(STATUSES.map(s=>[s.id,0]));parts.forEach(p=>c[p.status]=(c[p.status]||0)+1);
+  $("filters").innerHTML=[`<button class="f-chip" type="button" data-f="all" aria-pressed="${S.filter==="all"}">Все<span class="n">${parts.length}</span></button>`]
+    .concat(STATUSES.map(s=>`<button class="f-chip" type="button" data-f="${s.id}" aria-pressed="${S.filter===s.id}">${s.label}<span class="n">${c[s.id]}</span></button>`)).join("");
+  $("v-status").setAttribute("aria-pressed",S.groupBy==="status");$("v-unit").setAttribute("aria-pressed",S.groupBy==="unit");
+}
+
+function priceCell(p){
+  const qty=qtyOf(p),up=unitPrice(p),ab=activeBundle(p),sh=shipCost(p);
+  if(up>0){const lbl=ab?"доля комплекта":SPENT.has(p.status)?"куплено":p.status==="returned"?"возврат":pickedOf(p)?"выбран вариант":"цена";
+    return `${rub(up*qty+sh)}<small>${lbl}${sh?` · доставка ${rub(sh)}`:qty>1?` · ${qty} × ${rub(up)}`:""}</small>`}
+  const b=bestOffer(p),n=visibleOffers(p).length;
+  if(b)return `<span class="from">от</span> ${rub(offerTotal(p,b))}<small>${n} ${plural(n,"вариант","варианта","вариантов")}, не выбран</small>`;
+  return `<small>цены нет</small>`;
+}
+
+function shipChip(p){
+  if(p.status!=="ordered")return "";
+  const d=deliveryOf(p);if(!d.carrier&&!d.eta&&!d.track&&!d.from)return "";
+  const late=daysLate(d.eta);
+  const parts=[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:late===0?"ждём сегодня":"ждём "+fmtDate(d.eta)):""].filter(Boolean);
+  return `<span class="ship${late>0?" late":""}">${carrierBadge(d.carrier)}${parts.length?" "+esc(parts.join(" · ")):""}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button>`:""}</span>`;
+}
+
+function rowHtml(p,n){
+  const oem=normOem(p.oem),qty=qtyOf(p),pk=pickedOf(p),offers=visibleOffers(p),open=S.open.has(p.id),ab=activeBundle(p),inB=bundlesOfPart(p);
+  const meta=[];
+  if(S.carId===ALL){const c=carById(p.car);meta.push(`<span class="carname">${esc(c?.name||"Без машины")}</span>`)}
+  if(S.groupBy==="status"&&p.unit)meta.push(`<span class="unitname">${esc(p.unit)}</span>`);
+  if(qty>1)meta.push(`<span>${qty} шт.</span>`);
+  const sc=shipChip(p);if(sc)meta.push(sc);
+  if(ARRIVED.has(p.status))meta.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?`<span class="arr"><span>приехало ${esc(fmtDate(p.arrivedAt))}</span></span>`:"");
+  if(ab)meta.push(`<button class="chip-btn bundle on" type="button" data-goto="${esc(ab.id)}">Комплект «${esc(ab.name||ab.seller||"комплект")}»${ab.seller&&ab.name?` · ${esc(ab.seller)}`:""}</button>`);
+  else{
+    if(SPENT.has(p.status)&&p.supplier)meta.push(`<span>${esc(p.supplier)}</span>`);
+    else if(pk)meta.push(`<span>${esc(pk.seller||"выбран вариант")}${pk.cond&&COND[pk.cond]?` <span class="cond">${COND[pk.cond]}</span>`:""}${pk.warranty===true?` ${warrBadge(true)}`:""}</span>`);
+    else if(p.supplier)meta.push(`<span>${esc(p.supplier)}</span>`);
+    if(inB.length){const b0=inB[0],bp=num((b0.prices||{})[p.id]);meta.push(`<button class="chip-btn bundle" type="button" data-goto="${esc(b0.id)}" title="Открыть комплект">${inB.length>1?`в ${inB.length} комплектах`:`комплект «${esc(b0.name||b0.seller||"комплект")}»${bp?` · ${rub(bp)}`:""}`}</button>`)}
+  }
+  if(offers.length||canEdit())meta.push(offers.length
+    ?`<button class="chip-btn has" type="button" data-offers="${esc(p.id)}" aria-expanded="${open}" title="${open?"Свернуть варианты":"Показать варианты"}">Варианты <span class="cnt">${offers.length}</span>${chev}</button>`
+    :`<button class="chip-btn" type="button" data-offers="${esc(p.id)}" aria-expanded="${open}">+ вариант</button>`);
+  const ownPh=photosOf(p);
+  if(ownPh.length)meta.push(`<button class="ph-chip" type="button" data-partphotos="${esc(p.id)}" aria-label="Фото детали: ${ownPh.length}" title="Фото детали">${camIcon}${ownPh.length}</button>`);
+  const miss=orderMissing(p);
+  if(miss.length)meta.push(canEdit()?`<button class="fix-chip" type="button" data-order="${esc(p.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:`<span class="fix-chip">Не указано: ${esc(miss.join(", "))}</span>`);
+  const status=canEdit()
+    ?`<select class="status" data-st="${esc(p.status)}" data-status-for="${esc(p.id)}" aria-label="Статус: ${esc(p.name)}">${STATUSES.map(s=>`<option value="${s.id}"${s.id===p.status?" selected":""}>${s.label}</option>`).join("")}</select>`
+    :`<span class="s-pill" data-st="${esc(p.status)}">${esc(ST_LABEL[p.status]||p.status)}</span>`;
+  return `<div class="item" data-drag data-pid="${esc(p.id)}" data-unit="${esc(unitKey(p))}"><div class="row${p.status==="installed"?" done":""}" id="row-${esc(p.id)}">
+    <div class="p-main"><div class="p-top">${numTag(n)}<button class="p-name" type="button" data-edit="${esc(p.id)}"><span class="t">${esc(p.name||"Без названия")}</span>${p.side?`<span class="side" title="${p.side==="Л"?"Левая":"Правая"} по ходу движения">${esc(p.side)}</span>`:""}</button></div><div class="p-meta">${meta.join("")}</div>${p.note?`<div class="p-note">${esc(p.note)}</div>`:""}</div>
+    <div class="oem">${oem?`<code>${esc(fmtOem(oem))}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер ${esc(oem)}">${copyIcon}</button>${/^[0-9A-Z]{11}$/.test(oem)?`<a class="icon-btn" href="https://www.realoem.com/bmw/enUS/partxref?q=${esc(oem)}" target="_blank" rel="noopener" aria-label="Открыть ${esc(oem)} на RealOEM" title="RealOEM: на какие модели идёт">${extIcon}</a>`:""}`:`<span class="none">номер не подобран</span>`}</div>
+    <div class="qty">×${qty}</div>
+    <div class="price">${priceCell(p)}</div>
+    <div class="st-cell">${status}</div>
+  </div>${open?offersHtml(p):""}</div>`;
+}
+
+function offerForm(p,e,oid){
+  const pid=esc(p.id),k=esc(p.id)+"-"+(oid?esc(oid):"new");
+  const more=!!(num(e.ship)||e.days||e.contact||e.link);
+  const key=p.id+"|"+(oid||"new");fpState(key,photosOf(e));const ek=esc(key);
+  const photoField=`<div class="o-photo-field"><span class="lbl">Скриншоты и фото</span>
+      <div class="drop" data-drop="${ek}"><div class="o-photos" data-fpstrip="${ek}">${formThumbs(key)}</div>
+      ${S.assets?`<label class="btn sm">${camIcon} Добавить<input type="file" accept="image/*" multiple hidden data-fpinput="${ek}"></label><span>или вставьте скриншот (Ctrl+V), или перетащите сюда</span>`:`<span>Загружать фото может только владелец трекера</span>`}</div></div>`;
+  return `<form class="o-form" data-oform="${pid}" data-key="${ek}"${oid?` data-oid="${esc(oid)}"`:""} novalidate>
+      <div class="field"><label for="o-price-${k}">Цена за шт., ₽</label><input id="o-price-${k}" name="price" type="number" min="0" step="1" inputmode="numeric" value="${num(e.price)>0?num(e.price):""}" placeholder="0"></div>
+      <div class="field span2"><label for="o-note-${k}">Комментарий</label><input id="o-note-${k}" name="note" value="${esc(e.note||"")}" placeholder="целое, видео есть, свяжемся завтра"></div>
+      <div class="field"><label for="o-seller-${k}">Продавец</label><input id="o-seller-${k}" name="seller" value="${esc(e.seller||"")}" placeholder="HAN Parts, Москва"></div>
+      <div class="field"><label for="o-warr-${k}">Гарантия</label><select id="o-warr-${k}" name="warranty"><option value="">—</option><option value="yes"${e.warranty===true?" selected":""}>Даёт</option><option value="no"${e.warranty===false?" selected":""}>Не даёт</option></select></div>
+      <div class="field"><label for="o-cond-${k}">Состояние</label><select id="o-cond-${k}" name="cond"><option value="">—</option>${Object.entries(COND).map(([c,v])=>`<option value="${c}"${e.cond===c?" selected":""}>${v}</option>`).join("")}</select></div>
+      ${photoField}
+      <details class="o-more"${more?" open":""}><summary>Доставка, телефон, ссылка</summary><div class="o-more-grid">
+        <div class="field"><label for="o-ship-${k}">Доставка, ₽</label><input id="o-ship-${k}" name="ship" type="number" min="0" step="1" inputmode="numeric" value="${num(e.ship)>0?num(e.ship):""}" placeholder="0"></div>
+        <div class="field"><label for="o-days-${k}">Срок</label><input id="o-days-${k}" name="days" value="${esc(e.days||"")}" placeholder="2–4 дня"></div>
+        <div class="field"><label for="o-contact-${k}">Телефон</label><input id="o-contact-${k}" name="contact" value="${esc(e.contact||"")}" placeholder="8 (495) …" inputmode="tel"></div>
+        <div class="field"><label for="o-link-${k}">Ссылка</label><input id="o-link-${k}" name="link" type="text" inputmode="url" value="${esc(e.link||"")}" placeholder="https://…"></div>
+      </div></details>
+      <div class="o-btns"><span class="err" data-oerr hidden></span><button class="btn sm" type="button" data-ocancel="${pid}">Отмена</button><button class="btn sm primary" type="submit">${oid?"Сохранить":"Добавить"}</button></div>
+    </form>`;
+}
+
+function offersHtml(p){
+  const list=[...visibleOffers(p)].sort((a,b)=>(num(a.price)?offerTotal(p,a):1e12)-(num(b.price)?offerTotal(p,b):1e12));
+  const best=bestOffer(p),ab=activeBundle(p),pid=esc(p.id);
+  const rows=list.map(o=>{
+    if(canEdit()&&S.oedit&&S.oedit.pid===p.id&&S.oedit.oid===o.id)return `<div class="o-row editing">${offerForm(p,o,o.id)}</div>`;
+    const isBest=list.length>1&&best&&o.id===best.id,url=safeUrl(o.link),armed=S.odel&&S.odel.pid===p.id&&S.odel.oid===o.id;
+    const extra=[num(o.ship)?`+ доставка ${rub(num(o.ship))}`:"",o.days||""].filter(Boolean).join(" · ");
+    const title=offerTitle(o),noteLine=o.seller&&o.note?`<div class="o-note">${esc(o.note)}</div>`:"";
+    const price=num(o.price)>0?rub(num(o.price)*qtyOf(p)):"—";
+    const fb=o.fromBundle&&bundleById(o.fromBundle);
+    const fbChip=fb?`<button class="o-from" type="button" data-goto="${esc(fb.id)}" title="Цена из комплекта. Выбирается вместе с комплектом">комплект «${esc(fb.name||fb.seller||"комплект")}»</button>`:"";
+    const pickBtn=fb?`<span class="o-radio" aria-hidden="true" title="Выбирается через комплект" style="opacity:.35"></span>`
+      :canEdit()?`<button class="o-radio" type="button" data-pick="${pid}|${esc(o.id)}" aria-pressed="${!!o.picked}" aria-label="${o.picked?"Снять выбор":"Выбрать"}: ${esc(price)}" title="${o.picked?"Снять выбор":"Выбрать этот вариант"}"${ab?" disabled":""}></button>`:`<span class="o-radio" aria-pressed="${!!o.picked}"></span>`;
+    const lockedEdit=fb&&o.auto;
+    return `<div class="o-row${o.picked?" picked":""}${fb?" from-bundle":""}">
+      ${pickBtn}
+      <div class="o-price">${price}${extra?`<small>${esc(extra)}</small>`:""}</div>
+      <div class="o-main"><div class="o-seller"><span>${esc(title)}</span>${o.cond&&COND[o.cond]?`<span class="cond">${COND[o.cond]}</span>`:""}${warrBadge(o.warranty)}${fbChip}${isBest?`<span class="o-best">дешевле всех${num(o.ship)?" с доставкой":""}</span>`:""}${o.picked?`<span class="o-best">выбран</span>`:""}</div>
+        ${noteLine}${o.contact?`<div class="o-meta"><span class="o-contact">${esc(o.contact)}</span></div>`:""}${thumbsHtml(photosOf(o),pid,o.id)}</div>
+      <div class="o-actions">${url?`<a class="icon-btn" href="${esc(url)}" target="_blank" rel="noopener" aria-label="Открыть объявление">${extIcon}</a>`:""}${canEdit()&&S.assets?`<button class="icon-btn" type="button" data-ophoto="${pid}|${esc(o.id)}" aria-label="Добавить скриншот или фото" title="Добавить скриншот или фото">${camIcon}</button>`:""}${lockedEdit&&canEdit()?`<button class="icon-btn" type="button" data-bedit="${esc(fb.id)}" aria-label="Изменить цену в комплекте" title="Цена меняется в комплекте">${penIcon}</button>`:canEdit()?`<button class="icon-btn" type="button" data-oedit="${pid}|${esc(o.id)}" aria-label="Изменить вариант" title="Изменить">${penIcon}</button>${armed?`<button class="icon-btn armed" type="button" data-odel="${pid}|${esc(o.id)}">Удалить?</button>`:`<button class="icon-btn" type="button" data-odel="${pid}|${esc(o.id)}" aria-label="Удалить вариант" title="Удалить">${xIcon}</button>`}`:""}</div>
+    </div>`}).join("");
+  const adding=canEdit()&&S.oadd===p.id;
+  const prices=list.filter(o=>!o.fromBundle).map(o=>num(o.price)?offerTotal(p,o):0).filter(Boolean);
+  return `<div class="offers" id="offers-${pid}">
+    <div class="o-title"><span>Варианты у разных продавцов${list.length?` · ${list.length}`:""}</span>${prices.length>1?`<span>разница ${rub(Math.max(...prices)-Math.min(...prices))}</span>`:""}</div>
+    ${ab?`<div class="o-lock">Деталь берётся в комплекте «${esc(ab.name||ab.seller||"комплект")}». Чтобы выбрать отдельный вариант, снимите выбор комплекта.</div>`:""}
+    ${list.length?`<div class="o-list">${rows}</div>`:`<div class="o-empty">Вариантов пока нет. Впишите цену и комментарий, остальное по желанию.</div>`}
+    ${adding?`<div class="o-row editing">${offerForm(p,{},null)}</div>`:canEdit()?`<button class="btn sm o-addbtn" type="button" data-oadd="${pid}">+ Добавить вариант</button>`:""}
+  </div>`;
+}
+
+function groupOf(p){
+  if(S.groupBy==="status")return ["status:"+p.status,ST_LABEL[p.status]||"Без статуса"];
+  const u=(p.unit||"").trim()||"Без узла";return ["unit:"+u,u];
+}
+
+function renderGroups(){
+  const el=$("groups");
+  if(!S.db){el.innerHTML=`<div class="empty"><strong>Список деталей появится здесь</strong><span>Подключите GitHub выше, чтобы загрузить данные.</span></div>`;return}
+  if(!S.partsLoaded||!S.carsLoaded){el.innerHTML=`<div class="empty"><span>Загружаю детали…</span></div>`;return}
+  const parts=scopeParts();
+  if(!parts.length){el.innerHTML=`<div class="empty"><strong>Деталей пока нет</strong><span>Нажмите «Деталь», чтобы добавить первую: название, сторону и номер оригинала.</span></div>`;return}
+  const list=parts.filter(matches);
+  if(!list.length){el.innerHTML=`<div class="empty"><strong>Ничего не найдено</strong><span>Измените поиск или выберите «Все».</span></div>`;return}
+  const groups=new Map();
+  for(const p of list){const [k,t]=groupOf(p);if(!groups.has(k))groups.set(k,{title:t,items:[]});groups.get(k).items.push(p)}
+  const keys=[...groups.keys()].sort((a,b)=>{
+    if(S.groupBy==="status")return (ST_ORDER[a.slice(7)]??9)-(ST_ORDER[b.slice(7)]??9);
+    const ta=groups.get(a).title,tb=groups.get(b).title;return ta==="Без узла"?1:tb==="Без узла"?-1:ta.localeCompare(tb,"ru")});
+  el.innerHTML=keys.map(k=>{
+    const g=groups.get(k),st=k.slice(7);
+    const byName=(a,b)=>String(a.name).localeCompare(String(b.name),"ru");
+    const fb=S.groupBy==="status"
+      ?(st==="ordered"?(a,b)=>String(deliveryOf(a).eta||"9999").localeCompare(String(deliveryOf(b).eta||"9999"))||byName(a,b)
+        :(a,b)=>String(a.unit||"").localeCompare(String(b.unit||""),"ru")||byName(a,b))
+      :(a,b)=>(ST_ORDER[a.status]??9)-(ST_ORDER[b.status]??9)||byName(a,b);
+    const byUnit=S.groupBy==="status";
+    const etaCmp=(a,b)=>st==="ordered"?String(deliveryOf(a).eta||"9999").localeCompare(String(deliveryOf(b).eta||"9999")):0;
+    const rows=g.items.sort(byUnit?(a,b)=>unitCmp(a,b)||byOrder(a,b)||etaCmp(a,b)||byName(a,b):(a,b)=>byOrder(a,b)||fb(a,b));
+    const collapsed=!S.q&&S.collapsed.has(k);
+    const open=rows.filter(p=>TODO.has(p.status)).length;
+    const sum=rows.reduce((s,p)=>s+(TODO.has(p.status)?partEst(p):partCost(p)),0);
+    const meta=`${rows.length} ${plural(rows.length,"деталь","детали","деталей")}${S.groupBy==="unit"&&open?` · ${open} не куплено`:""}${sum>0?` · ${S.groupBy==="status"&&TODO.has(st)?"≈ ":""}${rub(sum)}`:""}`;
+    return `<section class="group"><button class="g-head" type="button" data-group="${esc(k)}" aria-expanded="${!collapsed}"><span class="g-left">${chev}<span class="g-title">${esc(g.title)}</span></span><span class="g-meta">${meta}</span></button>${collapsed?"":(()=>{const ob=S.groupBy==="status"&&!TODO.has(st)?orderedBlocks(rows,st):{html:"",rest:rows};
+      return ob.html+(ob.rest.length?`<div class="g-items" data-sortable="parts"${byUnit?' data-scope="unit"':""}>${ob.rest.map((p,i)=>rowHtml(p,i+1)).join("")}</div>`:"")})()}</section>`;
+  }).join("");
+}
+
+function bundleCard(b){
+  const c=compareBundle(b),url=safeUrl(b.link),d=b.delivery||{},armed=S.bdel===b.id;
+  const ord=c.members.some(p=>p.status==="ordered"),late=ord?daysLate(d.eta):0;
+  const pr=b.prices||{};
+  const dcell=(x,y)=>x>0&&y>0?(x-y>0?`<td class="more">+${rub(x-y)}</td>`:x-y<0?`<td class="less">−${rub(y-x)}</td>`:`<td class="na">0</td>`):`<td class="na">—</td>`;
+  const trs=c.members.map((p,i)=>{const bp=num(pr[p.id]),sb=c.best[p.id],sv=sb?sb.total:0;
+    return `<tr data-drag data-pid="${esc(p.id)}"><td>${numTag(i+1)}<button class="linkish" type="button" data-showoffers="${esc(p.id)}" title="Открыть варианты этой детали">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button></td><td${bp?"":` class="na"`}>${bp?rub(bp):"—"}</td><td${sv?"":` class="na"`}>${sv?rub(sv):"нет цены"}${sb&&sb.label?`<small>${esc(sb.label)}</small>`:""}</td>${dcell(bp,sv)}</tr>`}).join("");
+  const shipTr=bundleShip(b)||c.ship?`<tr><td>Доставка</td><td>${bundleShip(b)?rub(bundleShip(b)):"—"}</td><td>${c.ship?rub(c.ship):"—"}</td>${dcell(bundleShip(b),c.ship)}</tr>`:"";
+  const table=`<div class="b-scroll"><table class="b-table"><thead><tr><th>Деталь</th><th>В комплекте</th><th>По отдельности</th><th>Разница</th></tr></thead><tbody data-sortable="bundle:${esc(b.id)}">${trs}${shipTr}</tbody>
+    <tfoot><tr><td>Итого</td><td>${rub(c.bundleTotal)}</td><td>${c.separate?rub(c.separate):"—"}</td>${c.separate?dcell(c.bundleTotal,c.separate):`<td class="na">—</td>`}</tr></tfoot></table></div>`;
+  const pct=c.separate>0?Math.round(Math.abs(c.diff)/c.separate*100):0;
+  const verdict=`<div class="verdict">${c.missing.length===c.members.length?`<span class="s">Нет цен по отдельности: сравнивать не с чем.</span>`
+    :c.diff>0?`<b class="more">Комплект дороже на ${rub(c.diff)}</b><span class="s">+${pct}%, зато одна поставка и один продавец</span>`
+    :c.diff<0?`<b class="less">Комплект выгоднее на ${rub(-c.diff)}</b><span class="s">−${pct}% и одна поставка</span>`
+    :`<b>Стоит столько же</b><span class="s">зато одна поставка</span>`}
+    <span class="s">${c.sellers?`по отдельности: ${c.sellers} ${plural(c.sellers,"продавец","продавца","продавцов")}`:""}</span>
+    ${c.missing.length&&c.missing.length<c.members.length?`<span class="warn">Нет цены по отдельности: ${esc(c.missing.map(p=>p.name).join(", "))}. Сравнение неполное.</span>`:""}</div>`;
+  const shipLine=(d.carrier||d.eta||d.track||d.from)&&ord?`<span class="ship${late>0?" late":""}">${esc([d.carrier||"Доставка",d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:"ждём "+fmtDate(d.eta)):""].filter(Boolean).join(" · "))}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button>`:""}</span>`:"";
+  return `<article class="b-card${b.picked?" picked":""}" id="b-${esc(b.id)}">
+    <div class="b-top">
+      <div class="b-who"><div class="b-seller">${esc(b.name||"Комплект")}${b.seller?`<span class="small">${esc(b.seller)}</span>`:""}${b.cond&&COND[b.cond]?`<span class="cond">${COND[b.cond]}</span>`:""}${S.carId===ALL?`<span class="small">${esc(carById(b.car)?.name||"")}</span>`:""}</div>
+        <div class="b-meta">${b.contact?`<span class="o-contact">${esc(b.contact)}</span>`:""}${b.days?`<span>срок ${esc(b.days)}</span>`:""}${b.note?`<span>${esc(b.note)}</span>`:""}</div></div>
+      <div class="b-total">${rub(c.bundleTotal)}<small>${bundleShip(b)?`${rub(bundleTotalOf(b))} + доставка ${rub(bundleShip(b))}`:"за комплект"}</small></div>
+    </div>
+    ${c.members.length?table+verdict:`<span class="small">Детали не выбраны</span>`}
+    <div class="b-foot">
+      ${canEdit()?`<button class="btn sm ${b.picked?"good":""}" type="button" data-bpick="${esc(b.id)}" aria-pressed="${!!b.picked}">${b.picked?"✓ Комплект выбран":"Выбрать комплект"}</button>`:b.picked?`<span class="s-pill" data-st="arrived">Выбран</span>`:""}
+      ${canEdit()&&b.picked&&c.members.some(p=>TODO.has(p.status))?`<button class="btn sm primary" type="button" data-border="${esc(b.id)}">Оформить заказ</button>`:""}
+      ${shipLine}
+      <span class="right">${url?`<a class="icon-btn" href="${esc(url)}" target="_blank" rel="noopener" aria-label="Открыть объявление">${extIcon}</a>`:""}${canEdit()?`<button class="icon-btn" type="button" data-bedit="${esc(b.id)}" aria-label="Изменить комплект">${penIcon}</button>${armed?`<button class="icon-btn armed" type="button" data-bdel="${esc(b.id)}">Удалить?</button>`:`<button class="icon-btn" type="button" data-bdel="${esc(b.id)}" aria-label="Удалить комплект">${xIcon}</button>`}`:""}</span>
+    </div>
+  </article>`;
+}
+
+/* a picked bundle whose parts are all past «Нужно» has been ordered */
+function bundleOrdered(b){const ms=(b.parts||[]).map(partById).filter(Boolean);return !!b.picked&&ms.length>0&&ms.every(p=>!TODO.has(p.status))}
+function bundleMissing(b){const d=b.delivery||{},m=[];if(!b.seller)m.push("продавец");if(!d.from)m.push("откуда");if(!d.carrier)m.push("ТК");if(!(bundleTotalOf(b)>0))m.push("цена");return m}
+const NEXT_ST={ordered:"arrived",arrived:"installed"};
+const ARRIVED=new Set(["arrived","installed"]);
+function statusPatch(p,status){const x={status};if(status==="arrived"&&!p.arrivedAt)x.arrivedAt=todayStr();else if(!ARRIVED.has(status)&&status!=="returned"&&p.arrivedAt)x.arrivedAt="";return x}
+const arrInput=(attr,val,label)=>`<label class="arr"><span>${label||"приехало"}</span><input type="date" ${attr} value="${esc(val||"")}" max="${todayStr()}" aria-label="Дата прихода"></label>`;
+/* in «Заказано», «Пришло», «Установлено» parts bought as a bundle are shown as one table;
+   seller, delivery and price are written once, on the bundle */
+function orderedBlocks(rows,st){
+  const map=new Map(),rest=[];
+  for(const p of rows){const ab=activeBundle(p);if(ab){if(!map.has(ab.id))map.set(ab.id,{b:ab,items:[]});map.get(ab.id).items.push(p)}else rest.push(p)}
+  const html=[...map.values()].map(({b,items})=>{
+    const ix=new Map((b.parts||[]).map((id,i)=>[id,i]));items.sort((x,y)=>unitCmp(x,y)||(ix.get(x.id)??999)-(ix.get(y.id)??999));
+    const d=b.delivery||{},late=st==="ordered"?daysLate(d.eta):0,miss=bundleMissing(b);
+    const sum=items.reduce((s,p)=>s+unitPrice(p)*qtyOf(p),0),all=items.length===(b.parts||[]).filter(partById).length;
+    const ship=st==="ordered"&&(d.carrier||d.from||d.eta||d.track)?`<span class="ship${late>0?" late":""}">${carrierBadge(d.carrier)}${[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:late===0?"ждём сегодня":"ждём "+fmtDate(d.eta)):""].filter(Boolean).map(x=>" "+esc(x)).join(" ·")}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button>`:""}</span>`:"";
+    const rowsHtml=items.map((p,i)=>{const oem=normOem(p.oem),v=unitPrice(p)*qtyOf(p);
+      const status=canEdit()?`<select class="status" data-st="${esc(p.status)}" data-status-for="${esc(p.id)}" aria-label="Статус: ${esc(p.name)}">${STATUSES.map(x=>`<option value="${x.id}"${x.id===p.status?" selected":""}>${x.label}</option>`).join("")}</select>`:`<span class="s-pill" data-st="${esc(p.status)}">${esc(ST_LABEL[p.status]||p.status)}</span>`;
+      return `<tr><td>${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${p.unit?`<small>${esc(p.unit)}</small>`:""}</td><td>${oem?`<code>${esc(oem)}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер">${copyIcon}</button>`:`<span class="na">—</span>`}</td><td>${v?rub(v):"—"}</td>${ARRIVED.has(st)?`<td class="ob-arr">${canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")}</td>`:""}<td class="ob-st">${status}</td></tr>`}).join("");
+    const nx=NEXT_ST[st];
+    return `<div class="ob"><div class="ob-head"><div class="ob-who"><span class="ob-title">Комплект «${esc(b.name||b.seller||"комплект")}»</span><span class="pl-sub">${esc(b.seller||"продавец не указан")} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}${all?"":" здесь"}</span>${ship}</div>
+      <div class="ob-act"><b class="ob-sum">${rub(sum+(all?bundleShip(b):0))}</b>${canEdit()&&ARRIVED.has(st)?arrInput(`data-arrbundle="${esc(b.id)}|${st}"`,(items.find(x=>x.arrivedAt)||{}).arrivedAt,"приехало всё"):""}${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}${canEdit()&&nx?`<button class="btn sm" type="button" data-bstatus="${esc(b.id)}|${st}|${nx}">${nx==="arrived"?"Пришло всё":"Установлено всё"}</button>`:""}${canEdit()?`<button class="btn sm" type="button" data-bedit="${esc(b.id)}">Изменить</button>`:""}</div></div>
+      <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Номер</th><th>Цена</th>${ARRIVED.has(st)?"<th>Приехало</th>":""}<th>Статус</th></tr></thead><tbody>${rowsHtml}</tbody>${all&&bundleShip(b)?`<tfoot><tr><td colspan="2">в том числе доставка</td><td>${rub(bundleShip(b))}</td>${ARRIVED.has(st)?"<td></td>":""}<td></td></tr></tfoot>`:""}</table></div></div>`;
+  }).join("");
+  return {html,rest};
+}
+function renderBundles(){
+  const el=$("bundles");
+  if(!S.db||!S.partsLoaded){el.innerHTML="";return}
+  const ordered=scopeBundles().filter(bundleOrdered).length;
+  const list=scopeBundles().filter(b=>!bundleOrdered(b)).sort((a,b)=>(b.picked?1:0)-(a.picked?1:0)||String(a.created||"").localeCompare(String(b.created||"")));
+  if(!list.length&&!canEdit()){el.innerHTML="";return}
+  const head=`<div class="sec-head"><button class="sec-toggle" type="button" data-btoggle aria-expanded="${S.bundlesOpen}">${chev}<h2 class="sec-title" id="bTitle">Комплекты у одного продавца${list.length?` · ${list.length}`:""}</h2></button>${canEdit()?`<button class="btn sm" type="button" id="addBundleBtn">+ Комплект</button>`:""}</div>`;
+  if(!S.bundlesOpen){el.innerHTML=head;return}
+  const note=ordered?`<p class="sec-sub">Заказанные комплекты (${ordered}) — в группе «Заказано» вверху.</p>`:"";
+  el.innerHTML=head+note+(list.length?list.map(bundleCard).join(""):ordered?"":`<p class="sec-sub">Нашли несколько деталей у одного продавца одной ценой? Добавьте комплект: трекер сравнит его с покупкой тех же деталей по отдельности, с доставкой от каждого продавца.</p>`);
+}
+
+/* «Итог к заказу»: what is left to buy, grouped by where it will be bought */
+function planData(){
+  const parts=scopeParts().filter(p=>TODO.has(p.status));
+  const bmap=new Map(),smap=new Map(),none=[];
+  for(const p of parts){
+    const ab=activeBundle(p);
+    if(ab){if(!bmap.has(ab.id))bmap.set(ab.id,{kind:"bundle",b:ab,items:[]});bmap.get(ab.id).items.push(p);continue}
+    const pk=pickedOf(p);let seller="";
+    if(pk)seller=pk.seller||p.supplier||"";else seller=p.supplier||"";
+    const k=sellerKey(seller);
+    if(k){if(!smap.has(k))smap.set(k,{kind:"seller",key:k,name:seller,items:[]});const g=smap.get(k);g.items.push(p);if(seller.length>g.name.length)g.name=seller}
+    else none.push(p);
+  }
+  const byName=(a,b)=>String(a.name).localeCompare(String(b.name),"ru");
+  for(const g of bmap.values()){const ix=new Map((g.b.parts||[]).map((id,i)=>[id,i]));g.items.sort((a,b)=>(ix.get(a.id)??999)-(ix.get(b.id)??999))}
+  for(const g of smap.values())g.items.sort((a,b)=>byOrder(a,b)||byName(a,b));
+  none.sort((a,b)=>byOrder(a,b)||byName(a,b));
+  const groups=[];
+  for(const g of bmap.values()){g.sum=g.items.reduce((s,p)=>s+unitPrice(p)*qtyOf(p),0)+bundleShip(g.b);groups.push(g)}
+  const sellers=[...smap.values()].sort((a,b)=>b.items.length-a.items.length||a.name.localeCompare(b.name,"ru"));
+  for(const g of sellers){g.sum=g.items.reduce((s,p)=>s+partEst(p),0);groups.push(g)}
+  if(none.length)groups.push({kind:"none",items:none,sum:none.reduce((s,p)=>s+partEst(p),0)});
+  const total=groups.reduce((s,g)=>s+g.sum,0),noPrice=parts.filter(p=>!(partEst(p)>0)).length;
+  const offers=scopeBundles().filter(b=>!b.picked&&(b.parts||[]).some(id=>{const p=partById(id);return p&&TODO.has(p.status)}));
+  return {groups,total,noPrice,count:parts.length,offers};
+}
+function knownSellers(){
+  const m=new Map();const add=s=>{const k=sellerKey(s);if(k&&(!m.has(k)||String(s).length>m.get(k).length))m.set(k,String(s).trim())};
+  S.parts.forEach(p=>{add(p.supplier);offersOf(p).forEach(o=>add(o.seller))});S.bundles.forEach(b=>add(b.seller));
+  return [...m.values()].sort((a,b)=>a.localeCompare(b,"ru"));
+}
+/* table cells shared with the bundle card */
+const diffTd=(x,y)=>x>0&&y>0?(x-y>0?`<td class="more">+${rub(x-y)}</td>`:x-y<0?`<td class="less">−${rub(y-x)}</td>`:`<td class="na">0</td>`):`<td class="na">—</td>`;
+/* cheapest option for this part from anyone other than the chosen seller */
+function altOf(p){
+  const pk=pickedOf(p),q=qtyOf(p),ck=sellerKey(pk?(pk.seller||p.supplier):p.supplier),own=!pk&&num(p.price)>0,shown=!pk&&!own?bestOffer(p):null;let best=null;
+  for(const o of visibleOffers(p)){if(pk&&o.id===pk.id)continue;if(shown&&o.id===shown.id)continue;if(num(o.price)<=0)continue;if(ck&&sellerKey(o.seller)===ck)continue;
+    const v=num(o.price)*q+num(o.ship);if(!best||v<best.v)best={v,label:offerTitle(o)}}
+  return best;
+}
+/* which variant is the chosen one, spelled out */
+function chosenLabel(p){
+  const vis=visibleOffers(p),pk=pickedOf(p);
+  if(pk){const bits=[offerTitle(pk)];if(pk.seller&&pk.note)bits.push(pk.note);if(pk.cond&&COND[pk.cond])bits.push(COND[pk.cond].toLowerCase());
+    if(pk.warranty===true)bits.push("гарантия");else if(pk.warranty===false)bits.push("без гарантии");
+    return `выбран: ${bits.join(", ")}${vis.length>1?` · из ${vis.length} ${plural(vis.length,"варианта","вариантов","вариантов")}`:""}`}
+  if(num(p.price)>0&&vis.length)return `своя цена${p.supplier?"":", продавец не указан"} · ещё ${vis.length} ${plural(vis.length,"вариант","варианта","вариантов")}`;
+  return "";
+}
+const orderTd=p=>canEdit()?`<td class="act"><button class="btn sm" type="button" data-order="${esc(p.id)}">Оформить</button></td>`:`<td></td>`;
+/* every option a part can be bought at, for the in-table picker */
+function pickOptions(p){
+  const pk=pickedOf(p),q=qtyOf(p),opts=[];
+  if(!pk&&num(p.price)>0)opts.push({v:"own",label:`${rub(num(p.price)*q)} · ${p.supplier||"своя цена"}`,sel:true});
+  visibleOffers(p).filter(o=>num(o.price)>0).sort((a,b)=>offerTotal(p,a)-offerTotal(p,b)).forEach(o=>{
+    const extra=[o.seller&&o.note?o.note:"",o.cond&&COND[o.cond]?COND[o.cond].toLowerCase():"",o.warranty===true?"гарантия":o.warranty===false?"без гарантии":""].filter(Boolean).join(", ");
+    opts.push({v:o.id,label:`${rub(offerTotal(p,o))} · ${offerTitle(o)}${extra?" ("+extra+")":""}`,sel:!!o.picked})});
+  return opts;
+}
+function pickerHtml(p){
+  if(!canEdit()||activeBundle(p))return "";
+  const opts=pickOptions(p);if(opts.length<2)return "";
+  const none=!opts.some(o=>o.sel);
+  return `<select class="pl-pick${none?" undecided":""}" data-pickfor="${esc(p.id)}" aria-label="Какой вариант выбран: ${esc(p.name)}"><option value=""${none?" selected":""}>— не выбран (${opts.length} ${plural(opts.length,"вариант","варианта","вариантов")}) —</option>${opts.map(o=>`<option value="${esc(o.v)}"${o.sel?" selected":""}>${esc(o.label)}</option>`).join("")}</select>`;
+}
+function nameTd(p,selectable,src,n,picker){
+  return `<td>${numTag(n)}${selectable&&canEdit()?`<input type="checkbox" class="pl-chk" data-sel="${esc(p.id)}"${S.sel.has(p.id)?" checked":""} aria-label="Выбрать: ${esc(p.name)}">`:""}<button class="linkish" type="button" data-showoffers="${esc(p.id)}" title="Перейти к детали">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${picker||(src?`<small>${esc(src)}</small>`:"")}</td>`;
+}
+/* «Итог к заказу» — one table like the bundle card: picked bundles, then everything bought separately,
+   sortable by hand or by seller; totals with counts at the bottom */
+const partExact=p=>!!(activeBundle(p)||pickedOf(p)||num(p.price)>0);
+const sellerOfPart=p=>{const pk=pickedOf(p);return pk?(pk.seller||p.supplier||""):(p.supplier||"")};
+function renderPlan(){
+  const el=$("plan");
+  if(!S.db||!S.partsLoaded||S.carId===ALL&&!S.cars.length){el.innerHTML="";return}
+  const d=planData();
+  if(!d.count){el.innerHTML=`<div class="sec-head"><h2 class="sec-title" id="plTitle">Итог к заказу</h2></div><p class="sec-sub">Заказывать больше нечего: все детали заказаны или установлены.</p>`;return}
+  const bundles=d.groups.filter(g=>g.kind==="bundle");
+  const byName=(a,b)=>String(a.name).localeCompare(String(b.name),"ru");
+  const bySeller=S.planSort==="seller";
+  const sep=d.groups.filter(g=>g.kind!=="bundle").flatMap(g=>g.items).sort(bySeller
+    ?(a,b)=>{const x=sellerKey(sellerOfPart(a)),y=sellerKey(sellerOfPart(b));return x===y?(byOrder(a,b)||byName(a,b)):(!x?1:!y?-1:x.localeCompare(y,"ru"))}
+    :(a,b)=>byOrder(a,b)||byName(a,b));
+  for(const id of [...S.sel])if(!sep.some(p=>p.id===id))S.sel.delete(id);
+  const inBundle=bundles.reduce((s,g)=>s+g.items.length,0),cnt=n=>`${n} ${plural(n,"деталь","детали","деталей")}`;
+  let bundleSum=0;
+  const bundleBodies=bundles.map(g=>{
+    const b=g.b,c=compareBundle(b);bundleSum+=g.sum;
+    const rows=g.items.map((p,i)=>{const bp=unitPrice(p)*qtyOf(p),sb=c.best[p.id],sv=sb?sb.total:0;
+      return `<tr data-drag data-pid="${esc(p.id)}">${nameTd(p,false,"",i+1)}<td class="seller"><span class="na">${esc(b.seller||"—")}</span></td><td>${bp?rub(bp):"—"}</td><td${sv?"":` class="na"`}>${sv?rub(sv):"нет цены"}${sb&&sb.label?`<small>${esc(sb.label)}</small>`:""}</td>${diffTd(bp,sv)}<td></td></tr>`}).join("");
+    const sh=bundleShip(b)?`<tr><td>Доставка комплекта</td><td></td><td>${rub(bundleShip(b))}</td><td>${c.ship?rub(c.ship):"—"}</td>${diffTd(bundleShip(b),c.ship)}<td></td></tr>`:"";
+    return `<tbody data-sortable="bundle:${esc(b.id)}"><tr class="pl-sec"><td colspan="6"><div class="pl-sechead"><b class="t">Комплект «${esc(b.name||b.seller||"комплект")}»</b><span class="pl-sub">${esc(b.seller||"продавец не указан")} · ${cnt(g.items.length)}</span><span class="sp"></span><b>${rub(g.sum)}</b>${canEdit()?`<button class="btn sm" type="button" data-bpick="${esc(b.id)}">Убрать из заказа</button><button class="btn sm primary" type="button" data-border="${esc(b.id)}">Оформить заказ</button>`:""}</div></td></tr>${rows}${sh}</tbody>`;
+  }).join("");
+  let sepSum=0,sepCheap=0,prevKey=null;
+  const sepRows=sep.map((p,i)=>{
+    const pk=pickedOf(p),v=partEst(p),a=altOf(p),own=!pk&&num(p.price)>0,seller=sellerOfPart(p),k=sellerKey(seller),bo=bestOffer(p);
+    const chosen=pk||own,src=chosenLabel(p)||(chosen?(seller?"":"продавец не указан"):p.supplier?"цена у продавца не указана":bo?"вариант не выбран":"");
+    const und=!chosen&&!activeBundle(p),lo=und&&bo?offerTotal(p,bo):0,cmp=und?null:a;
+    sepSum+=v;sepCheap+=cmp&&v?Math.min(v,cmp.v):v;
+    const newSeller=bySeller&&i>0&&k!==prevKey;prevKey=k;
+    const sellerCell=k?`<span class="sname">${esc(seller)}</span>`:`<span class="na">не выбран</span>`;
+    const price=v?(und&&lo&&lo<v?`<span class="from">до</span> ${rub(v)}<small>от ${rub(lo)} · в итог — дороже</small>`:und?`≈ ${rub(v)}`:rub(v)):"—";
+    return `<tr data-drag data-pid="${esc(p.id)}" data-seller="${esc(k)}"${newSeller?` class="pl-newseller"`:""}>${nameTd(p,false,src,i+1,pickerHtml(p))}<td class="seller">${sellerCell}</td><td${v?"":` class="na"`}>${price}</td><td${cmp?"":` class="na"`}>${cmp?rub(cmp.v)+`<small>${esc(cmp.label)}</small>`:"—"}</td>${diffTd(v,cmp&&cmp.v)}${orderTd(p)}</tr>`;
+  }).join("");
+  const noChoice=sep.filter(p=>!partExact(p)&&partEst(p)>0).length,noPrice=sep.filter(p=>!(partEst(p)>0)).length;
+  const notExact=sep.filter(p=>!partExact(p)).length,sepSign=notExact?"≈ ":"= ",grandSign=notExact||d.noPrice?"≈ ":"= ";
+  const sepBody=sep.length?`<tbody data-sortable="parts"${bySeller?` data-scope="seller"`:""}><tr class="pl-sec"><td colspan="6"><div class="pl-sechead"><b class="t">Отдельно</b><span class="pl-sub">${cnt(sep.length)}${sepCheap<sepSum?` · если брать дешевле: ${rub(sepCheap)}`:""}</span><span class="sp"></span><b>${sepSum?sepSign+rub(sepSum):"—"}</b></div></td></tr>${sepRows}</tbody>`:"";
+  const foot=`<tfoot>${inBundle?`<tr><td colspan="2">В комплекте<small>${cnt(inBundle)}</small></td><td>${rub(bundleSum)}</td><td></td><td></td><td></td></tr>`:""}
+    ${sep.length&&inBundle?`<tr><td colspan="2">Отдельно<small>${cnt(sep.length)}</small></td><td>${sepSum?sepSign+rub(sepSum):"—"}</td><td></td><td></td><td></td></tr>`:""}
+    <tr class="pl-grand"><td colspan="2">Итого к заказу<small>${inBundle?`в комплекте: ${inBundle} · `:""}${sep.length?`отдельно: ${sep.length} · `:""}всего: ${cnt(d.count)}${notExact?` · примерно: ${[noChoice?`вариант не выбран у ${noChoice}`:"",noPrice?`нет цены у ${noPrice}`:""].filter(Boolean).join(", ")}`:" · все цены выбраны"}</small></td><td>${d.total?grandSign+rub(d.total):"—"}</td><td></td><td></td><td></td></tr></tfoot>`;
+  const head=`<div class="sec-head"><h2 class="sec-title" id="plTitle">Итог к заказу</h2>
+    <div class="view" role="group" aria-label="Порядок в таблице"><button type="button" data-plsort="manual" aria-pressed="${!bySeller}">Вручную</button><button type="button" data-plsort="seller" aria-pressed="${bySeller}">По продавцам</button></div></div>`;
+  const offers=d.offers.map(b=>{const c=compareBundle(b);
+    return `<div class="pl-offer"><span>Комплект «${esc(b.name||b.seller||"комплект")}»${b.seller?` · ${esc(b.seller)}`:""}: <b>${rub(c.bundleTotal)}</b>${c.separate?` против ${rub(c.separate)} по отдельности (${c.diff>0?"дороже на "+rub(c.diff):c.diff<0?"выгоднее на "+rub(-c.diff):"столько же"})`:""}</span>${canEdit()?`<button class="btn sm" type="button" data-bpick="${esc(b.id)}">Включить в заказ</button>`:""}</div>`}).join("");
+  const table=`<article class="b-card plan-card"><div class="b-scroll"><table class="b-table pl-table"><thead><tr><th>Деталь</th><th>Продавец</th><th>Цена</th><th>Лучшее у других</th><th>Разница</th><th></th></tr></thead>${bundleBodies}${sepBody}${foot}</table></div></article>`;
+  const selParts=[...S.sel].map(partById).filter(Boolean),selSellers=[...new Set(selParts.map(p=>sellerKey(sellerOfPart(p))))];
+  const bar=S.sel.size&&canEdit()?`<div class="pl-bar"><span class="pl-cnt">Выбрано: ${S.sel.size}</span>
+      <input id="pl-seller" list="pl-sellers" placeholder="Продавец" autocomplete="off" aria-label="Продавец для выбранных деталей"><datalist id="pl-sellers">${knownSellers().map(s=>`<option value="${esc(s)}">`).join("")}</datalist>
+      <button class="btn sm primary" type="button" id="pl-combine">Объединить у продавца</button>
+      <button class="btn sm" type="button" id="pl-split" title="Вернуть как было до объединения">Разъединить</button>
+      <button class="btn sm" type="button" id="pl-order"${selSellers.length>1?` title="У выбранных разные продавцы — впишете одного в окне заказа"`:""}>Оформить выбранные</button>
+      <button class="btn sm ghost" type="button" id="pl-clear">Снять выбор</button></div>`:"";
+  el.innerHTML=head+table+offers;
+}
+/* combine remembers the part's previous main so «Разъединить» can put it back exactly */
+async function combineToSeller(ids,seller){
+  const k=sellerKey(seller);let noOffer=0;
+  for(const id of ids){const p=partById(id);if(!p)continue;
+    const prev={price:num(p.price),supplier:p.supplier||"",pick:(pickedOf(p)||{}).id||"",added:"",seller};
+    const withOwn=keepOwnAsOffer(p,offersOf(p)),added=withOwn.find(o=>!offersOf(p).some(x=>x.id===o.id));
+    const o=offersOf(p).find(x=>sellerKey(x.seller)===k&&num(x.price)>0&&!coveredByBundle(p,x));
+    if(o){if(o.picked&&sellerKey(p.supplier)===k)continue;
+      prev.added=added?added.id:"";
+      await updPart(id,{offers:withOwn.map(x=>({...x,picked:x.id===o.id})),price:num(o.price),supplier:o.seller||seller,prevMain:p.prevMain||prev})}
+    else{
+      const pk=pickedOf(p),own=!pk&&num(p.price)>0,sameOrNone=!sellerKey(p.supplier)||sellerKey(p.supplier)===k;
+      if(own&&sameOrNone)await updPart(id,{supplier:seller,prevMain:p.prevMain||prev});
+      else{prev.added=added?added.id:"";await updPart(id,{offers:withOwn.map(x=>({...x,picked:false})),supplier:seller,price:0,prevMain:p.prevMain||prev});noOffer++}
+    }
+  }
+  return noOffer;
+}
+async function splitFromSeller(ids){
+  let n=0;
+  for(const id of ids){const p=partById(id);if(!p)continue;const prev=p.prevMain;
+    if(prev){
+      const offers=offersOf(p).filter(o=>o.id!==prev.added).map(o=>({...o,picked:!!prev.pick&&o.id===prev.pick}));
+      await updPart(id,{offers,price:num(prev.price),supplier:prev.supplier||"",prevMain:null});n++;
+    }else if(sellerOfPart(p)){
+      const pk=pickedOf(p);
+      await updPart(id,{offers:offersOf(p).map(o=>({...o,picked:false})),supplier:"",price:pk?0:num(p.price)});n++;
+    }
+  }
+  return n;
+}
+
+function render(){renderCars();renderSummary();renderToolbar();renderGroups();renderBundles();renderPlan();$("addPartBtn").hidden=!canEdit()}
+
+/* writes */
+async function guarded(fn,okMsg){
+  if(S.busy)return false;S.busy=true;
+  try{await fn();if(okMsg)toast(okMsg);return true}
+  catch(err){handleWriteError(err);return false}
+  finally{S.busy=false}
+}
+/* writes patch the local copy right away, so a chain of writes never reads stale rows */
+const updPart=async(id,patch)=>{const full={...patch,updated:nowIso()};await S.db.doc("parts/"+id).update(full);const p=partById(id);if(p)Object.assign(p,full);bump()};
+const updBundle=async(id,patch)=>{const full={...patch,updated:nowIso()};await S.db.doc("bundles/"+id).update(full);const b=bundleById(id);if(b)Object.assign(b,full);bump()};
+/* a variant that repeats the bundle (same seller, same price) is not shown among the part's variants */
+const sellerKey=s=>String(s||"").split(",")[0].trim().toLowerCase();
+function coveredByBundle(p,o){
+  if(o.fromBundle)return true;
+  const k=sellerKey(o.seller);if(!k)return false;
+  return S.bundles.some(b=>(b.parts||[]).includes(p.id)&&num((b.prices||{})[p.id])>0&&sellerKey(b.seller)===k&&Math.round(num(o.price)*qtyOf(p))===Math.round(num(b.prices[p.id])));
+}
+const visibleOffers=p=>offersOf(p).filter(o=>!coveredByBundle(p,o));
+function handleWriteError(err){
+  const code=err&&err.code;
+  if(code==="auth")toast("Ключ GitHub не подходит или истёк: изменение не сохранилось");
+  else if(code==="not_granted")toast("Ключ не даёт права записи в репозиторий: изменение не сохранилось");
+  else if(code==="offline")toast("Нет интернета: изменение не сохранилось");
+  else if(code==="conflict")toast("Данные поменялись на другом устройстве. Обновите страницу и повторите");
+  else toast("Не сохранилось, попробуйте ещё раз");
+}
+
+/* picking/unpicking touches only bundle documents: part prices are formulas over the bundle */
+async function releaseBundle(){}
+async function applyBundle(b){
+  for(const ob of S.bundles){if(ob.id!==b.id&&ob.picked&&(ob.parts||[]).some(id=>(b.parts||[]).includes(id)))await updBundle(ob.id,{picked:false})}
+}
+
+/* removing a part from bundles keeps every total right: auto totals follow the remaining parts,
+   a typed total loses the removed part's price, and a picked bundle re-spreads its price */
+async function removeFromBundles(p){
+  for(const b of S.bundles.filter(x=>(x.parts||[]).includes(p.id))){
+    const parts=(b.parts||[]).filter(id=>id!==p.id&&partById(id)),prices={};
+    parts.forEach(id=>{const v=num((b.prices||{})[id]);if(v>0)prices[id]=v});
+    const removed=num((b.prices||{})[p.id])||(b.picked?num(sharesOf(b)[p.id]):0);
+    const total=isManualTotal(b)?Math.max(0,bundleTotalOf(b)-removed):Object.values(prices).reduce((s,v)=>s+v,0);
+    await updBundle(b.id,{parts,prices,total});
+  }
+}
+/* back to «не выбран»: a picked variant is released; an own price moves into the variants so it stays selectable */
+async function unchoosePart(p){
+  if(pickedOf(p))return guarded(()=>updPart(p.id,{offers:offersOf(p).map(o=>({...o,picked:false})),price:0,supplier:""}),"Вариант не выбран — в итог идёт самый дорогой");
+  if(num(p.price)>0)return guarded(()=>updPart(p.id,{offers:keepOwnAsOffer(p,offersOf(p)).map(o=>({...o,picked:false})),price:0,supplier:""}),"Вариант не выбран — цена сохранена в вариантах");
+  return true;
+}
+async function pickOffer(p,oid,on){
+  const was=offersOf(p).find(o=>o.id===oid);if(!was)return false;
+  const base=on?keepOwnAsOffer(p,offersOf(p)):offersOf(p),saved=base.length>offersOf(p).length;
+  const offers=base.map(o=>({...o,picked:on&&o.id===oid}));
+  return guarded(()=>updPart(p.id,on?{offers,price:num(was.price),supplier:was.seller||""}:{offers,price:0,supplier:""}),on?"Выбран: "+offerTitle(was)+(saved?". Прежняя цена сохранена в вариантах":""):"Выбор снят");
+}
+/* before the main price is replaced, the part's own price (with its seller) moves into the variants */
+function keepOwnAsOffer(p,offers){
+  if(pickedOf(p)||!(num(p.price)>0))return offers;
+  const k=sellerKey(p.supplier),pr=Math.round(num(p.price));
+  const same=o=>{const ok_=sellerKey(o.seller);return !k||ok_===k||(ok_&&(ok_.startsWith(k)||k.startsWith(ok_)))};
+  if(offers.some(o=>Math.round(num(o.price))===pr&&same(o)))return offers;
+  return [...offers,{id:newId(),seller:p.supplier||"",price:num(p.price),cond:"",warranty:null,ship:0,days:"",link:"",contact:"",note:"была основной ценой детали",photos:[],picked:false}];
+}
+/* the cheapest remaining option becomes the part's main price */
+function promoteCheapest(p,offers,own){
+  let best=null;
+  for(const o of offers){if(num(o.price)<=0||coveredByBundle(p,o))continue;const v=num(o.price)*qtyOf(p)+num(o.ship);if(!best||v<best.v)best={o,v}}
+  if(own&&num(own.price)>0){const v=num(own.price)*qtyOf(p);if(!best||v<best.v)best={own,v}}
+  const cleared=offers.map(o=>({...o,picked:false}));
+  if(!best)return {offers:cleared,price:0,supplier:"",label:""};
+  if(best.own)return {offers:cleared,price:num(best.own.price),supplier:best.own.supplier||"",label:rub(best.v)+(best.own.supplier?" · "+best.own.supplier:"")};
+  return {offers:offers.map(o=>({...o,picked:o.id===best.o.id})),price:num(best.o.price),supplier:best.o.seller||"",label:rub(best.v)+" · "+offerTitle(best.o)};
+}
+/* what "the main" of a part is: its picked bundle, picked variant, own price, or the cheapest variant shown as «от» */
+function mainPlan(p){
+  const ab=activeBundle(p),pk=pickedOf(p);let offers=offersOf(p).map(o=>({...o})),own=null,kind,removed=null;
+  if(ab){kind="bundle";own=num(p.price)>0?{price:num(p.price),supplier:p.supplier||""}:null}
+  else if(pk){kind="offer";removed=pk}
+  else if(num(p.price)>0)kind="own";
+  else{const bo=bestOffer(p);if(!bo)return null;kind="offer";removed=bo}
+  if(removed)offers=offers.filter(o=>o.id!==removed.id);
+  return {kind,offers,own,removed,preview:promoteCheapest(p,offers,own)};
+}
+async function removeMain(p){
+  const plan=mainPlan(p);if(!plan)return null;
+  if(plan.kind==="bundle")await removeFromBundles(p);
+  const pr=promoteCheapest(partById(p.id)||p,plan.offers,plan.own);
+  const patch={offers:pr.offers,price:pr.price,supplier:pr.supplier};
+  await updPart(p.id,patch);
+  if(plan.removed)dropUnused(photosOf(plan.removed),p.id,plan.removed.id);
+  return pr;
+}
+async function deletePart(p){
+  await removeFromBundles(p);
+  await S.db.doc("parts/"+p.id).delete();
+  dropUnused([...photosOf(p),...offersOf(p).flatMap(photosOf)],p.id,null);
+  S.open.delete(p.id);
+}
+
+/* drag to reorder: hold a card (mouse ~0.3 s, finger ~0.45 s) and move; order is saved */
+const DRAG={el:null,cont:null,items:[],idx:0,to:0,y0:0,sy0:0,h:0,mids:[],pend:null,timer:0,justDropped:false};
+function dragStart(row,cont,y){
+  let items=[...cont.children].filter(c=>c.matches("[data-drag]"));
+  const sc=cont.dataset.scope;if(sc)items=items.filter(c=>c.dataset[sc]===row.dataset[sc]);
+  if(items.length<2){if(sc)toast(sc==="unit"?"Внутри этого узла одна деталь — двигать некуда":"У этого продавца одна деталь — двигать некуда");return}
+  const er=row.getBoundingClientRect(),fr=items[0].getBoundingClientRect(),lr=items[items.length-1].getBoundingClientRect();
+  Object.assign(DRAG,{el:row,cont,items,idx:items.indexOf(row),to:items.indexOf(row),y0:y,sy0:window.scrollY,h:er.height,minDy:fr.top-er.top,maxDy:lr.bottom-er.bottom});
+  DRAG.mids=items.map(it=>{const r=it.getBoundingClientRect();return r.top+r.height/2});
+  row.classList.add("dragging");document.body.classList.add("is-dragging");
+  if(navigator.vibrate)try{navigator.vibrate(12)}catch(e){}
+}
+function dragMove(y){
+  const dy=Math.min(DRAG.maxDy,Math.max(DRAG.minDy,y-DRAG.y0+(window.scrollY-DRAG.sy0)));
+  DRAG.el.style.transform=`translateY(${dy}px)`;
+  const center=DRAG.mids[DRAG.idx]+dy;let to=DRAG.idx;
+  DRAG.mids.forEach((m,i)=>{if(i<DRAG.idx&&center<=m)to=Math.min(to,i);if(i>DRAG.idx&&center>=m)to=Math.max(to,i)});
+  DRAG.to=to;
+  DRAG.items.forEach((it,i)=>{if(it===DRAG.el)return;const shift=i>DRAG.idx&&i<=to?-DRAG.h:i<DRAG.idx&&i>=to?DRAG.h:0;it.style.transform=shift?`translateY(${shift}px)`:""});
+  if(y<70)window.scrollBy(0,-14);else if(y>window.innerHeight-70)window.scrollBy(0,14);
+}
+async function dragEnd(){
+  const {el,cont,items,idx,to}=DRAG;DRAG.el=null;
+  items.forEach(it=>{it.style.transform=""});el.classList.remove("dragging");document.body.classList.remove("is-dragging");
+  DRAG.justDropped=true;setTimeout(()=>{DRAG.justDropped=false},250);
+  if(to===idx)return;
+  const order=items.map(it=>it.dataset.pid);const [m]=order.splice(idx,1);order.splice(to,0,m);
+  const kind=cont.dataset.sortable;
+  if(kind.startsWith("bundle:"))await saveBundleOrder(kind.slice(7),order);else await savePartOrder(order);
+}
+/* reuse the moved parts' own order numbers so their place among other parts stays put */
+async function savePartOrder(ids){
+  const ps=ids.map(partById).filter(Boolean);
+  const have=[...new Set(ps.map(p=>p.sort).filter(Number.isFinite))].sort((a,b)=>a-b);
+  const keys=have.length===ps.length?have:ps.map((_,i)=>(have[0]||0)+i*10);
+  const changed=ps.map((p,i)=>[p,keys[i]]).filter(([p,k])=>p.sort!==k);
+  changed.forEach(([p,k])=>{p.sort=k});bump();render();
+  await guarded(async()=>{for(const [p,k] of changed)await S.db.doc("parts/"+p.id).update({sort:k})});
+}
+async function saveBundleOrder(bid,ids){
+  const b=bundleById(bid);if(!b)return;
+  const rest=(b.parts||[]).filter(id=>!ids.includes(id)),parts=[...ids.filter(id=>(b.parts||[]).includes(id)),...rest];
+  b.parts=parts;bump();render();
+  await guarded(()=>S.db.doc("bundles/"+bid).update({parts}));
+}
+document.addEventListener("pointerdown",e=>{
+  if(!canEdit()||e.button>0)return;
+  const row=e.target.closest("[data-drag]"),cont=row&&row.parentElement;
+  if(!row||!cont||!cont.matches("[data-sortable]"))return;
+  if(e.target.closest("input,select,textarea,summary,.offers"))return;
+  const touch=e.pointerType!=="mouse";
+  DRAG.pend={row,cont,x:e.clientX,y:e.clientY,tol:touch?10:6};clearTimeout(DRAG.timer);
+  DRAG.timer=setTimeout(()=>{const p=DRAG.pend;DRAG.pend=null;if(p)dragStart(p.row,p.cont,p.y)},touch?450:300);
+});
+document.addEventListener("touchmove",e=>{if(DRAG.el)e.preventDefault()},{passive:false});
+document.addEventListener("contextmenu",e=>{if(DRAG.pend||DRAG.el)e.preventDefault()});
+document.addEventListener("pointermove",e=>{
+  if(DRAG.pend&&Math.hypot(e.clientX-DRAG.pend.x,e.clientY-DRAG.pend.y)>DRAG.pend.tol){clearTimeout(DRAG.timer);DRAG.pend=null}
+  if(DRAG.el){e.preventDefault();dragMove(e.clientY)}
+},{passive:false});
+const dragStop=()=>{clearTimeout(DRAG.timer);DRAG.pend=null;if(DRAG.el)dragEnd()};
+document.addEventListener("pointerup",dragStop);document.addEventListener("pointercancel",dragStop);
+document.addEventListener("click",e=>{if(DRAG.justDropped){e.preventDefault();e.stopPropagation();DRAG.justDropped=false}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&DRAG.el){DRAG.to=DRAG.idx;dragEnd()}});
+
+/* events */
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button,a");if(!t)return;
+  const d=t.dataset;
+  if(d.car){S.carId=d.car;store("rimonta.car",S.carId);render();return}
+  if(d.f){S.filter=d.f;render();return}
+  if(d.view){S.groupBy=d.view;store("rimonta.group",S.groupBy);render();return}
+  if(d.group){S.collapsed.has(d.group)?S.collapsed.delete(d.group):S.collapsed.add(d.group);store("rimonta.collapsed",JSON.stringify([...S.collapsed]));renderGroups();return}
+  if(t.hasAttribute("data-btoggle")){S.bundlesOpen=!S.bundlesOpen;store("rimonta.bopen",S.bundlesOpen?"1":"0");renderBundles();return}
+  if(d.copy!==undefined){copy(d.copy);return}
+  if(d.edit){openPart(partById(d.edit));return}
+  if(d.goto){if(!S.bundlesOpen){S.bundlesOpen=true;store("rimonta.bopen","1");renderBundles()}
+    const card=$("b-"+d.goto);if(card){card.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});card.classList.add("flash");setTimeout(()=>card.classList.remove("flash"),1400)}return}
+  if(d.offers){const id=d.offers;discardForms();S.open.has(id)?S.open.delete(id):S.open.add(id);if(S.oedit&&S.oedit.pid===id)S.oedit=null;if(S.oadd===id)S.oadd=null;if(S.open.has(id)&&!visibleOffers(partById(id)||{}).length)S.oadd=id;store("rimonta.open",JSON.stringify([...S.open]));renderGroups();
+    if(S.open.has(id)&&!offersOf(partById(id)).length)focusForm(id,null);return}
+  if(d.showoffers){showOffers(d.showoffers);return}
+  if(d.partphotos){const p=partById(d.partphotos);if(p)openLightbox(photosOf(p),0);return}
+  if(d.order){const p=partById(d.order);if(p)openOrder(p);return}
+  if(d.border){const b=bundleById(d.border);if(b)openOrder(null,b);return}
+  if(d.photo){const [pid,oid,i]=d.photo.split("|");const o=offersOf(partById(pid)||{}).find(x=>x.id===oid);if(o)openLightbox(photosOf(o),num(i));return}
+  if(d.fpview){const j=d.fpview.lastIndexOf("|"),st=S.fp[d.fpview.slice(0,j)];if(st)openLightbox(st.ids,num(d.fpview.slice(j+1)));return}
+  if(d.fprm){const j=d.fprm.lastIndexOf("|"),key=d.fprm.slice(0,j),st=S.fp[key];if(!st)return;
+    const id=st.ids.splice(num(d.fprm.slice(j+1)),1)[0];
+    if(st.added.includes(id)){st.added=st.added.filter(x=>x!==id);dropAssets([id])}else if(id)st.removed.push(id);
+    drawStrip(key);return}
+  if(d.ophoto){if(!S.assets){toast("Загружать фото может только владелец трекера");return}
+    const [pid,oid]=d.ophoto.split("|");S.photoTarget={pid,oid};$("photoInput").value="";$("photoInput").click();return}
+  if(d.oadd){discardForms();S.oadd=d.oadd;S.oedit=null;S.odel=null;renderGroups();focusForm(d.oadd,null);return}
+  if(d.pick){const [pid,oid]=d.pick.split("|"),p=partById(pid);if(!p)return;
+    const was=offersOf(p).find(o=>o.id===oid);if(!was)return;await pickOffer(p,oid,!was.picked);return}
+  if(d.oedit){discardForms();const [pid,oid]=d.oedit.split("|");S.oedit={pid,oid};S.oadd=null;S.odel=null;renderGroups();focusForm(pid,oid);return}
+  if(d.ocancel){discardForms();const id=d.ocancel;const wasAdd=!S.oedit;S.oedit=null;S.oadd=null;if(wasAdd&&!visibleOffers(partById(id)||{}).length){S.open.delete(id);store("rimonta.open",JSON.stringify([...S.open]))}renderGroups();return}
+  if(d.odel){const [pid,oid]=d.odel.split("|"),p=partById(pid);if(!p)return;
+    if(!(S.odel&&S.odel.oid===oid&&S.odel.pid===pid)){S.odel={pid,oid};renderGroups();return}
+    const gone=offersOf(p).find(o=>o.id===oid),offers=offersOf(p).filter(o=>o.id!==oid);
+    let patch={offers},msg="Вариант удалён";
+    if(gone&&gone.picked){const pr=promoteCheapest(p,offers,null);patch={offers:pr.offers,price:pr.price,supplier:pr.supplier};if(pr.price)msg="Удалён. Основным стал "+pr.label}
+    S.odel=null;if(await guarded(()=>updPart(pid,patch),msg))dropUnused(photosOf(gone),pid,oid);return}
+  if(d.bpick){const b=bundleById(d.bpick);if(!b)return;
+    if(b.picked)await guarded(async()=>{await releaseBundle(b);await updBundle(b.id,{picked:false})},"Выбор комплекта снят");
+    else{if((b.parts||[]).filter(partById).length<2){toast("В комплекте должно быть минимум две детали");return}
+      await guarded(async()=>{await applyBundle(b);await updBundle(b.id,{picked:true})},"Комплект выбран")}
+    return}
+  if(d.bedit){openBundle(bundleById(d.bedit));return}
+  if(d.bstatus){const [bid,from,to]=d.bstatus.split("|"),b=bundleById(bid);if(!b)return;
+    const ids=(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===from});
+    await guarded(async()=>{for(const id of ids)await updPart(id,statusPatch(partById(id),to))},`${ST_LABEL[to]}: ${ids.length} ${plural(ids.length,"деталь","детали","деталей")}`);return}
+  if(d.gorder){const g=planData().groups.find(x=>x.kind==="seller"&&x.key===d.gorder);if(g)openOrder(null,null,g);return}
+  if(d.plsort){S.planSort=d.plsort;store("rimonta.plsort",S.planSort);renderPlan();return}
+  if(d.selseller!==undefined){const ids=planData().groups.filter(g=>g.kind!=="bundle").flatMap(g=>g.items).filter(p=>sellerKey(sellerOfPart(p))===d.selseller).map(p=>p.id);
+    const all=ids.every(id=>S.sel.has(id));ids.forEach(id=>all?S.sel.delete(id):S.sel.add(id));renderPlan();return}
+  if(t.id==="pl-split"){const ids=[...S.sel];let n=0;
+    if(await guarded(async()=>{n=await splitFromSeller(ids)})){S.sel.clear();render();toast(n?`Разъединено: ${n}`:"У выбранных нет продавца — разъединять нечего")}
+    return}
+  if(t.id==="pl-order"){const items=[...S.sel].map(partById).filter(Boolean);if(!items.length)return;
+    const names=[...new Set(items.map(sellerOfPart).filter(Boolean))];
+    openOrder(null,null,{items,name:names.length===1?names[0]:""});return}
+  if(t.id==="pl-clear"){S.sel.clear();renderPlan();return}
+  if(t.id==="pl-combine"){const seller=($("pl-seller").value||"").trim();if(!seller){toast("Впишите продавца");$("pl-seller").focus();return}
+    const ids=[...S.sel];let miss=0;
+    if(await guarded(async()=>{miss=await combineToSeller(ids,seller)})){S.sel.clear();render();
+      toast(`Объединено у «${seller}»: ${ids.length}`+(miss?`. У ${miss} нет цены этого продавца — впишите её в детали`:""))}
+    return}
+  if(d.bdel){const b=bundleById(d.bdel);if(!b)return;
+    if(S.bdel!==b.id){S.bdel=b.id;renderBundles();return}
+    S.bdel=null;await guarded(async()=>{if(b.picked)await releaseBundle(b);await S.db.doc("bundles/"+b.id).delete()},"Комплект удалён");return}
+  if(t.id==="addBundleBtn"){openBundle(null);return}
+  if(t.id==="addCarBtn"){openCar();return}
+  if(t.hasAttribute("data-close")){t.closest("dialog").close();return}
+});
+$("addPartBtn").addEventListener("click",()=>openPart(null));
+$("ownerBtn").addEventListener("click",openOwner);
+$("q").addEventListener("input",e=>{S.q=e.target.value.trim();renderGroups()});
+document.addEventListener("change",async e=>{
+  const t=e.target;if(!t.matches||!t.matches("input[type=date][data-arrfor],input[type=date][data-arrbundle]"))return;
+  const v=t.value;t.blur();
+  if(t.dataset.arrfor){await guarded(()=>updPart(t.dataset.arrfor,{arrivedAt:v}),v?"Дата прихода: "+fmtDate(v):"Дата прихода убрана")}
+  else{const [bid,st]=t.dataset.arrbundle.split("|"),b=bundleById(bid);if(!b)return;
+    const ids=(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===st});
+    await guarded(async()=>{for(const id of ids)await updPart(id,{arrivedAt:v})},`Дата прихода для ${ids.length} ${plural(ids.length,"детали","деталей","деталей")}: ${fmtDate(v)}`)}
+  render();
+});
+$("f-status").addEventListener("change",e=>{const on=ARRIVED.has(e.target.value);$("f-arrived-wrap").hidden=!on;if(on&&!$("f-arrived").value)$("f-arrived").value=todayStr()});
+document.addEventListener("change",async e=>{const sel=e.target.closest&&e.target.closest("select[data-pickfor]");if(!sel)return;
+  const p=partById(sel.dataset.pickfor),v=sel.value;sel.blur();if(!p||v==="own"){renderPlan();return}
+  const ok=v?await pickOffer(p,v,true):await unchoosePart(p);
+  if(ok)render();else renderPlan();});
+document.addEventListener("change",e=>{const c=e.target.closest&&e.target.closest("[data-sel]");if(!c)return;c.checked?S.sel.add(c.dataset.sel):S.sel.delete(c.dataset.sel);renderPlan();const n=document.querySelector(`[data-sel="${CSS.escape(c.dataset.sel)}"]`);if(n)n.focus({preventScroll:true})});
+document.addEventListener("change",async e=>{
+  const sel=e.target.closest("[data-status-for]");if(!sel||!S.db)return;
+  const id=sel.dataset.statusFor,status=sel.value;sel.dataset.st=status;
+  const p=partById(id);
+  if(status==="ordered"&&p&&p.status!=="ordered"){sel.value=p.status;sel.dataset.st=p.status;openOrder(p);return}
+  if(!(await guarded(()=>updPart(id,statusPatch(p,status)),ST_LABEL[status]+(status==="arrived"&&!p.arrivedAt?" · дата прихода: сегодня":""))))render();
+});
+/* photos */
+document.addEventListener("change",e=>{
+  const fi=e.target.closest&&e.target.closest("[data-fpinput]");
+  if(fi){const files=[...fi.files];fi.value="";addFormPhotos(fi.dataset.fpinput,files)}
+});
+$("photoInput").addEventListener("change",async e=>{
+  const t=S.photoTarget,files=[...e.target.files];S.photoTarget=null;if(!t||!files.length||!S.assets)return;
+  toast("Загружаю…");
+  const ids=await uploadImages(files);if(!ids.length)return;
+  const p=partById(t.pid);if(!p){dropAssets(ids);return}
+  const offers=offersOf(p).map(o=>o.id===t.oid?{...o,photos:[...photosOf(o),...ids]}:o);
+  if(!(await guarded(()=>updPart(t.pid,{offers}),ids.length>1?`Добавлено фото: ${ids.length}`:"Фото добавлено")))dropAssets(ids);
+});
+document.addEventListener("paste",e=>{
+  const a=document.activeElement,f=(e.target.closest&&e.target.closest("form[data-key]"))||(a&&a.closest&&a.closest("form[data-key]"));
+  if(!f||!S.assets)return;
+  const files=[...(e.clipboardData&&e.clipboardData.files||[])].filter(x=>/^image\//.test(x.type));
+  if(!files.length)return;
+  e.preventDefault();addFormPhotos(f.dataset.key,files);
+});
+document.addEventListener("dragover",e=>{const z=e.target.closest&&e.target.closest("[data-drop]");if(!z||!S.assets)return;e.preventDefault();z.classList.add("over")});
+document.addEventListener("dragleave",e=>{const z=e.target.closest&&e.target.closest("[data-drop]");if(z&&!z.contains(e.relatedTarget))z.classList.remove("over")});
+document.addEventListener("drop",e=>{const z=e.target.closest&&e.target.closest("[data-drop]");if(!z||!S.assets)return;e.preventDefault();z.classList.remove("over");addFormPhotos(z.dataset.drop,[...e.dataTransfer.files])});
+document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&t.closest(".thumb"))t.closest(".thumb").classList.add("broken")},true);
+(()=>{
+  const lb=$("lb"),img=$("lb-img");
+  img.addEventListener("load",()=>{LB.nw=img.naturalWidth;LB.nh=img.naturalHeight;img.style.width=LB.nw+"px";img.style.height=LB.nh+"px";$("lb-load").hidden=true;img.style.visibility="visible";fitLB()});
+  img.addEventListener("error",()=>{$("lb-load").textContent="Фото не загрузилось";$("lb-load").hidden=false});
+  $("lb-prev").addEventListener("click",()=>navLB(-1));
+  $("lb-next").addEventListener("click",()=>navLB(1));
+  $("lb-in").addEventListener("click",()=>zoomLB(LB.s*1.5));
+  $("lb-out").addEventListener("click",()=>zoomLB(LB.s/1.5));
+  $("lb-fit").addEventListener("click",fitLB);
+  $("lb-100").addEventListener("click",()=>zoomLB(1));
+  const fsOk=!!(document.fullscreenEnabled&&$("photoDialog").requestFullscreen);
+  $("lb-fs").hidden=!fsOk;
+  $("lb-fs").addEventListener("click",()=>{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else $("photoDialog").requestFullscreen().catch(()=>toast("Во весь экран в этом окне нельзя"))});
+  document.addEventListener("fullscreenchange",()=>setTimeout(fitLB,60));
+  $("photoDialog").addEventListener("close",()=>{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});img.removeAttribute("src");LB.ptr.clear();LB.pinch=null});
+  $("photoDialog").addEventListener("keydown",e=>{
+    if(e.key==="ArrowLeft")navLB(-1);else if(e.key==="ArrowRight")navLB(1);
+    else if(e.key==="+"||e.key==="=")zoomLB(LB.s*1.5);else if(e.key==="-")zoomLB(LB.s/1.5);else if(e.key==="0")fitLB();});
+  window.addEventListener("resize",()=>{if($("photoDialog").open)fitLB()});
+  lb.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button"))return;
+    lb.setPointerCapture(e.pointerId);LB.ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(LB.ptr.size===1)LB.start={x:e.clientX,y:e.clientY,s:LB.s};
+    if(LB.ptr.size===2){const [a,b]=[...LB.ptr.values()];LB.pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,s:LB.s}}
+    if(e.pointerType!=="mouse"&&LB.ptr.size===1){const t=Date.now();if(t-LB.lastTap<300){toggleZoomLB(e.clientX,e.clientY);LB.lastTap=0;LB.start=null}else LB.lastTap=t}
+  });
+  lb.addEventListener("pointermove",e=>{
+    const prev=LB.ptr.get(e.pointerId);if(!prev)return;const cur={x:e.clientX,y:e.clientY};LB.ptr.set(e.pointerId,cur);
+    if(LB.ptr.size===2&&LB.pinch){const [a,b]=[...LB.ptr.values()],v=lbView();
+      LB.x+=(cur.x-prev.x)/2;LB.y+=(cur.y-prev.y)/2;
+      zoomLB(LB.pinch.s*Math.hypot(a.x-b.x,a.y-b.y)/LB.pinch.d,(a.x+b.x)/2-v.l,(a.y+b.y)/2-v.t);return}
+    if(LB.ptr.size===1&&LB.s>LB.base*1.01){LB.x+=cur.x-prev.x;LB.y+=cur.y-prev.y;applyLB()}
+  });
+  const end=e=>{
+    if(!LB.ptr.has(e.pointerId))return;LB.ptr.delete(e.pointerId);if(LB.ptr.size<2)LB.pinch=null;
+    if(LB.ptr.size===0&&LB.start&&LB.start.s<=LB.base*1.01&&LB.s<=LB.base*1.01){
+      const dx=e.clientX-LB.start.x,dy=e.clientY-LB.start.y;if(Math.abs(dx)>60&&Math.abs(dy)<80)navLB(dx<0?1:-1)}
+    if(LB.ptr.size===0)LB.start=null;
+  };
+  lb.addEventListener("pointerup",end);lb.addEventListener("pointercancel",end);
+  lb.addEventListener("wheel",e=>{e.preventDefault();const v=lbView();zoomLB(LB.s*Math.exp(-e.deltaY*0.0018),e.clientX-v.l,e.clientY-v.t)},{passive:false});
+  lb.addEventListener("dblclick",e=>{if(e.target.closest("button"))return;toggleZoomLB(e.clientX,e.clientY)});
+})();
+
+document.addEventListener("submit",async e=>{
+  const f=e.target.closest("[data-oform]");if(!f)return;
+  e.preventDefault();
+  const pid=f.dataset.oform,p=partById(pid);if(!p)return;
+  const err=f.querySelector("[data-oerr]"),val=n=>f.querySelector(`[name="${n}"]`).value;
+  const seller=val("seller").trim(),price=Math.max(0,Math.round(num(val("price")))),note=val("note").trim();
+  if(!seller&&!price&&!note&&!((S.fp[f.dataset.key]||{}).ids||[]).length){err.textContent="Впишите цену, комментарий или добавьте фото";err.hidden=false;return}
+  const wv=val("warranty");
+  const data={seller,price,note,cond:val("cond"),warranty:wv==="yes"?true:wv==="no"?false:null,ship:Math.max(0,Math.round(num(val("ship")))),days:val("days").trim(),link:fixUrl(val("link")),contact:val("contact").trim()};
+  const editingId=f.dataset.oid||null,key=f.dataset.key,st=S.fp[key];
+  if(st&&st.up){err.textContent="Подождите, фото ещё загружается";err.hidden=false;return}
+  data.photos=st?[...st.ids]:photosOf(offersOf(p).find(o=>o.id===editingId));
+  let offers,patch;
+  if(editingId){offers=offersOf(p).map(o=>o.id===editingId?{...o,...data}:o);const ed=offers.find(o=>o.id===editingId);
+    patch=ed&&ed.picked?{offers,price:ed.price,supplier:ed.seller}:{offers}}
+  else{offers=[...offersOf(p),{id:newId(),...data,picked:false}];patch={offers}}
+  const btn=f.querySelector('button[type="submit"]');btn.disabled=true;
+  const ok=await guarded(()=>updPart(pid,patch),editingId?"Вариант сохранён":"Вариант добавлен");
+  btn.disabled=false;
+  if(ok){
+    if(st){dropUnused(st.removed,pid,editingId);delete S.fp[key]}
+    if(editingId)S.oedit=null;else S.oadd=pid;
+    renderGroups();renderSummary();renderBundles();
+    if(!editingId){const nf=document.querySelector(`[data-oform="${CSS.escape(pid)}"]:not([data-oid]) input[name="price"]`);if(nf)nf.focus()}
+  }
+});
+
+function copy(text){
+  const done=()=>toast(text.length>40?"Скопировано":"Скопировано: "+text);
+  try{navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done))}catch(e){fallbackCopy(text,done)}
+}
+function fallbackCopy(text,done){
+  const ta=document.createElement("textarea");ta.value=text;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();ok?done():toast("Выделите текст и скопируйте вручную");
+}
+function showErr(id,msg){const el=$(id);el.textContent=msg;el.hidden=false}
+
+/* part dialog */
+const pf=$("partForm");
+function openPart(p){
+  if(!canEdit()){if(p)toast("Только просмотр");return}
+  S.editing=p||null;
+  $("pdTitle").textContent=p?"Деталь":"Новая деталь";
+  $("f-car").innerHTML=S.cars.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("")||`<option value="">Сначала добавьте машину</option>`;
+  $("f-status").innerHTML=STATUSES.map(s=>`<option value="${s.id}">${s.label}</option>`).join("");
+  const d=p||{car:S.carId!==ALL?S.carId:S.cars[0]?.id,status:"need",qty:1,side:""};
+  const ab=p?activeBundle(p):null,dv=(p&&p.delivery)||{};
+  $("f-name").value=d.name||"";$("f-car").value=d.car||S.cars[0]?.id||"";$("f-unit").value=d.unit||"";$("f-qty").value=d.qty||1;
+  $("f-oem").value=normOem(d.oem);$("f-status").value=d.status||"need";$("f-arrived").value=d.arrivedAt||"";$("f-arrived").max=todayStr();$("f-arrived-wrap").hidden=!ARRIVED.has(d.status||"need");$("f-price").value=num(d.price)>0?Math.round(num(d.price)):"";
+  $("f-supplier").value=d.supplier||"";$("f-note").value=d.note||"";
+  $("f-price").disabled=$("f-supplier").disabled=false;
+  $("f-price-hint").textContent=ab?`В комплекте: ${rub(unitPrice(p)*qtyOf(p))}. Здесь — цена по отдельности`:p&&offersOf(p).length?"Если выбран вариант, цена берётся из него":"";
+  $("f-ship").hidden=!!ab;
+  $("f-carrier").value=dv.carrier||"";$("f-from").value=dv.from||"";$("f-track").value=dv.track||"";$("f-eta").value=dv.eta||"";
+  $("f-shipcost").value=num(dv.cost)>0?num(dv.cost):"";$("f-shipcost").placeholder=p&&pickedOf(p)&&num(pickedOf(p).ship)?String(num(pickedOf(p).ship)):"0";
+  [...pf.querySelectorAll('input[name="side"]')].forEach(r=>r.checked=r.value===(d.side||""));
+  $("pdErr").hidden=true;setupDeleteButtons(p);
+  $("pdStamp").textContent=p&&p.updated?"изменено "+new Date(p.updated).toLocaleDateString("ru-RU",{day:"numeric",month:"short"}):"";
+  const pkey="part|"+(p?p.id:"new");delete S.fp[pkey];fpState(pkey,photosOf(p));S.pkey=pkey;pf.dataset.key=pkey;
+  $("f-photos").innerHTML=photoField(pkey,"Фото детали");
+  $("partDialog").showModal();$("f-name").focus();
+}
+$("partDialog").addEventListener("close",()=>{const k=S.pkey;if(k&&S.fp[k]){dropAssets(S.fp[k].added);delete S.fp[k]}S.pkey=null});
+pf.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=$("f-name").value.trim();
+  if(!name){showErr("pdErr","Впишите название детали");$("f-name").focus();return}
+  if(!$("f-car").value){showErr("pdErr","Сначала добавьте машину кнопкой «+ Машина»");return}
+  const now=nowIso(),ed=S.editing,ab=ed?activeBundle(ed):null;
+  const data={name,car:$("f-car").value,unit:$("f-unit").value.trim(),side:(pf.querySelector('input[name="side"]:checked')||{}).value||"",
+    qty:Math.max(1,Math.round(num($("f-qty").value))||1),oem:normOem($("f-oem").value),status:$("f-status").value,
+    arrivedAt:ARRIVED.has($("f-status").value)?($("f-arrived").value||(ed&&ed.arrivedAt)||todayStr()):($("f-status").value==="returned"?$("f-arrived").value:""),
+    price:Math.max(0,Math.round(num($("f-price").value))),supplier:$("f-supplier").value.trim(),note:$("f-note").value.trim(),
+    delivery:ab?(ed.delivery||{}):{carrier:$("f-carrier").value.trim(),from:$("f-from").value.trim(),track:$("f-track").value.trim(),eta:$("f-eta").value,cost:Math.max(0,Math.round(num($("f-shipcost").value)))},
+    updated:now};
+  const btn=$("pdSave");btn.disabled=true;
+  try{
+    const pk_=S.pkey,pst=pk_&&S.fp[pk_];
+    if(pst&&pst.up){showErr("pdErr","Подождите, фото ещё загружается");return}
+    data.photos=pst?[...pst.ids]:photosOf(ed);
+    const wantOrder=data.status==="ordered"&&!(ed&&ed.status==="ordered");
+    if(wantOrder)data.status=ed?ed.status:"need";
+    let saved;
+    if(ed){saved={...data,offers:offersOf(ed),created:ed.created||now};await S.db.doc("parts/"+ed.id).set(saved);saved.id=ed.id;
+      const lp=partById(ed.id);if(lp)Object.assign(lp,saved);bump()}
+    else{saved={...data,offers:[],created:now};const ref=await S.db.collection("parts").add(saved);saved.id=ref.id}
+    if(pst){dropUnused(pst.removed,saved.id,"part");delete S.fp[pk_]}
+    if(wantOrder){$("partDialog").close();openOrder(saved);return}
+    if(data.car!==S.carId&&S.carId!==ALL){S.carId=data.car;store("rimonta.car",S.carId)}
+    $("partDialog").close();toast(ed?"Сохранено":"Деталь добавлена");
+  }catch(err){showErr("pdErr",err&&err.code==="invalid_argument"?"Нет прав на изменение списка":err&&err.code==="quota_exceeded"?"База заполнена: удалите старые детали":"Не сохранилось, попробуйте ещё раз")}
+  finally{btn.disabled=false}
+});
+function setupDeleteButtons(p){
+  const del=$("pdDelete"),all=$("pdDeleteAll");
+  del.dataset.armed="";all.dataset.armed="";del.hidden=!p;all.hidden=true;
+  if(!p)return;
+  const plan=mainPlan(p),repl=plan&&plan.preview.price>0;
+  del.dataset.mode=repl?"main":"part";
+  del.textContent=repl?"Удалить основное":"Удалить деталь";
+  del.title=repl?`Убрать ${plan.kind==="bundle"?"комплект":plan.kind==="own"?"цену детали":"основной вариант"}, основным станет самый дешёвый из оставшихся`:"";
+  all.hidden=!repl;all.textContent="Удалить деталь целиком";
+}
+$("pdDelete").addEventListener("click",async e=>{
+  const b=e.currentTarget,p=S.editing;if(!p)return;
+  const main=b.dataset.mode==="main";
+  if(!b.dataset.armed){b.dataset.armed="1";b.textContent=main?`Заменить на ${mainPlan(p).preview.label}?`:"Точно удалить?";return}
+  b.disabled=true;
+  const ok=await guarded(async()=>{if(main){const pr=await removeMain(p);toast("Основным стал "+((pr&&pr.label)||"следующий вариант"))}else{await deletePart(p);toast("Деталь удалена")}});
+  b.disabled=false;
+  if(ok)$("partDialog").close();
+});
+$("pdDeleteAll").addEventListener("click",async e=>{
+  const b=e.currentTarget,p=S.editing;if(!p)return;
+  if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Точно удалить со всеми вариантами?";return}
+  b.disabled=true;const ok=await guarded(()=>deletePart(p),"Деталь удалена");b.disabled=false;
+  if(ok)$("partDialog").close();
+});
+
+/* order dialog — required: seller, from, carrier, final price */
+const of_=$("orderForm");let ORD=null;
+function openOrder(p,b,g){
+  if(!canEdit())return;
+  if(p&&!b){const ab=activeBundle(p);if(ab)b=ab}
+  ORD=g?{group:g}:b?{bid:b.id}:{pid:p.id,part:p};
+  let seller,from,carrier,price,ship,eta,track,sub,priceLabel="",hint="";
+  $("or-items-wrap").hidden=!g;$("or-price").closest(".field").hidden=!!g;
+  if(g){
+    const ps=g.items,d0=((ps.find(x=>x.delivery&&(x.delivery.from||x.delivery.carrier))||{}).delivery)||{};
+    seller=g.name;from=d0.from||cityOf(seller);carrier=d0.carrier||"";price=0;ship=0;eta=d0.eta||"";track=d0.track||"";
+    $("orTitle").textContent=seller?`Заказ у продавца «${seller}»`:"Заказ выбранных деталей";
+    sub=`Все детали группы станут «Заказано»: ${ps.map(x=>x.name).join(", ")}.`;
+    $("or-items").innerHTML=ps.map(x=>{const v=Math.round(unitPrice(x)||num((bestOffer(x)||{}).price));
+      return `<label class="or-item"><span>${esc(x.name)}${x.side?` · ${esc(x.side)}`:""}${qtyOf(x)>1?` · ${qtyOf(x)} шт., цена за шт.`:""}</span><input type="number" min="0" step="1" inputmode="numeric" data-oprice="${esc(x.id)}" value="${v>0?v:""}" placeholder="0" aria-label="Цена: ${esc(x.name)}"></label>`}).join("");
+  }else if(b){
+    const d=b.delivery||{},ms=(b.parts||[]).map(partById).filter(Boolean);
+    seller=b.seller||"";from=d.from||cityOf(b.seller);carrier=d.carrier||"";price=bundleTotalOf(b);ship=num(b.ship);eta=d.eta||"";track=d.track||"";
+    $("orTitle").textContent=`Заказ комплекта «${b.name||b.seller||"комплект"}»`;
+    sub=`Все детали комплекта станут «Заказано»: ${ms.map(x=>x.name).join(", ")}.`;priceLabel="Окончательная цена комплекта, ₽";
+  }else{
+    const d=p.delivery||{},pk=pickedOf(p),bo=bestOffer(p);
+    seller=p.supplier||(pk&&pk.seller)||"";from=d.from||cityOf(seller);carrier=d.carrier||"";
+    price=unitPrice(p)||(bo?num(bo.price):0);ship=num(d.cost)||num(pk&&pk.ship);eta=d.eta||"";track=d.track||"";
+    $("orTitle").textContent="Оформить заказ";
+    sub=`${p.name}${p.side?` · ${p.side==="Л"?"левая":"правая"}`:""}${p.oem?` · ${normOem(p.oem)}`:""}`;
+    priceLabel=qtyOf(p)>1?"Окончательная цена за шт., ₽":"Окончательная цена, ₽";
+    if(pk&&num(pk.price))hint=`выбранный вариант: ${rub(num(pk.price))}`;else if(bo)hint=`лучший вариант: ${rub(num(bo.price))}`;
+  }
+  $("orSub").textContent=sub;$("or-price-l").innerHTML=esc(priceLabel)+' <span class="req">*</span>';$("or-price-h").textContent=hint;
+  $("or-seller").value=seller;$("or-from").value=from;$("or-carrier").value=carrier;$("or-price").value=price>0?Math.round(price):"";
+  $("or-ship").value=ship>0?ship:"";$("or-eta").value=eta;$("or-track").value=track;
+  $("or-badge").innerHTML=carrier?carrierBadge(carrier):"";
+  of_.querySelectorAll(".field.invalid").forEach(x=>x.classList.remove("invalid"));$("orErr").hidden=true;
+  $("orderDialog").showModal();
+  const first=(g?["or-seller","or-from","or-carrier"]:["or-seller","or-from","or-carrier","or-price"]).find(id=>!$(id).value.trim());$(first||"or-carrier").focus();
+}
+$("or-carrier").addEventListener("input",e=>{const v=e.target.value.trim();$("or-badge").innerHTML=v?carrierBadge(v):""});
+of_.addEventListener("input",e=>{const f=e.target.closest(".field");if(f&&e.target.value.trim())f.classList.remove("invalid")});
+of_.addEventListener("submit",async e=>{
+  e.preventDefault();if(!ORD)return;
+  const req=[["or-seller","продавца"],["or-from","откуда едет"],["or-carrier","транспортную компанию"]].concat(ORD.group?[]:[["or-price","окончательную цену"]]);
+  const bad=req.filter(([id])=>id==="or-price"?!(num($(id).value)>0):!$(id).value.trim());
+  of_.querySelectorAll(".field").forEach(x=>x.classList.remove("invalid"));
+  const items=ORD.group?[...$("or-items").querySelectorAll("input[data-oprice]")]:[];
+  items.forEach(i=>i.classList.toggle("bad",!(num(i.value)>0)));
+  if(items.some(i=>!(num(i.value)>0)))bad.push(["","цены всех деталей"]);
+  if(bad.length){bad.filter(([id])=>id).forEach(([id])=>$(id).closest(".field").classList.add("invalid"));showErr("orErr","Укажите "+bad.map(x=>x[1]).join(", "));const f0=bad.find(([id])=>id);(f0?$(f0[0]):items.find(i=>!(num(i.value)>0))).focus();return}
+  const seller=$("or-seller").value.trim(),from=$("or-from").value.trim(),carrier=$("or-carrier").value.trim(),price=Math.round(num($("or-price").value));
+  const ship=Math.max(0,Math.round(num($("or-ship").value))),eta=$("or-eta").value,track=$("or-track").value.trim();
+  const msg=`Заказано: ${carrier}${eta?", ждём "+fmtDate(eta):""}`;
+  const btn=$("orSave");btn.disabled=true;
+  let ok;
+  if(ORD.group){
+    ok=await guarded(async()=>{let i=0;
+      for(const inp of items){const p=partById(inp.dataset.oprice);if(!p)continue;
+        await updPart(p.id,{status:"ordered",supplier:seller,price:Math.round(num(inp.value)),delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:i===0?ship:0}});i++}
+    },`${msg} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}`);
+  }else if(ORD.bid){const b=bundleById(ORD.bid);if(!b){btn.disabled=false;return}
+    ok=await guarded(async()=>{
+      const nb={...b,seller,total:price,ship,delivery:{carrier,from,track,eta}};
+      await updBundle(b.id,{seller,total:price,ship,delivery:nb.delivery,picked:true});
+      await applyBundle(nb);
+      for(const id of (b.parts||[])){const p=partById(id);if(p&&p.status!=="ordered"&&TODO.has(p.status))await updPart(id,{status:"ordered"})}
+    },msg);
+  }else{
+    const p=partById(ORD.pid)||ORD.part;
+    ok=await guarded(()=>updPart(p.id,{status:"ordered",supplier:seller,price,delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:ship}}),msg);
+  }
+  btn.disabled=false;
+  if(ok){$("orderDialog").close();ORD=null}
+});
+
+/* bundle dialog */
+const bf=$("bundleForm");
+function openBundle(b){
+  if(!canEdit())return;
+  const carId=b?b.car:(S.carId!==ALL?S.carId:null);
+  if(!carId){toast("Сначала выберите машину сверху");return}
+  S.editingBundle=b||null;
+  const parts=S.parts.filter(p=>p.car===carId&&p.status!=="installed"&&p.status!=="returned"||(b&&(b.parts||[]).includes(p.id)))
+    .sort((x,y)=>String(x.unit||"").localeCompare(String(y.unit||""),"ru")||String(x.name).localeCompare(String(y.name),"ru"));
+  const sel=new Set(b?b.parts||[]:[]);
+  const prs=(b&&b.prices)||{};
+  $("b-parts").innerHTML=parts.length?parts.map(p=>{const sv=separateOf(p),on=sel.has(p.id),id=esc(p.id);
+    return `<div class="cl-row"><label class="cl-name"><input type="checkbox" value="${id}"${on?" checked":""}> <span>${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</span></label><span class="bp">${sv?"отдельно "+rub(sv):"нет цены"}</span><input class="cl-price" type="number" min="0" step="1" inputmode="numeric" placeholder="цена, ₽" data-for="${id}" value="${num(prs[p.id])>0?num(prs[p.id]):""}"${on?"":" disabled"} aria-label="Цена в комплекте: ${esc(p.name)}"></div>`}).join("")
+    :`<span class="small" style="padding:6px">У этой машины пока нет деталей для комплекта.</span>`;
+  const v=b||{},dv=v.delivery||{};
+  $("b-name").value=v.name||"";
+  $("b-seller").value=v.seller||"";$("b-total").value=num(v.total)>0?num(v.total):"";$("b-cond").value=v.cond||"";$("b-ship").value=num(v.ship)>0?num(v.ship):"";
+  $("b-days").value=v.days||"";$("b-contact").value=v.contact||"";$("b-link").value=v.link||"";$("b-note").value=v.note||"";
+  $("b-carrier").value=dv.carrier||"";$("b-from").value=dv.from||"";$("b-track").value=dv.track||"";$("b-eta").value=dv.eta||"";
+  bf.dataset.car=carId;
+  const s0=priceSum();bf.dataset.auto=num(v.total)===s0&&s0>0?String(s0):(num(v.total)?"":"0");$("b-sum").textContent=s0?"сумма по деталям "+rub(s0):"";
+  $("bdTitle").textContent=b?(b.name||"Комплект"):"Комплект у одного продавца";
+  $("bdErr").hidden=true;$("bdDelete").hidden=!b;$("bdDelete").textContent="Удалить";$("bdDelete").dataset.armed="";
+  $("bundleDialog").showModal();$("b-name").focus();
+}
+function priceSum(){return [...$("b-parts").querySelectorAll("input.cl-price:not([disabled])")].reduce((s,i)=>s+Math.max(0,Math.round(num(i.value))),0)}
+function syncTotal(){
+  const s=priceSum(),t=$("b-total"),auto=bf.dataset.auto;
+  if(t.value===""||auto==="0"||String(Math.round(num(t.value)))===auto){t.value=s||"";bf.dataset.auto=String(s)}
+  $("b-sum").textContent=s?"сумма по деталям "+rub(s):"";
+}
+$("b-parts").addEventListener("change",e=>{const cb=e.target.closest('input[type="checkbox"]');if(!cb)return;
+  const pi=$("b-parts").querySelector(`input.cl-price[data-for="${CSS.escape(cb.value)}"]`);if(pi){pi.disabled=!cb.checked;if(cb.checked&&!pi.value)pi.focus()}syncTotal()});
+$("b-parts").addEventListener("input",e=>{if(e.target.matches("input.cl-price"))syncTotal()});
+$("b-total").addEventListener("input",()=>{bf.dataset.auto=""});
+bf.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const ids=[...$("b-parts").querySelectorAll("input:checked")].map(i=>i.value);
+  const name=$("b-name").value.trim(),seller=$("b-seller").value.trim();
+  const prices={};ids.forEach(id=>{const i=$("b-parts").querySelector(`input.cl-price[data-for="${CSS.escape(id)}"]`);const v=i?Math.max(0,Math.round(num(i.value))):0;if(v)prices[id]=v});
+  const total=Math.max(0,Math.round(num($("b-total").value)))||Object.values(prices).reduce((s,v)=>s+v,0);
+  if(!name&&!seller){showErr("bdErr","Впишите название или продавца");$("b-name").focus();return}
+  if(ids.length<2){showErr("bdErr","Отметьте минимум две детали");return}
+  if(!total){showErr("bdErr","Впишите цены деталей или общую цену комплекта");return}
+  const now=nowIso(),old=S.editingBundle;
+  const data={car:bf.dataset.car,name,seller,total,prices,cond:$("b-cond").value,ship:Math.max(0,Math.round(num($("b-ship").value))),days:$("b-days").value.trim(),
+    contact:$("b-contact").value.trim(),link:fixUrl($("b-link").value),note:$("b-note").value.trim(),parts:ids,
+    delivery:{carrier:$("b-carrier").value.trim(),from:$("b-from").value.trim(),track:$("b-track").value.trim(),eta:$("b-eta").value},updated:now};
+  const btn=$("bdSave");btn.disabled=true;
+  const ok=await guarded(async()=>{
+    let nb;
+    if(old){await S.db.doc("bundles/"+old.id).set({...data,picked:!!old.picked,created:old.created||now});nb={...old,...data,id:old.id};
+      if(old.picked)await applyBundle(nb)}
+    else{const ref=await S.db.collection("bundles").add({...data,picked:false,created:now});nb={...data,picked:false,id:ref.id}}
+  },old?"Комплект сохранён":"Комплект добавлен");
+  btn.disabled=false;
+  if(ok){$("bundleDialog").close();if(!S.bundlesOpen){S.bundlesOpen=true;store("rimonta.bopen","1");renderBundles()}}
+});
+$("bdDelete").addEventListener("click",async e=>{
+  const btn=e.currentTarget,b=S.editingBundle;if(!b)return;
+  if(!btn.dataset.armed){btn.dataset.armed="1";btn.textContent="Точно удалить?";return}
+  const ok=await guarded(async()=>{if(b.picked)await releaseBundle(b);await S.db.doc("bundles/"+b.id).delete()},"Комплект удалён");
+  if(ok)$("bundleDialog").close();
+});
+
+/* owner summary — formatted the way the user writes it for car owners */
+function ownerText(o){
+  const M=n=>o.th?tys(n):rub(n);
+  const cars=S.carId===ALL?S.cars:[carById(S.carId)].filter(Boolean);
+  const byCreated=(a,b)=>String(a.created||"").localeCompare(String(b.created||""));
+  const nm=p=>cap(p.name)+(qtyOf(p)>1?` (${qtyOf(p)} шт)`:"");
+  const cmt=x=>[o.sellers&&x.seller,x.cond&&COND[x.cond]?COND[x.cond].toLowerCase():"",x.warranty===true?"даёт гарантию":x.warranty===false?"не даёт гарантию":"",num(x.ship)?"доставка "+M(num(x.ship)):"",x.days,x.note].filter(Boolean).join(", ");
+  const partBlock=p=>{
+    const offers=visibleOffers(p).filter(x=>num(x.price)>0).sort((a,b)=>offerTotal(p,a)-offerTotal(p,b)),pk=pickedOf(p),own=!pk&&num(p.price)>0;
+    if(!pk&&!own&&offers.length>1)return [nm(p)+":",...offers.map(x=>{const c=cmt(x);return `${M(offerTotal(p,x))}${c?` — ${c}`:""}`})];
+    const price=unitPrice(p)>0?partCost(p):offers[0]?offerTotal(p,offers[0]):0;
+    const src=pk?cmt(pk):own?(o.sellers&&p.supplier?p.supplier:""):offers.length===1?cmt(offers[0]):"";
+    const extra=[src,p.note].filter(Boolean).join("; ");
+    return [`${nm(p)} — ${price?M(price):"цена уточняется"}${extra?` (${extra})`:""}`];
+  };
+  const bundleBlock=b=>{
+    const c=compareBundle(b),pr=b.prices||{},title=cap(b.name||"Комплект");
+    const head=[o.sellers&&b.seller?b.seller:"",b.note].filter(Boolean).join(", ");
+    const out=[`${title} (все у одного продавца${head?`, ${head}`:""})${b.picked?" — берём":""}:`];
+    c.members.forEach(p=>out.push(`* ${nm(p)} — ${num(pr[p.id])>0?M(num(pr[p.id])):"—"}`));
+    if(bundleShip(b))out.push(`* Доставка — ${M(bundleShip(b))}`);
+    out.push(`* Итого: ${M(c.bundleTotal)}`);
+    out.push(`${title} (у разных продавцов):`);
+    c.members.forEach(p=>{const x=c.best[p.id];out.push(`* ${nm(p)} — ${x?M(x.total):"нет цены"}${o.sellers&&x&&x.seller?` (${x.seller})`:""}`)});
+    if(c.ship)out.push(`* Доставка — ${M(c.ship)}`);
+    out.push(`* Итого: ${c.separate?M(c.separate):"—"}${c.missing.length&&c.separate?" (не по всем деталям)":""}`);
+    return out;
+  };
+  const res=[];
+  for(const car of cars){
+    const parts=S.parts.filter(p=>p.car===car.id).sort(byCreated),bundles=S.bundles.filter(b=>b.car===car.id);
+    if(!parts.length)continue;
+    const todo=parts.filter(p=>TODO.has(p.status)),todoIds=new Set(todo.map(p=>p.id));
+    const liveB=bundles.filter(b=>(b.parts||[]).some(id=>todoIds.has(id)));
+    const inB=new Set(liveB.flatMap(b=>b.parts||[]));
+    const items=[...todo.filter(p=>!inB.has(p.id)).map(p=>({t:p.created,lines:partBlock(p)})),...liveB.map(b=>({t:b.created,lines:bundleBlock(b)}))].sort((a,b)=>String(a.t||"").localeCompare(String(b.t||"")));
+    if(cars.length>1||o.bought)res.push(`${car.name} — что нужно заказать:`,"");
+    let prevMulti=false;
+    items.forEach((it,i)=>{const multi=it.lines.length>1;if(i>0&&(multi||prevMulti))res.push("");res.push(...it.lines);prevMulti=multi});
+    if(!items.length)res.push("Заказывать больше нечего.");
+    if(o.bought){
+      const secs=[["Заказано, в пути",["ordered"]],["Пришло, ждёт установки",["arrived"]],["Установлено",["installed"]]];
+      for(const [title,sts] of secs){const ps=parts.filter(p=>sts.includes(p.status));if(!ps.length)continue;
+        res.push("",title+":");
+        ps.forEach(p=>{const d=deliveryOf(p),ab=activeBundle(p);
+          const bits=[unitPrice(p)>0?M(partCost(p)):"",ab?`в комплекте «${ab.name||ab.seller||"комплект"}»`:"",p.status==="ordered"?[d.carrier,d.eta?"ожидаем "+fmtDate(d.eta):""].filter(Boolean).join(", "):"",ARRIVED.has(p.status)&&p.arrivedAt?"приехало "+fmtDate(p.arrivedAt):""].filter(Boolean);
+          res.push(`* ${nm(p)}${bits.length?" — "+bits.join(", "):""}`)})}
+      const t=totals(parts,bundles);res.push("",`Потрачено: ${M(t.spent)}`);
+    }
+    res.push("");
+  }
+  return res.join("\n").trim()||"Деталей пока нет.";
+}
+const ownerOpts=()=>({th:$("od-th").checked,sellers:$("od-sellers").checked,bought:$("od-bought").checked});
+function openOwner(){
+  $("od-th").checked=load("rimonta.ownerTh")!=="0";$("od-sellers").checked=load("rimonta.ownerSellers")==="1";$("od-bought").checked=load("rimonta.ownerBought")==="1";
+  $("od-text").value=ownerText(ownerOpts());$("ownerDialog").showModal();
+}
+[["od-th","rimonta.ownerTh"],["od-sellers","rimonta.ownerSellers"],["od-bought","rimonta.ownerBought"]].forEach(([id,k])=>$(id).addEventListener("change",e=>{store(k,e.target.checked?"1":"0");$("od-text").value=ownerText(ownerOpts())}));
+$("od-copy").addEventListener("click",()=>{const ta=$("od-text");const text=ta.value;
+  try{navigator.clipboard.writeText(text).then(()=>toast("Сводка скопирована"),()=>{ta.focus();ta.select();toast("Выделил текст: скопируйте вручную")})}catch(e){ta.focus();ta.select();toast("Выделил текст: скопируйте вручную")}});
+
+/* car dialog */
+const cf=$("carForm");
+function openCar(){cf.reset();$("cdErr").hidden=true;$("carDialog").showModal();$("c-name").focus()}
+cf.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=$("c-name").value.trim();if(!name){showErr("cdErr","Впишите название машины");return}
+  const vin=$("c-vin").value.replace(/\s/g,"").toUpperCase();
+  if(vin&&vin.length!==17){showErr("cdErr","В VIN 17 символов, сейчас "+vin.length);return}
+  const btn=$("cdSave");btn.disabled=true;
+  try{const ref=await S.db.collection("cars").add({name,vin,spec:$("c-spec").value.trim(),created:nowIso()});
+    S.carId=ref.id;store("rimonta.car",S.carId);$("carDialog").close();toast("Машина добавлена")}
+  catch(err){showErr("cdErr",err&&err.code==="invalid_argument"?"Нет прав на изменение списка":"Не сохранилось, попробуйте ещё раз")}
+  finally{btn.disabled=false}
+});
+
+render();
+
+(()=>{
+  const ghRefresh=()=>{
+    if(DRAG.el){setTimeout(ghSchedule,300);return}
+    const a=document.activeElement,typing=a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName);
+    const inOffer=typing&&a.closest("[data-oform]"),inPlan=typing&&a.closest("#plan"),inDate=typing&&a.type==="date"&&a.closest("#groups");
+    renderCars();renderSummary();renderToolbar();if(!inOffer&&!inDate)renderGroups();renderBundles();if(!inPlan)renderPlan();$("addPartBtn").hidden=!canEdit();
+  };
+  let rq=0;const ghSchedule=()=>{bump();if(rq)return;rq=requestAnimationFrame(()=>{rq=0;ghRefresh()})};
+  const notice=t=>{const n=$("notice");n.textContent=t||"";n.hidden=!t};
+  const setup=mode=>{$("ghSetup").hidden=!mode;$("ghKeyBox").hidden=mode!=="key";$("ghImportBox").hidden=mode!=="import";$("ghFoot").hidden=mode==="key"&&!store};
+  const keyErr=t=>{const e=$("ghErr");e.textContent=t||"";e.hidden=!t};
+  const sync=t=>{$("ghSync").textContent=t};
+  const fmtAt=iso=>{try{return new Date(iso).toLocaleString("ru-RU",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}};
+  const plural=(n,a,b,c)=>{const m=n%10,h=n%100;return n+" "+(m===1&&h!==11?a:m>=2&&m<=4&&(h<10||h>=20)?b:c)};
+  const changes=n=>plural(n,"изменение","изменения","изменений");
+  let store=null,poll=0;
+
+  /* what the top line says depends on the connection and on edits still waiting on this device */
+  function onStatus(st){
+    const n=store?store.outbox():0,wait=n?` Не отправлено: ${changes(n)}.`:"";
+    if(st==="ok"||st==="saving"){notice("");if(st==="ok"&&$("ghKeyBox").hidden===false)setup(null);if(!$("ghImportBox").hidden&&st==="ok")setup(null);sync(n?"отправляю "+changes(n)+"…":"сохранено")}
+    else if(st==="offline"){const at=store&&store.cachedAt();sync(n?"не отправлено: "+changes(n):"нет связи");
+      notice(store&&store.isLoaded()?`Нет интернета${at?", данные от "+fmtAt(at):""}. Правки сохраняются на этом устройстве и отправятся сами, когда появится связь.${wait}`:"Нет интернета, а сохранённой копии на этом устройстве ещё нет.")}
+    else if(st==="auth"){setup("key");keyErr("Ключ не подходит или его срок истёк. Создайте новый на GitHub и вставьте сюда."+(n?` ${changes(n)} ждут на этом устройстве и отправятся после ввода ключа.`:""));sync(n?"не отправлено: "+changes(n):"нет доступа")}
+    else if(st==="norepo"||st==="nowrite"){setup("key");keyErr(`Ключ не даёт права записи в ${GH.owner}/${GH.repo}. При создании ключа выберите этот репозиторий и право Contents: Read and write.`+(n?` ${changes(n)} ждут на этом устройстве.`:""));sync(n?"не отправлено: "+changes(n):"нет доступа")}
+    else if(st==="missing"){setup("import")}
+    else if(st==="broken")notice("Файл db.json в репозитории повреждён. Откройте историю изменений на GitHub и верните прошлую версию.");
+    else{sync(n?"не отправлено: "+changes(n):"нет связи с GitHub");notice("GitHub сейчас не отвечает."+(n?` ${changes(n)} сохранены на этом устройстве и отправятся сами.`:" Обновите страницу чуть позже."))}
+    $("ghDrop").hidden=!n||st==="ok"||st==="saving";
+  }
+
+  /* report of edits made without internet: stays on screen until "Понятно", even after reopening */
+  const REP="rimonta.report";
+  function readRep(){try{return JSON.parse(lsGet(REP)||"null")}catch(e){return null}}
+  function onReport(r){
+    const old=readRep()||{sent:[],failed:[]};
+    const rep={at:r.at,sent:[...old.sent,...r.sent],failed:[...old.failed,...r.failed]};
+    lsSet(REP,JSON.stringify(rep));drawRep();
+    toast(r.failed.length?"Часть правок без интернета не внеслась — подробности сверху":"Правки, сделанные без интернета, внесены");
+  }
+  function drawRep(){
+    const r=readRep(),el=$("ghReport");
+    if(!r||!r.sent.length&&!r.failed.length){el.hidden=true;el.innerHTML="";return}
+    const li=x=>`<li>${esc(x.label)}<small>${esc(fmtAt(x.at))}${x.why?" · "+esc(x.why):""}</small></li>`;
+    el.className="gh-report"+(r.failed.length?" bad":"");
+    el.innerHTML=`${r.sent.length?`<p><b>✓ Внесены правки, сделанные без интернета: ${r.sent.length}</b> · отправлены ${esc(fmtAt(r.at))}</p><ul>${r.sent.map(li).join("")}</ul>`:""}
+      ${r.failed.length?`<p><b>✕ Не внесены: ${r.failed.length}</b></p><ul>${r.failed.map(li).join("")}</ul>`:""}
+      <button class="btn sm" type="button" id="ghRepOk">Понятно</button>`;
+    el.hidden=false;
+    $("ghRepOk").onclick=()=>{lsSet(REP,"");drawRep()};
+  }
+
+  async function connect(){
+    store=makeGhStore(onStatus,onReport);
+    S.db=store.db;S.assets=store.assets;S.canWrite=true;
+    store.db.collection("cars").onSnapshot(s=>{S.cars=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.created||"").localeCompare(String(b.created||"")));S.carsLoaded=true;ghSchedule()});
+    store.db.collection("parts").onSnapshot(s=>{S.parts=s.docs.map(d=>({id:d.id,...d.data()}));S.partsLoaded=true;ghSchedule()});
+    store.db.collection("bundles").onSnapshot(s=>{S.bundles=s.docs.map(d=>({id:d.id,...d.data()}));ghSchedule()});
+    render();
+    await store.start();
+    clearInterval(poll);
+    poll=setInterval(()=>{if(document.visibilityState==="visible"&&!store.busy())store.pull();else if(store.outbox()&&navigator.onLine!==false)store.retry()},20000);
+  }
+  const wake=()=>{if(!store)return;if(store.outbox())store.retry();else store.pull()};
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")wake()});
+  window.addEventListener("online",wake);
+
+  $("ghForm").addEventListener("submit",async e=>{
+    e.preventDefault();const t=$("ghToken").value.trim();
+    if(!/^(github_pat_|ghp_)\w{20,}$/.test(t)){keyErr("Это не похоже на ключ GitHub: он начинается с github_pat_");return}
+    const btn=e.target.querySelector("button");btn.disabled=true;keyErr("");
+    try{const r=await gh(`/repos/${GH.owner}/${GH.repo}`,{},t);
+      if(r.status===401)keyErr("Ключ не подходит или его срок истёк.");
+      else if(!r.ok)keyErr(`Ключ не даёт доступа к ${GH.owner}/${GH.repo}. При создании ключа выберите этот репозиторий и право Contents: Read and write.`);
+      else{lsSet("rimonta.ghtoken",t);$("ghToken").value="";setup(null);if(store)store.retry();else await connect()}}
+    catch(err){keyErr("Нет связи с GitHub. Проверьте интернет.")}
+    finally{btn.disabled=false}
+  });
+  $("ghDrop").addEventListener("click",()=>{
+    const n=store?store.outbox():0;if(!n)return;
+    if(!confirm(`Отменить ${changes(n)}, которые ещё не отправлены? На GitHub останется как было.`))return;
+    store.dropOutbox();toast("Неотправленные правки отменены");
+  });
+  $("ghLogout").addEventListener("click",()=>{
+    const n=store?store.outbox():0;
+    if(!confirm((n?`На этом устройстве ${changes(n)} ещё не отправлены — они пропадут.\n\n`:"")+"Убрать ключ GitHub с этого устройства? Данные на GitHub останутся, ключ нужно будет вставить заново."))return;
+    ["rimonta.ghtoken","rimonta.cache","rimonta.outbox",REP].forEach(k=>lsSet(k,""));try{caches.delete("rimonta-photos")}catch(e){}
+    location.reload();
+  });
+
+  const impMsg=(t,bad)=>{const e=$("ghImpMsg");e.textContent=t||"";e.hidden=!t;e.classList.toggle("bad",!!bad)};
+  async function importDb(db,photos){
+    const ids=Object.keys(photos||{});
+    for(let i=0;i<ids.length;i++){impMsg(`Загружаю фото ${i+1} из ${ids.length}…`);await store.putFile("photos/"+ids[i],photos[ids[i]].b64,"Фото "+ids[i])}
+    impMsg("Сохраняю детали…");
+    await store.putFile(GH.file,textToB64(JSON.stringify({cars:db.cars||{},parts:db.parts||{},bundles:db.bundles||{}},null,1)),"Перенос данных из трекера в Claude");
+    impMsg("");const st=await store.pull(true);if(st==="ok")toast("Данные перенесены");
+  }
+  $("ghImport").addEventListener("change",async e=>{
+    const f=e.target.files[0];e.target.value="";if(!f)return;
+    let j;try{j=JSON.parse(await f.text())}catch(err){impMsg("Файл не читается. Нужен rimonta-backup.json",true);return}
+    if(!j||!j.db||!j.db.parts){impMsg("В файле нет деталей. Нужен rimonta-backup.json",true);return}
+    try{await importDb(j.db,j.photos)}catch(err){impMsg(err&&err.code==="offline"?"Нет интернета, попробуйте ещё раз":"Не получилось сохранить на GitHub, попробуйте ещё раз",true)}
+  });
+  $("ghEmpty").addEventListener("click",async()=>{
+    try{await importDb({},{})}catch(err){impMsg("Не получилось создать базу, попробуйте ещё раз",true)}
+  });
+
+  drawRep();
+  if(ghToken())connect();else setup("key");
+})();
+</script>
+
