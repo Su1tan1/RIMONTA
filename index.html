@@ -302,6 +302,12 @@ tr.dragging td{background:var(--accent-soft)}
 .pl-bar input{flex:1 1 180px;min-width:0;border:1px solid var(--line);background:var(--sunken);border-radius:9px;padding:7px 10px}
 .pl-cnt{font-weight:600;font-size:14px}
 .or-items{display:flex;flex-direction:column;gap:6px}
+.ar-box{background:var(--sunken);border-radius:10px;padding:10px 14px}
+.ar-list{margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:3px;font-size:14px}
+.ar-list small{color:var(--muted)}
+.ar-text{margin:0;font-size:14px;line-height:1.45}
+.ob-all{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.ob-all .status{width:auto;padding:5px 24px 5px 10px;font-size:12.5px}
 .or-item{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:8px;align-items:center;font-size:14px;color:var(--ink)!important;text-transform:none!important;letter-spacing:0!important;font-weight:500!important}
 .or-item input.bad{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
 .row{transition:background-color .4s,box-shadow .4s;scroll-margin-top:16px}
@@ -492,6 +498,107 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
 @media (max-width:480px){.grid,.fs{grid-template-columns:1fr}.o-form{grid-template-columns:1fr}.o-form .span2{grid-column:auto}
   .cl-row{grid-template-columns:minmax(0,1fr) 96px;grid-template-areas:"name price" "bp price"}.cl-name{grid-area:name}.cl-row .bp{grid-area:bp;padding-left:28px}.cl-row .cl-price{grid-area:price}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.inst{font-size:12.5px;color:var(--muted)}
+.m-thead{display:none}
+/* ---------- phone: notes-like cards, every table becomes a list, nothing scrolls sideways ---------- */
+@media (max-width:640px){
+  .wrap{gap:14px}
+  .cars,.filters{flex-wrap:wrap;overflow:visible}
+  .filters .f-chip[aria-pressed="false"]:has(.n:empty),.filters .f-chip[aria-pressed="false"]:not([data-f="all"]):has(.n.z){display:none}
+  .view button{padding:7px 10px}
+  /* part card: name and price first, the rest underneath in plain lines */
+  /* flex, not grid: the status select must not narrow the column with the name */
+  .row{display:flex;flex-wrap:wrap;align-items:center;gap:3px 10px;padding:8px 12px 9px}
+  .row::before{content:"";order:3;flex:0 0 100%;height:0;margin-top:-3px}
+  .m-thead{display:flex;justify-content:space-between;gap:10px;padding:6px 12px 5px;border-top:1px solid var(--line);background:var(--sunken);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .p-main{display:contents}
+  .p-top{order:1;flex:1 1 0;min-width:0}
+  .p-name{font-size:15px;font-weight:650;line-height:1.3}
+  .p-meta{order:4;flex:1 1 0;min-width:0;font-size:12.5px;gap:2px 6px;line-height:1.35}
+  .p-note{order:7;flex:1 1 100%;font-size:12.5px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .oem{order:6;flex:1 1 100%;margin-top:-1px}
+  .oem code{font-size:12.5px}
+  .oem .icon-btn{padding:1px}
+  .oem:has(.none){display:none}
+  .oem .ro{display:none}
+  .oem code{font-size:13px;color:var(--muted)}
+  .price{order:2;flex:0 0 auto;text-align:right;font-size:15px;align-self:flex-start;padding-top:1px}
+  .price small{display:none}
+  .price small.keep{display:block;font-size:12.5px}
+  .st-cell{order:5;flex:0 0 auto;margin-left:auto}
+  /* status reads like a table cell: coloured text with a small arrow, no pill */
+  .st-cell .status,.ob-table td.ob-st .status{width:auto;font-size:12.5px;padding:2px 16px 2px 6px;border-radius:6px;background-color:transparent!important;background-position:right 3px center}
+  .st-cell .s-pill{font-size:12px;padding:2px 6px;background:none!important}
+  .chip-btn,.ph-chip,.fix-chip,.ship,.arr{font-size:12.5px}
+  .p-meta .ship{background:none;padding:0;color:var(--muted);font-weight:500}
+  .p-meta .ship.late{color:var(--danger);font-weight:600}
+  .p-meta .arr{background:none;padding:0}
+  .p-meta .unitname,.p-meta>span{white-space:normal}
+  .chip-btn:not(.has){border:0;padding:0;background:none}
+  .p-meta .arr{max-width:100%}
+  .p-meta .arr>span{white-space:nowrap}
+  .p-meta .arr input[type=date]{max-width:112px;font-size:12.5px}
+  .chip-btn.bundle{border:0;padding:0;background:none}
+  .num{min-width:16px;margin-right:4px}
+  .g-head{padding:12px 14px}
+  /* tables become lists */
+  .b-scroll{overflow:visible;background:none}
+  .b-table,.ob-table{min-width:0;display:block;background:none}
+  .b-table thead{display:none}
+  .b-table tbody,.b-table tfoot{display:block}
+  .b-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 12px;border-top:1px solid var(--line);background:var(--sunken)}
+  .b-table td{display:block;padding:0;border:0;white-space:normal;text-align:right}
+  .b-table td:empty{display:none}
+  .b-table td:first-child{text-align:left}
+  .b-table td small{display:inline;margin-left:4px}
+  .b-table td:first-child{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline}
+  .b-table td:first-child>:not(.num){grid-column:2}
+  .b-table td:first-child small{display:block;margin:1px 0 0}
+  .b-table tfoot tr{border-top:1.5px solid var(--muted)}
+  .b-table tfoot td:first-child{display:block}
+  .b-table tfoot td{border:0}
+  /* bundle card: part | bundle price, then "separately" and the difference */
+  .b-table:not(.ob-table):not(.pl-table) td:nth-child(3){text-align:left;color:var(--muted);font-size:12.5px}
+  .b-table:not(.ob-table):not(.pl-table) td:nth-child(3)::before{content:"отдельно "}
+  .b-table:not(.ob-table):not(.pl-table) td:nth-child(4){font-size:12.5px}
+  /* ordered bundle: part | price, then number | status, then arrival */
+  .ob-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n p" "n st" "oem oem" "arr arr";align-items:start;gap:1px 10px;padding:7px 12px 8px;background:var(--surface)}
+  .ob-table td.ob-n .linkish{font-weight:600}
+  .ob-all .status{background-color:transparent!important;padding:2px 16px 2px 6px;background-position:right 3px center}
+  .ob-table td.ob-n{grid-area:n}.ob-table td.ob-p{grid-area:p;font-weight:600}
+  .ob-table td.ob-oem{grid-area:oem;text-align:left;padding-left:20px;color:var(--muted)}
+  .ob-table td.ob-oem:has(.na){display:none}
+  .ob-table td.ob-arr{grid-area:arr;width:auto;text-align:left;padding-left:20px}
+  .ob-table td.ob-st{grid-area:st;width:auto}
+  .ob-table td.ob-st .status{width:auto}
+  .ob-table tfoot tr{background:var(--surface)}
+  .ob-table tfoot td:first-child{grid-column:1}
+  .ob{padding:12px 14px 14px}
+  .ob-head{flex-direction:column;align-items:stretch}
+  .ob-act{margin-left:0}
+  .ob-sum{margin-right:auto}
+  /* order summary: part | price, seller | order button, best elsewhere | difference */
+  .pl-table tbody tr:not(.pl-sec){grid-template-areas:"n p" "s act" "alt d";background:var(--surface)}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(1){grid-area:n}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(2){grid-area:s;text-align:left;max-width:none;font-size:13px}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(3){grid-area:p;font-weight:600}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(4){grid-area:alt;text-align:left;color:var(--muted);font-size:12.5px}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(4):not(.na)::before{content:"у других "}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(4).na{display:none}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(5){grid-area:d;font-size:12.5px;align-self:end}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(5).na{display:none}
+  .pl-table tbody tr:not(.pl-sec) td:nth-child(6){grid-area:act;align-self:center}
+  .pl-table .pl-sec{display:block;padding:0;border:0;background:none}
+  .pl-table .pl-sec td{display:block;padding:12px 2px 8px;text-align:left;border:0!important;background:none}
+  .pl-table tr.pl-newseller{border-top:2px solid var(--muted)}
+  .pl-table tr.pl-newseller td{border:0}
+  .pl-table .pl-pick{max-width:none}
+  .pl-table tfoot tr{background:var(--surface)}
+  .pl-table tfoot tr.pl-grand{border-top:2px solid var(--ink)}
+  .pl-table tfoot tr.pl-grand td{border:0}
+  .plan-card{padding:12px}
+  .b-top,.b-foot{flex-wrap:wrap}
+}
 </style>
 
 <div class="wrap">
@@ -737,6 +844,26 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
     <div class="d-foot"><span class="small"><span class="req" style="color:var(--danger)">*</span> обязательно</span><div class="right">
       <button type="button" class="btn" data-close>Отмена</button>
       <button type="submit" class="btn primary" id="orSave">Заказано</button>
+    </div></div>
+  </form>
+</dialog>
+<dialog id="arriveDialog" aria-labelledby="arTitle">
+  <form class="d-form" id="arriveForm" method="dialog" novalidate>
+    <div class="d-head">
+      <h2 id="arTitle">Всё пришло?</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <p class="small" id="arSub" style="margin:0"></p>
+    <div class="ar-box"><span class="lbl" id="arListL">Проверьте, что пришли все детали:</span><ol class="ar-list" id="arList"></ol></div>
+    <p class="ar-text" id="arText" hidden></p>
+    <div class="grid" id="arGrid">
+      <div class="field"><label for="ar-date" id="ar-date-l">Дата прихода <span class="req">*</span></label><input id="ar-date" type="date"></div>
+      <div class="field" id="ar-ship-f"><label for="ar-ship">Сумма за доставку, ₽ <span class="req">*</span></label><input id="ar-ship" type="number" min="0" step="1" inputmode="numeric" placeholder="сколько заплатили"><span class="hint" id="ar-ship-h"></span></div>
+    </div>
+    <div class="err" id="arErr" hidden></div>
+    <div class="d-foot"><span class="small"><span class="req" style="color:var(--danger)">*</span> обязательно</span><div class="right">
+      <button type="button" class="btn" data-close>Отмена</button>
+      <button type="submit" class="btn good" id="arSave">Да, всё пришло</button>
     </div></div>
   </form>
 </dialog>
@@ -1224,7 +1351,7 @@ function renderSummary(){
 function renderToolbar(){
   const parts=scopeParts();const c=Object.fromEntries(STATUSES.map(s=>[s.id,0]));parts.forEach(p=>c[p.status]=(c[p.status]||0)+1);
   $("filters").innerHTML=[`<button class="f-chip" type="button" data-f="all" aria-pressed="${S.filter==="all"}">Все<span class="n">${parts.length}</span></button>`]
-    .concat(STATUSES.map(s=>`<button class="f-chip" type="button" data-f="${s.id}" aria-pressed="${S.filter===s.id}">${s.label}<span class="n">${c[s.id]}</span></button>`)).join("");
+    .concat(STATUSES.map(s=>`<button class="f-chip" type="button" data-f="${s.id}" aria-pressed="${S.filter===s.id}">${s.label}<span class="n${c[s.id]?"":" z"}">${c[s.id]}</span></button>`)).join("");
   $("v-status").setAttribute("aria-pressed",S.groupBy==="status");$("v-unit").setAttribute("aria-pressed",S.groupBy==="unit");
 }
 
@@ -1234,7 +1361,7 @@ function priceCell(p){
     return `${rub(up*qty+sh)}<small>${lbl}${sh?` · доставка ${rub(sh)}`:qty>1?` · ${qty} × ${rub(up)}`:""}</small>`}
   const b=bestOffer(p),n=visibleOffers(p).length;
   if(b)return `<span class="from">от</span> ${rub(offerTotal(p,b))}<small>${n} ${plural(n,"вариант","варианта","вариантов")}, не выбран</small>`;
-  return `<small>цены нет</small>`;
+  return `<small class="keep">цены нет</small>`;
 }
 
 function shipChip(p){
@@ -1253,6 +1380,7 @@ function rowHtml(p,n){
   if(qty>1)meta.push(`<span>${qty} шт.</span>`);
   const sc=shipChip(p);if(sc)meta.push(sc);
   if(ARRIVED.has(p.status))meta.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?`<span class="arr"><span>приехало ${esc(fmtDate(p.arrivedAt))}</span></span>`:"");
+  if(p.status==="installed"&&p.installedAt)meta.push(`<span class="inst">установлено ${esc(fmtDate(p.installedAt))}</span>`);
   if(ab)meta.push(`<button class="chip-btn bundle on" type="button" data-goto="${esc(ab.id)}">Комплект «${esc(ab.name||ab.seller||"комплект")}»${ab.seller&&ab.name?` · ${esc(ab.seller)}`:""}</button>`);
   else{
     if(SPENT.has(p.status)&&p.supplier)meta.push(`<span>${esc(p.supplier)}</span>`);
@@ -1260,7 +1388,7 @@ function rowHtml(p,n){
     else if(p.supplier)meta.push(`<span>${esc(p.supplier)}</span>`);
     if(inB.length){const b0=inB[0],bp=num((b0.prices||{})[p.id]);meta.push(`<button class="chip-btn bundle" type="button" data-goto="${esc(b0.id)}" title="Открыть комплект">${inB.length>1?`в ${inB.length} комплектах`:`комплект «${esc(b0.name||b0.seller||"комплект")}»${bp?` · ${rub(bp)}`:""}`}</button>`)}
   }
-  if(offers.length||canEdit())meta.push(offers.length
+  if(!SPENT.has(p.status)&&(offers.length||canEdit()))meta.push(offers.length
     ?`<button class="chip-btn has" type="button" data-offers="${esc(p.id)}" aria-expanded="${open}" title="${open?"Свернуть варианты":"Показать варианты"}">Варианты <span class="cnt">${offers.length}</span>${chev}</button>`
     :`<button class="chip-btn" type="button" data-offers="${esc(p.id)}" aria-expanded="${open}">+ вариант</button>`);
   const ownPh=photosOf(p);
@@ -1272,11 +1400,11 @@ function rowHtml(p,n){
     :`<span class="s-pill" data-st="${esc(p.status)}">${esc(ST_LABEL[p.status]||p.status)}</span>`;
   return `<div class="item" data-drag data-pid="${esc(p.id)}" data-unit="${esc(unitKey(p))}"><div class="row${p.status==="installed"?" done":""}" id="row-${esc(p.id)}">
     <div class="p-main"><div class="p-top">${numTag(n)}<button class="p-name" type="button" data-edit="${esc(p.id)}"><span class="t">${esc(p.name||"Без названия")}</span>${p.side?`<span class="side" title="${p.side==="Л"?"Левая":"Правая"} по ходу движения">${esc(p.side)}</span>`:""}</button></div><div class="p-meta">${meta.join("")}</div>${p.note?`<div class="p-note">${esc(p.note)}</div>`:""}</div>
-    <div class="oem">${oem?`<code>${esc(fmtOem(oem))}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер ${esc(oem)}">${copyIcon}</button>${/^[0-9A-Z]{11}$/.test(oem)?`<a class="icon-btn" href="https://www.realoem.com/bmw/enUS/partxref?q=${esc(oem)}" target="_blank" rel="noopener" aria-label="Открыть ${esc(oem)} на RealOEM" title="RealOEM: на какие модели идёт">${extIcon}</a>`:""}`:`<span class="none">номер не подобран</span>`}</div>
+    <div class="oem">${oem?`<code>${esc(fmtOem(oem))}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер ${esc(oem)}">${copyIcon}</button>${/^[0-9A-Z]{11}$/.test(oem)?`<a class="icon-btn ro" href="https://www.realoem.com/bmw/enUS/partxref?q=${esc(oem)}" target="_blank" rel="noopener" aria-label="Открыть ${esc(oem)} на RealOEM" title="RealOEM: на какие модели идёт">${extIcon}</a>`:""}`:`<span class="none">номер не подобран</span>`}</div>
     <div class="qty">×${qty}</div>
     <div class="price">${priceCell(p)}</div>
     <div class="st-cell">${status}</div>
-  </div>${open?offersHtml(p):""}</div>`;
+  </div>${open&&!SPENT.has(p.status)?offersHtml(p):""}</div>`;
 }
 
 function offerForm(p,e,oid){
@@ -1367,7 +1495,7 @@ function renderGroups(){
     const sum=rows.reduce((s,p)=>s+(TODO.has(p.status)?partEst(p):partCost(p)),0);
     const meta=`${rows.length} ${plural(rows.length,"деталь","детали","деталей")}${S.groupBy==="unit"&&open?` · ${open} не куплено`:""}${sum>0?` · ${S.groupBy==="status"&&TODO.has(st)?"≈ ":""}${rub(sum)}`:""}`;
     return `<section class="group"><button class="g-head" type="button" data-group="${esc(k)}" aria-expanded="${!collapsed}"><span class="g-left">${chev}<span class="g-title">${esc(g.title)}</span></span><span class="g-meta">${meta}</span></button>${collapsed?"":(()=>{const ob=S.groupBy==="status"&&!TODO.has(st)?orderedBlocks(rows,st):{html:"",rest:rows};
-      return ob.html+(ob.rest.length?`<div class="g-items" data-sortable="parts"${byUnit?' data-scope="unit"':""}>${ob.rest.map((p,i)=>rowHtml(p,i+1)).join("")}</div>`:"")})()}</section>`;
+      return ob.html+(ob.rest.length?`<div class="m-thead" aria-hidden="true"><span>Деталь</span><span>Цена · статус</span></div><div class="g-items" data-sortable="parts"${byUnit?' data-scope="unit"':""}>${ob.rest.map((p,i)=>rowHtml(p,i+1)).join("")}</div>`:"")})()}</section>`;
   }).join("");
 }
 
@@ -1410,7 +1538,8 @@ function bundleOrdered(b){const ms=(b.parts||[]).map(partById).filter(Boolean);r
 function bundleMissing(b){const d=b.delivery||{},m=[];if(!b.seller)m.push("продавец");if(!d.from)m.push("откуда");if(!d.carrier)m.push("ТК");if(!(bundleTotalOf(b)>0))m.push("цена");return m}
 const NEXT_ST={ordered:"arrived",arrived:"installed"};
 const ARRIVED=new Set(["arrived","installed"]);
-function statusPatch(p,status){const x={status};if(status==="arrived"&&!p.arrivedAt)x.arrivedAt=todayStr();else if(!ARRIVED.has(status)&&status!=="returned"&&p.arrivedAt)x.arrivedAt="";return x}
+function statusPatch(p,status){const x={status};if(status==="arrived"&&!p.arrivedAt)x.arrivedAt=todayStr();else if(!ARRIVED.has(status)&&status!=="returned"&&p.arrivedAt)x.arrivedAt="";
+  if(status==="installed"&&!p.installedAt)x.installedAt=todayStr();else if(status!=="installed"&&p.installedAt)x.installedAt="";return x}
 const arrInput=(attr,val,label)=>`<label class="arr"><span>${label||"приехало"}</span><input type="date" ${attr} value="${esc(val||"")}" max="${todayStr()}" aria-label="Дата прихода"></label>`;
 /* in «Заказано», «Пришло», «Установлено» parts bought as a bundle are shown as one table;
    seller, delivery and price are written once, on the bundle */
@@ -1424,10 +1553,10 @@ function orderedBlocks(rows,st){
     const ship=st==="ordered"&&(d.carrier||d.from||d.eta||d.track)?`<span class="ship${late>0?" late":""}">${carrierBadge(d.carrier)}${[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:late===0?"ждём сегодня":"ждём "+fmtDate(d.eta)):""].filter(Boolean).map(x=>" "+esc(x)).join(" ·")}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button>`:""}</span>`:"";
     const rowsHtml=items.map((p,i)=>{const oem=normOem(p.oem),v=unitPrice(p)*qtyOf(p);
       const status=canEdit()?`<select class="status" data-st="${esc(p.status)}" data-status-for="${esc(p.id)}" aria-label="Статус: ${esc(p.name)}">${STATUSES.map(x=>`<option value="${x.id}"${x.id===p.status?" selected":""}>${x.label}</option>`).join("")}</select>`:`<span class="s-pill" data-st="${esc(p.status)}">${esc(ST_LABEL[p.status]||p.status)}</span>`;
-      return `<tr><td>${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${p.unit?`<small>${esc(p.unit)}</small>`:""}</td><td>${oem?`<code>${esc(oem)}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер">${copyIcon}</button>`:`<span class="na">—</span>`}</td><td>${v?rub(v):"—"}</td>${ARRIVED.has(st)?`<td class="ob-arr">${canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")}</td>`:""}<td class="ob-st">${status}</td></tr>`}).join("");
+      return `<tr><td class="ob-n">${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${p.unit?`<small>${esc(p.unit)}</small>`:""}</td><td class="ob-oem">${oem?`<code>${esc(oem)}</code><button class="icon-btn" type="button" data-copy="${esc(oem)}" aria-label="Скопировать номер">${copyIcon}</button>`:`<span class="na">—</span>`}</td><td class="ob-p">${v?rub(v):"—"}</td>${ARRIVED.has(st)?`<td class="ob-arr">${canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")}</td>`:""}<td class="ob-st">${status}</td></tr>`}).join("");
     const nx=NEXT_ST[st];
-    return `<div class="ob"><div class="ob-head"><div class="ob-who"><span class="ob-title">Комплект «${esc(b.name||b.seller||"комплект")}»</span><span class="pl-sub">${esc(b.seller||"продавец не указан")} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}${all?"":" здесь"}</span>${ship}</div>
-      <div class="ob-act"><b class="ob-sum">${rub(sum+(all?bundleShip(b):0))}</b>${canEdit()&&ARRIVED.has(st)?arrInput(`data-arrbundle="${esc(b.id)}|${st}"`,(items.find(x=>x.arrivedAt)||{}).arrivedAt,"приехало всё"):""}${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}${canEdit()&&nx?`<button class="btn sm" type="button" data-bstatus="${esc(b.id)}|${st}|${nx}">${nx==="arrived"?"Пришло всё":"Установлено всё"}</button>`:""}${canEdit()?`<button class="btn sm" type="button" data-bedit="${esc(b.id)}">Изменить</button>`:""}</div></div>
+    return `<div class="ob"><div class="ob-head"><div class="ob-who"><span class="ob-title">Комплект «${esc(b.name||b.seller||"комплект")}»</span><span class="pl-sub">${esc(b.seller||"продавец не указан")} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}${all?"":" здесь"}${st==="installed"&&(items.find(x=>x.installedAt)||{}).installedAt?` · установлено ${esc(fmtDate(items.find(x=>x.installedAt).installedAt))}`:""}</span>${ship}</div>
+      <div class="ob-act"><b class="ob-sum">${rub(sum+(all?bundleShip(b):0))}</b>${canEdit()&&ARRIVED.has(st)?arrInput(`data-arrbundle="${esc(b.id)}|${st}"`,(items.find(x=>x.arrivedAt)||{}).arrivedAt,"приехало всё"):""}${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}${canEdit()&&nx?`<button class="btn sm" type="button" data-bstatus="${esc(b.id)}|${st}|${nx}">${nx==="arrived"?"Пришло всё":"Установлено всё"}</button>`:""}${canEdit()?`<button class="btn sm" type="button" data-bedit="${esc(b.id)}">Изменить</button>`:""}${canEdit()?`<label class="ob-all">весь комплект<select class="status" data-st="${esc(st)}" data-status-for="" data-bundle-all="${esc(b.id)}" aria-label="Статус всего комплекта"><option value="">${esc(ST_LABEL[st])}</option>${STATUSES.filter(x=>x.id!==st).map(x=>`<option value="${x.id}">${x.label}</option>`).join("")}</select></label>`:""}</div></div>
       <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Номер</th><th>Цена</th>${ARRIVED.has(st)?"<th>Приехало</th>":""}<th>Статус</th></tr></thead><tbody>${rowsHtml}</tbody>${all&&bundleShip(b)?`<tfoot><tr><td colspan="2">в том числе доставка</td><td>${rub(bundleShip(b))}</td>${ARRIVED.has(st)?"<td></td>":""}<td></td></tr></tfoot>`:""}</table></div></div>`;
   }).join("");
   return {html,rest};
@@ -1812,6 +1941,7 @@ document.addEventListener("click",async e=>{
     return}
   if(d.bedit){openBundle(bundleById(d.bedit));return}
   if(d.bstatus){const [bid,from,to]=d.bstatus.split("|"),b=bundleById(bid);if(!b)return;
+    openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===from}),to});return
     const ids=(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===from});
     await guarded(async()=>{for(const id of ids)await updPart(id,statusPatch(partById(id),to))},`${ST_LABEL[to]}: ${ids.length} ${plural(ids.length,"деталь","детали","деталей")}`);return}
   if(d.gorder){const g=planData().groups.find(x=>x.kind==="seller"&&x.key===d.gorder);if(g)openOrder(null,null,g);return}
@@ -1859,6 +1989,8 @@ document.addEventListener("change",async e=>{
   const sel=e.target.closest("[data-status-for]");if(!sel||!S.db)return;
   const id=sel.dataset.statusFor,status=sel.value;sel.dataset.st=status;
   const p=partById(id);
+  if(sel.dataset.bundleAll){const b=bundleById(sel.dataset.bundleAll);sel.value="";if(b&&status)openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(partById),to:status});return}
+  if(p&&BACK(p.status,status)){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
   if(status==="ordered"&&p&&p.status!=="ordered"){sel.value=p.status;sel.dataset.st=p.status;openOrder(p);return}
   if(!(await guarded(()=>updPart(id,statusPatch(p,status)),ST_LABEL[status]+(status==="arrived"&&!p.arrivedAt?" · дата прихода: сегодня":""))))render();
 });
@@ -2120,6 +2252,61 @@ of_.addEventListener("submit",async e=>{
   }
   btn.disabled=false;
   if(ok){$("orderDialog").close();ORD=null}
+});
+
+/* status changes that need a second confirmation:
+   whole bundle → «Пришло» (date + what the delivery cost), → «Установлено» (date), any step back (e.g. «Пришло» → «Заказано»),
+   and any other status set on the whole bundle at once */
+const af=$("arriveForm");let ARR=null;
+const BACK=(from,to)=>(ST_ORDER[to]??0)<(ST_ORDER[from]??0)&&SPENT.has(from)&&to!=="returned";
+function openStatusConfirm(o){
+  if(!canEdit())return;
+  const ms=o.pids.map(partById).filter(p=>p&&p.status!==o.to);if(!ms.length){toast("Все уже в статусе «"+ST_LABEL[o.to]+"»");return}
+  const b=o.bid?bundleById(o.bid):null,d=(b&&b.delivery)||{},to=o.to;
+  const back=ms.some(p=>BACK(p.status,to)),dated=!back&&(to==="arrived"||to==="installed"),askShip=!back&&to==="arrived"&&!!b;
+  ARR={bid:o.bid||"",pids:ms.map(p=>p.id),to,back,dated,askShip};
+  const what=b?`Комплект «${b.name||b.seller||"комплект"}»`:ms.length===1?`«${ms[0].name}»`:`${ms.length} ${plural(ms.length,"деталь","детали","деталей")}`;
+  $("arTitle").textContent=back?`Вернуть в «${ST_LABEL[to]}»?`:to==="arrived"?`${what} ${b||ms.length>1?"пришёл":"пришла"}?`:to==="installed"?`${what} ${b||ms.length>1?"установлен":"установлена"}?`:`Поставить статус «${ST_LABEL[to]}»?`;
+  $("arSub").textContent=b?[b.seller,d.carrier,d.from?"из "+d.from:"",d.track?"трек "+d.track:""].filter(Boolean).join(" · "):"";
+  $("arListL").textContent=back||!dated?(b?"Затронет все детали комплекта:":"Деталь:"):to==="installed"?"Проверьте, что установлены все детали:":"Проверьте, что пришли все детали:";
+  $("arList").innerHTML=ms.map(p=>`<li>${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}${p.oem?` <small>${esc(normOem(p.oem))}</small>`:""}${back||!dated?` <small>сейчас: ${esc(ST_LABEL[p.status]||p.status)}</small>`:""}</li>`).join("");
+  const txt=back?(to==="ordered"?"Дата прихода сотрётся, детали снова будут ждать доставку. Продавец, транспортная компания и цена останутся.":to==="arrived"?"Дата установки сотрётся. Дата прихода останется.":"Заказ отменится: детали вернутся в список к заказу, даты прихода и установки сотрутся. Продавец и цена останутся.")
+    :!dated?`Статус «${ST_LABEL[to]}» получат все перечисленные детали.`:"";
+  $("arText").textContent=txt;$("arText").hidden=!txt;
+  $("arGrid").hidden=!dated;$("ar-ship-f").hidden=!askShip;
+  $("ar-date-l").innerHTML=(to==="installed"?"Дата установки":"Дата прихода")+' <span class="req">*</span>';
+  $("ar-date").value=todayStr();$("ar-date").max=todayStr();$("ar-ship").value="";
+  const was=b?bundleShip(b):0;
+  $("ar-ship-h").textContent=was?`при заказе указали ${rub(was)}. Если доставка бесплатная, впишите 0`:"Если доставка бесплатная, впишите 0";
+  $("arSave").textContent=back?`Да, вернуть в «${ST_LABEL[to]}»`:to==="arrived"?"Да, всё пришло":to==="installed"?"Да, всё установлено":`Да, поставить «${ST_LABEL[to]}»`;
+  $("arSave").className="btn "+(back?"primary":"good");
+  af.querySelectorAll(".field.invalid").forEach(x=>x.classList.remove("invalid"));$("arErr").hidden=true;
+  $("arriveDialog").showModal();
+  if(dated)$(askShip?"ar-ship":"ar-date").focus();else $("arSave").focus();
+}
+/* the select is put back until the change is confirmed */
+$("arriveDialog").addEventListener("close",()=>{ARR=null;render()});
+af.addEventListener("input",e=>{const f=e.target.closest(".field");if(f&&e.target.value!=="")f.classList.remove("invalid")});
+af.addEventListener("submit",async e=>{
+  e.preventDefault();if(!ARR)return;
+  const {to,back,dated,askShip}=ARR,b=ARR.bid?bundleById(ARR.bid):null;
+  const ms=ARR.pids.map(partById).filter(p=>p&&p.status!==to);
+  const date=$("ar-date").value,shipRaw=$("ar-ship").value.trim(),bad=[];
+  if(dated&&(!date||date>todayStr()))bad.push(["ar-date",date?"дату не позже сегодняшней":to==="installed"?"дату установки":"дату прихода"]);
+  if(askShip&&(shipRaw===""||!(num(shipRaw)>=0)))bad.push(["ar-ship","сумму за доставку (0, если бесплатно)"]);
+  af.querySelectorAll(".field").forEach(x=>x.classList.remove("invalid"));
+  if(bad.length){bad.forEach(([id])=>$(id).closest(".field").classList.add("invalid"));showErr("arErr","Укажите "+bad.map(x=>x[1]).join(" и "));$(bad[0][0]).focus();return}
+  const ship=Math.round(num(shipRaw)),n=`${ms.length} ${plural(ms.length,"деталь","детали","деталей")}`;
+  const btn=$("arSave");btn.disabled=true;
+  const ok=await guarded(async()=>{
+    if(askShip&&b&&ship!==bundleShip(b))await updBundle(b.id,{ship});
+    for(const p of ms){const x=statusPatch(p,to);
+      if(dated&&to==="arrived")x.arrivedAt=date;
+      if(dated&&to==="installed")x.installedAt=date;
+      await updPart(p.id,x)}
+  },back?`Возвращено в «${ST_LABEL[to]}»: ${n}`:to==="arrived"?`Пришло: ${n} · ${fmtDate(date)}${askShip?` · доставка ${ship?rub(ship):"бесплатно"}`:""}`:to==="installed"?`Установлено: ${n} · ${fmtDate(date)}`:`${ST_LABEL[to]}: ${n}`);
+  btn.disabled=false;
+  if(ok)$("arriveDialog").close();
 });
 
 /* bundle dialog */
