@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261021125136">
+<meta name="app-ver" content="20261021131335">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,7 +66,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;margin:-20px -16px 0;padding:max(10px,env(safe-area-inset-top,0px)) 16px 10px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.top .brand{flex:1;min-width:0}
+.top .top-actions{margin-left:auto;align-items:center}
 .top-actions{display:flex;gap:8px;flex-wrap:wrap}
 .brand{display:flex;flex-direction:column;gap:2px}
 .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -746,21 +748,42 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
   .pl-table td.act{width:auto}
   .plan-card{padding:8px}
 }
+/* sticky top bar: burger left, «+» right; the menu slides in */
+.hb,.plus{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.hb:hover{border-color:var(--muted)}
+.plus{border:0;background:var(--accent);color:var(--accent-ink);border-radius:50%}
+.plus:hover{filter:brightness(1.08)}
+.plus[hidden]{display:none}
+.dr-quick{padding:12px 16px 0}
+.dr-quick .sheet-btn{width:100%}
+.drawer[open]{animation:drIn .28s cubic-bezier(.2,.8,.2,1)}
+.drawer[open]::backdrop{animation:bdIn .28s ease}
+.drawer.closing{animation:drOut .19s ease-in forwards}
+.drawer.closing::backdrop{animation:bdOut .19s ease-in forwards}
+@keyframes drIn{from{transform:translateX(-100%)}to{transform:none}}
+@keyframes drOut{from{transform:none}to{transform:translateX(-100%)}}
+@keyframes bdIn{from{opacity:0}to{opacity:1}}
+@keyframes bdOut{from{opacity:1}to{opacity:0}}
+dialog:not(.drawer)[open]{animation:dlgIn .18s ease-out}
+@keyframes dlgIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.drawer[open],.drawer.closing,.drawer[open]::backdrop,.drawer.closing::backdrop,dialog:not(.drawer)[open]{animation:none}}
+@media (max-width:640px){
+  .top{gap:10px;padding-left:12px;padding-right:12px}
+  .top .eyebrow,.top .owner-top{display:none}
+  .top h1{font-size:22px}
+}
 </style>
 
 <div class="wrap">
   <header class="top">
+    <button class="hb" id="panelBtn" type="button" aria-label="Меню: архив машин, корзина, сводка"><svg width="20" height="16" viewBox="0 0 20 16" aria-hidden="true"><path d="M2 2h16M2 8h16M2 14h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <div class="brand">
       <span class="eyebrow">Учёт деталей по машинам</span>
       <h1>Запчасти RIMONTA</h1>
     </div>
     <div class="top-actions">
-      <button class="btn" id="panelBtn" type="button" aria-label="Архив машин и корзина"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 1.5h14M1 7h14M1 12.5h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Архив</button>
-      <button class="btn" id="ownerBtn" type="button">Сводка для владельца</button>
-      <button class="btn primary" id="addPartBtn" type="button">
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Деталь
-      </button>
+      <button class="btn owner-top" id="ownerBtn" type="button">Сводка для владельца</button>
+      <button class="plus" id="addPartBtn" type="button" aria-label="Добавить деталь" title="Добавить деталь"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     </div>
   </header>
 
@@ -1017,6 +1040,7 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
 <dialog id="panel" class="drawer" aria-labelledby="pnTitle">
   <div class="dr-wrap">
     <div class="dr-head"><button type="button" class="icon-btn" id="pnBack" hidden aria-label="Назад к архиву"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><h2 id="pnTitle">Архив</h2><button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="dr-quick"><button type="button" class="sheet-btn" id="pnOwner">Сводка для владельца<small>текст для мессенджера: что куплено, что едет, сколько стоит</small></button></div>
     <div class="dr-body" id="pnBody"></div>
     <div class="dr-foot"><button type="button" class="trash-btn" id="trashBtn"></button></div>
   </div>
@@ -2179,7 +2203,7 @@ document.addEventListener("click",async e=>{
   if(t.id==="expAllBtn"){const ids=scopeParts().filter(matches).map(p=>p.id),all=allOpen(ids);ids.forEach(id=>all?S.exp.delete(id):S.exp.add(id));keepPos("#expAllBtn",()=>{renderGroups();renderToolbar()});return}
   if(d.caract){const [act,id]=d.caract.split("|");if($("carSheet").open)$("carSheet").close();carAction(act,id);return}
   if(d.carmenu){openCarSheet(d.carmenu);return}
-  if(d.opencar){S.carId=d.opencar;store("rimonta.car",S.carId);$("panel").close();render();window.scrollTo({top:0,behavior:"smooth"});return}
+  if(d.opencar){S.carId=d.opencar;store("rimonta.car",S.carId);closePanel();render();window.scrollTo({top:0,behavior:"smooth"});return}
   if(d.carphoto){CARPH=d.carphoto;$("carPhotoInput").click();return}
   if(d.f){S.filter=d.f;render();return}
   if(d.view){S.groupBy=d.view;store("rimonta.group",S.groupBy);render();return}
@@ -2223,6 +2247,9 @@ document.addEventListener("click",async e=>{
       msg=`Удалён. Остался один вариант — он стал основной ценой: ${rub(num(o.price)*qtyOf(p))}${o.seller?" · "+o.seller:""}`}
     S.odel=null;if(await guarded(()=>updPart(pid,patch),msg))dropUnused(photosOf(gone),pid,oid);return}
   if(d.bpick){const b=bundleById(d.bpick);if(!b)return;
+    const bn=`«${b.name||b.seller||"комплект"}»`;
+    if(b.picked&&!await askConfirm({title:`Убрать комплект ${bn} из заказа?`,text:"Детали снова будут считаться по отдельности, по своим ценам и вариантам. Сам комплект останется в разделе «Комплекты».",ok:"Убрать"}))return;
+    if(!b.picked&&(b.parts||[]).filter(partById).length>=2&&!await askConfirm({title:`Выбрать комплект ${bn}?`,text:`Детали комплекта (${(b.parts||[]).filter(partById).length}) будут считаться по цене комплекта: ${rub(bundleTotalOf(b)+bundleShip(b))}${b.seller?", продавец "+b.seller:""}.`,ok:"Выбрать"}))return;
     if(b.picked)await guarded(async()=>{await releaseBundle(b);await updBundle(b.id,{picked:false})},"Выбор комплекта снят");
     else{if((b.parts||[]).filter(partById).length<2){toast("В комплекте должно быть минимум две детали");return}
       await guarded(async()=>{await applyBundle(b);await updBundle(b.id,{picked:true})},"Комплект выбран")}
@@ -2280,7 +2307,11 @@ document.addEventListener("change",async e=>{
   if(sel.dataset.bundleAll){const b=bundleById(sel.dataset.bundleAll);sel.value="";if(b&&status)openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(partById),to:status});return}
   if(p&&BACK(p.status,status)){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
   if(status==="ordered"&&p&&p.status!=="ordered"){sel.value=p.status;sel.dataset.st=p.status;openOrder(p);return}
-  if(!(await guarded(()=>updPart(id,statusPatch(p,status)),ST_LABEL[status]+(status==="arrived"&&!p.arrivedAt?" · дата прихода: сегодня":""))))render();
+  /* any other status change on a single part asks first */
+  sel.value=p.status;sel.dataset.st=p.status;
+  const why=status==="arrived"?" Дата прихода — сегодня, её можно поменять.":status==="installed"?" Дата установки — сегодня.":status==="returned"?" Деталь уйдёт в «Возврат».":"";
+  if(!await askConfirm({title:`«${p.name}»: поставить статус «${ST_LABEL[status]}»?`,text:`Сейчас: «${ST_LABEL[p.status]||p.status}».${why}`,ok:`Да, «${ST_LABEL[status]}»`})){render();return}
+  if(!(await guarded(()=>updPart(id,statusPatch(partById(id)||p,status)),ST_LABEL[status]+(status==="arrived"&&!p.arrivedAt?" · дата прихода: сегодня":""))))render();
 });
 /* photos */
 document.addEventListener("change",e=>{
@@ -2757,13 +2788,15 @@ async function carAction(act,id){
     if(await guarded(()=>updCar(id,{archivedAt:nowIso()}),"Машина в архиве — кнопка «Архив» вверху")){if(S.carId===id){S.carId=liveCars()[0]?.id||ALL;store("rimonta.car",S.carId)}render()}
     return}
   if(act==="restore"){
-    if(await guarded(()=>updCar(id,{archivedAt:"",deletedAt:""}),"Машина снова в работе")){S.carId=id;store("rimonta.car",id);if($("panel").open)$("panel").close();render()}
+    if(!await askConfirm({title:`Вернуть ${nm} в работу?`,text:`Машина снова появится на главном экране со всеми данными: ${cnt(n)}.`,ok:"Вернуть в работу"}))return;
+    if(await guarded(()=>updCar(id,{archivedAt:"",deletedAt:""}),"Машина снова в работе")){S.carId=id;store("rimonta.car",id);closePanel();render()}
     return}
   if(act==="del"){
     if(!await askConfirm({title:`Удалить ${nm}?`,text:`Машина и все её детали (${n}) попадут в корзину. Вернуть можно в любой момент: «Архив» вверху → «Корзина» внизу панели.`,ok:"Удалить в корзину",danger:true}))return;
     if(await guarded(()=>updCar(id,{deletedAt:nowIso()}),"Машина в корзине")){if(S.carId===id){S.carId=liveCars()[0]?.id||ALL;store("rimonta.car",S.carId)}render()}
     return}
   if(act==="untrash"){
+    if(!await askConfirm({title:`Вернуть ${nm} из корзины?`,text:c.archivedAt?`Машина вернётся в архив со всеми данными: ${cnt(n)}.`:`Машина вернётся на главный экран со всеми данными: ${cnt(n)}.`,ok:"Вернуть"}))return;
     if(await guarded(()=>updCar(id,{deletedAt:""}),c.archivedAt?"Машина возвращена в архив":"Машина возвращена"))render();
     return}
   if(act==="purge"){
@@ -2805,10 +2838,17 @@ function renderPanel(){
       <div class="ar-act"><button class="btn sm primary" type="button" data-opencar="${esc(c.id)}">Открыть</button>${canEdit()?`<button class="btn sm" type="button" data-carmenu="${esc(c.id)}">Ещё…</button>`:""}</div></div></article>`}).join("")
     :`<div class="dr-empty">Здесь будут завершённые машины.<br>Нажмите «✓ Готово — в архив» у машины или удерживайте её название наверху.</div>`;
 }
+function closePanel(){
+  const d=$("panel");if(!d.open)return;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){d.close();return}
+  d.classList.add("closing");setTimeout(()=>{d.classList.remove("closing");d.close()},190);
+}
+$("panel").addEventListener("cancel",e=>{e.preventDefault();closePanel()});
+$("pnOwner").addEventListener("click",()=>{closePanel();setTimeout(()=>$("ownerBtn").click(),200)});
 $("panelBtn").addEventListener("click",()=>openPanel("archive"));
 $("trashBtn").addEventListener("click",()=>openPanel(S.panelView==="trash"?"archive":"trash"));
 $("pnBack").addEventListener("click",()=>openPanel("archive"));
-$("panel").addEventListener("click",e=>{if(e.target===$("panel")){$("panel").close();return}
+$("panel").addEventListener("click",e=>{if(e.target===$("panel")||e.target.closest("[data-close]")){e.stopPropagation();closePanel();return}
   const im=e.target.closest("img[data-carview]");if(im)openLightbox([im.dataset.carview],0)});
 /* car photo: for the archive card and the car window */
 let CARPH=null;
@@ -2870,7 +2910,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261021125136";let lastCheck=0;
+const APP_VER="20261021131335";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
