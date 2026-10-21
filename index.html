@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261021131335">
+<meta name="app-ver" content="20261021212458">
+<script>try{var t=localStorage.getItem("rimonta.theme")||"dark";if(t!=="auto")document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Запчасти">
+<meta name="apple-mobile-web-app-title" content="RIMONTA">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
@@ -33,7 +34,7 @@
   --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-@media all{:root{
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E141A; --surface:#17202A; --sunken:#121A22; --ink:#E5EAF0; --muted:#94A2AF; --line:#29343F;
   --accent:#7AA2FF; --accent-ink:#0E141A; --accent-soft:#1E2A44;
   --violet:#B9A3FF; --violet-soft:#29213F; --violet-line:#4B3E7C;
@@ -772,6 +773,41 @@ dialog:not(.drawer)[open]{animation:dlgIn .18s ease-out}
   .top .eyebrow,.top .owner-top{display:none}
   .top h1{font-size:22px}
 }
+/* logo, theme switch, status dots, outlined bundle box, pinned status */
+.top h1{display:flex;align-items:center;gap:10px}
+.top h1 .logo{flex:0 0 auto;width:34px;height:34px;border-radius:9px;display:block}
+.dr-quick{display:flex;flex-direction:column;gap:6px}
+.dr-quick .lbl{font-size:12px}
+.g-dot{width:9px;height:9px;margin-right:2px}
+.m-st{float:right;margin:0 10px 4px 10px}
+.m-more .st-cell,.m-more .n-st{display:none}
+.m-st .status{field-sizing:content;width:auto;font-size:12.5px;padding:2px 18px 2px 8px;background-position:right 5px center}
+.ob.obx{position:relative;background:transparent;border:1.5px solid var(--line);border-radius:12px;margin:14px 12px 16px;padding:14px 0 12px}
+.ob.obx+.ob.obx{border-top:1.5px solid var(--line)}
+.obx-top{position:absolute;top:-10px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+.obx-legend{background:var(--surface);padding:0 6px;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:18px}
+.obx-legend b{color:var(--ink);font-weight:600}
+.obx-more{pointer-events:auto;flex:0 0 auto;width:30px;height:22px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-weight:700;line-height:1;cursor:pointer}
+.obx-fix{margin:2px 12px 6px}
+.obx-sum{position:absolute;right:14px;bottom:-10px;background:var(--surface);padding:0 6px;font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums;line-height:18px}
+.ob.obx .b-scroll{background:transparent;border-radius:0}
+.ob.obx .ob-table{background:transparent}
+.ob.obx .ob-table thead{display:none}
+.ob.obx .ob-table tbody tr:first-child td{border-top:0}
+.sheet-sel{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sheet-sel .status{width:auto;field-sizing:content}
+.ob-table .ob-mst{float:right;margin-left:8px}
+.ob.obx .ob-table tr.open td{background:transparent}
+.ob.obx .ob-table tr.open{background:var(--sunken)}
+.ob.obx .ob-table tr.open td:first-child{border-radius:0}
+@media (max-width:640px){
+  .top .owner-top{display:inline-flex;width:42px;height:42px;padding:0;justify-content:center;border-radius:12px}
+  .top .owner-top span{display:none}
+  .top h1 .logo{width:30px;height:30px}
+  .ob.obx{margin:14px 8px 16px}
+  .ob.obx .ob-table tbody tr{background:transparent}
+}
+@media (min-width:641px){.top .owner-top svg{display:none}}
 </style>
 
 <div class="wrap">
@@ -779,10 +815,11 @@ dialog:not(.drawer)[open]{animation:dlgIn .18s ease-out}
     <button class="hb" id="panelBtn" type="button" aria-label="Меню: архив машин, корзина, сводка"><svg width="20" height="16" viewBox="0 0 20 16" aria-hidden="true"><path d="M2 2h16M2 8h16M2 14h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <div class="brand">
       <span class="eyebrow">Учёт деталей по машинам</span>
-      <h1>Запчасти RIMONTA</h1>
+      <h1><svg class="logo" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 512 512" aria-hidden="true"><clipPath id="lgclip"><rect width="512" height="512" rx="112"/></clipPath><g clip-path="url(#lgclip)"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A1D25"/><stop offset="1" stop-color="#08090C"/></linearGradient>
+<linearGradient id="lgst" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF5A3C"/><stop offset="1" stop-color="#D4151F"/></linearGradient><mask id="lgcut" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="600"><rect width="600" height="600" fill="#fff"/><rect x="80" y="296" width="130" height="10" fill="#000"/><rect x="80" y="326" width="130" height="10" fill="#000"/></mask></defs><rect width="512" height="512" fill="url(#lgbg)"/><g transform="translate(256 256) skewX(-24) translate(-256 -256)"><rect x="380" y="-20" width="34" height="560" fill="url(#lgst)"/><rect x="428" y="-20" width="14" height="560" fill="#FF5A3C" opacity=".6"/></g><g transform="translate(256 256) skewX(-14) translate(-262 -257)"><path d="M118 150 H338 A56 56 0 0 1 394 206 V222 A56 56 0 0 1 338 278 H118 Z M188 202 V226 H326 A10 10 0 0 0 336 216 V212 A10 10 0 0 0 326 202 Z M118 150 H188 V364 H118 Z M252 278 H338 L412 364 H324 Z" fill="#FFFFFF" mask="url(#lgcut)"/><g fill="#FFFFFF"><rect x="62" y="296" width="44" height="10" opacity=".3"/><rect x="40" y="326" width="66" height="10" opacity=".2"/></g></g></g></svg><span>RIMONTA</span></h1>
     </div>
     <div class="top-actions">
-      <button class="btn owner-top" id="ownerBtn" type="button">Сводка для владельца</button>
+      <button class="btn owner-top" id="ownerBtn" type="button" aria-label="Сводка для владельца" title="Сводка для владельца"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 1.8h7l3.2 3.2v11.2H4z M11 1.8V5h3.2 M6.5 9h5M6.5 12h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg><span>Сводка для владельца</span></button>
       <button class="plus" id="addPartBtn" type="button" aria-label="Добавить деталь" title="Добавить деталь"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     </div>
   </header>
@@ -955,6 +992,7 @@ dialog:not(.drawer)[open]{animation:dlgIn .18s ease-out}
       <h2 id="odTitle">Сводка для владельца</h2>
       <button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
     </div>
+    <div class="seg" role="radiogroup" aria-label="Что показать" id="odMode"><label><input type="radio" name="odmode" value="todo" checked><span>К заказу</span></label><label><input type="radio" name="odmode" value="ordered"><span>Заказано</span></label><label><input type="radio" name="odmode" value="arrived"><span>Пришло</span></label></div>
     <div class="opts">
       <label class="check"><input type="checkbox" id="od-th"> Цены в тысячах (25т)</label>
       <label class="check"><input type="checkbox" id="od-sellers"> Продавцы</label>
@@ -1040,7 +1078,7 @@ dialog:not(.drawer)[open]{animation:dlgIn .18s ease-out}
 <dialog id="panel" class="drawer" aria-labelledby="pnTitle">
   <div class="dr-wrap">
     <div class="dr-head"><button type="button" class="icon-btn" id="pnBack" hidden aria-label="Назад к архиву"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><h2 id="pnTitle">Архив</h2><button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
-    <div class="dr-quick"><button type="button" class="sheet-btn" id="pnOwner">Сводка для владельца<small>текст для мессенджера: что куплено, что едет, сколько стоит</small></button></div>
+    <div class="dr-quick"><span class="lbl">Тема</span><div class="seg" role="radiogroup" aria-label="Тема" id="themeSeg"><label><input type="radio" name="theme" value="dark"><span>Тёмная</span></label><label><input type="radio" name="theme" value="light"><span>Светлая</span></label><label><input type="radio" name="theme" value="auto"><span>Авто</span></label></div></div>
     <div class="dr-body" id="pnBody"></div>
     <div class="dr-foot"><button type="button" class="trash-btn" id="trashBtn"></button></div>
   </div>
@@ -1082,6 +1120,10 @@ const COND={new:"Новая",used:"Б/у",analog:"Аналог"};
 const ALL="__all";
 
 const $=id=>document.getElementById(id);
+/* theme: dark by default, or light, or follow the device */
+const THEMES={dark:"Тёмная",light:"Светлая",auto:"Как на устройстве"};
+function applyTheme(t){t=THEMES[t]?t:"dark";if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t);return t}
+let THEME=(()=>{try{return localStorage.getItem("rimonta.theme")||"dark"}catch(e){return "dark"}})();applyTheme(THEME);
 function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function loadSet(k,def){try{const v=localStorage.getItem(k);return new Set(v?JSON.parse(v):def)}catch(e){return new Set(def)}}
@@ -1650,8 +1692,8 @@ function miniRow(p,n,k){
   if(open){const full=TODO.has(p.status)?rowHtml(p,n):noteRow(p,n);inner=full.slice(full.indexOf(">")+1,full.lastIndexOf("</div>")).replace(/ id="row-/g,' data-r="')}
   const extra=SPENT.has(p.status)?0:visibleOffers(p).filter(o=>!o.picked).length;
   const todo=TODO.has(p.status),v=todo?partEst(p):partCost(p),approx=todo&&v>0&&!partExact(p);
-  const dot=S.groupBy==="unit"?`<span class="m-dot" data-st="${esc(p.status)}" title="${esc(ST_LABEL[p.status]||"")}"></span>`:"";
-  return `<div class="item mitem${open?" open":""}" data-drag data-xp="${esc(p.id)}" data-pid="${esc(p.id)}" data-unit="${esc(unitKey(p))}"><div class="mrow${p.status==="installed"?" done":""}" id="row-${esc(p.id)}">${numTag(n)}<button class="m-name" type="button" data-edit="${esc(p.id)}"><span>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` ×${qtyOf(p)}`:""}</span>${extra?`<sup class="vb" title="Ещё вариантов: ${extra}">${extra}</sup>`:""}</button>${dot}<span class="m-price">${v?(approx?"≈ ":"")+rub(v):"—"}</span><button class="m-arrow" type="button" data-exp="${esc(p.id)}" aria-expanded="${open}" aria-label="${open?"Скрыть":"Показать"} подробности">${chevR}</button></div>${open?`<div class="m-more${S.justOpened===p.id?" anim":""}">${inner}</div>`:""}</div>`;
+  const dot=`<span class="m-dot" data-st="${esc(p.status)}" title="${esc(ST_LABEL[p.status]||"")}"></span>`;
+  return `<div class="item mitem${open?" open":""}" data-drag data-xp="${esc(p.id)}" data-pid="${esc(p.id)}" data-unit="${esc(unitKey(p))}"><div class="mrow${p.status==="installed"?" done":""}" id="row-${esc(p.id)}">${numTag(n)}<button class="m-name" type="button" data-edit="${esc(p.id)}"><span>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` ×${qtyOf(p)}`:""}</span>${extra?`<sup class="vb" title="Ещё вариантов: ${extra}">${extra}</sup>`:""}</button>${dot}<span class="m-price">${v?(approx?"≈ ":"")+rub(v):"—"}</span><button class="m-arrow" type="button" data-exp="${esc(p.id)}" aria-expanded="${open}" aria-label="${open?"Скрыть":"Показать"} подробности">${chevR}</button></div>${open?`<div class="m-more${S.justOpened===p.id?" anim":""}"><div class="m-st">${statusSel(p)}</div>${inner}</div>`:""}</div>`;
 }
 
 /* «Заказано», «Пришло», «Установлено»: one short line like a note — name and price, underneath unit, seller and city */
@@ -1674,6 +1716,7 @@ function noteRow(p,n){
   if(name0||city)sub.push(esc(name0)+(name0&&city?", ":"")+(city?`<span class="geo">из ${esc(city)}</span>`:""));
   if(p.status==="ordered"){const late=daysLate(d.eta);
     if(d.carrier)sub.push(`<span class="geo">${esc(carrierTitle(d.carrier)||d.carrier)}</span>`);
+    if(d.track){const tr=String(d.track).replace(/\s/g,"");sub.push(`трек …${esc(tr.slice(-4))}`)}
     if(d.eta)sub.push(late>0?`<span class="late">опаздывает на ${late} ${plural(late,"день","дня","дней")}</span>`:late===0?"ждём сегодня":"ждём "+esc(fmtDate(d.eta)))}
   if(ARRIVED.has(p.status))sub.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?"приехало "+esc(fmtDate(p.arrivedAt)):"");
   if(p.status==="installed"&&p.installedAt)sub.push("установлено "+esc(fmtDate(p.installedAt)));
@@ -1769,16 +1812,16 @@ function renderGroups(){
       :(a,b)=>(ST_ORDER[a.status]??9)-(ST_ORDER[b.status]??9)||byName(a,b);
     const byUnit=S.groupBy==="status";
     const etaCmp=(a,b)=>st==="ordered"?String(deliveryOf(a).eta||"9999").localeCompare(String(deliveryOf(b).eta||"9999")):0;
-    const rows=g.items.sort(byUnit?(a,b)=>unitCmp(a,b)||byOrder(a,b)||etaCmp(a,b)||byName(a,b):(a,b)=>byOrder(a,b)||fb(a,b));
+    const rows=g.items.sort(byUnit&&st==="ordered"?(a,b)=>etaCmp(a,b)||unitCmp(a,b)||byOrder(a,b)||byName(a,b):byUnit?(a,b)=>unitCmp(a,b)||byOrder(a,b)||etaCmp(a,b)||byName(a,b):(a,b)=>byOrder(a,b)||fb(a,b));
     const collapsed=!S.q&&S.collapsed.has(k);
     const open=rows.filter(p=>TODO.has(p.status)).length;
     const tot=groupTotal(rows),sum=tot.sum,sign=tot.approx?"≈ ":"";
     const meta=`${rows.length} ${plural(rows.length,"деталь","детали","деталей")}${S.groupBy==="unit"&&open?` · ${open} не куплено`:""}${sum>0?` · ${sign}${rub(sum)}`:""}`;
     const foot=`<div class="g-total"><span>Итого<small> · ${rows.length} ${plural(rows.length,"деталь","детали","деталей")}${tot.undecided?` · где вариант не выбран — по большей цене`:""}${tot.noPrice?` · без цены: ${tot.noPrice}`:""}</small></span><b>${sum>0?sign+rub(sum):"—"}</b></div>`;
-    return `<section class="group"><button class="g-head" type="button" data-group="${esc(k)}" aria-expanded="${!collapsed}"><span class="g-left">${chev}<span class="g-title">${esc(g.title)}</span></span><span class="g-meta">${meta}</span></button>${collapsed?"":(()=>{const ob=S.groupBy==="status"&&!TODO.has(st)?orderedBlocks(rows,st,k):{html:"",rest:rows};
+    return `<section class="group"><button class="g-head" type="button" data-group="${esc(k)}" aria-expanded="${!collapsed}"><span class="g-left">${chev}${S.groupBy==="status"?`<span class="m-dot g-dot" data-st="${esc(st)}"></span>`:""}<span class="g-title">${esc(g.title)}</span></span><span class="g-meta">${meta}</span></button>${collapsed?"":(()=>{const ob=S.groupBy==="status"&&!TODO.has(st)?orderedBlocks(rows,st,k):{html:"",rest:rows};
       const both=ob.html&&ob.rest.length,restIds=ob.rest.map(p=>p.id);
       return (both?`<div class="m-thead g-top"><span>Весь раздел</span>${expBtn(`data-gexp="${esc(k)}"`,rows.map(p=>p.id),"всё")}</div>`:"")+ob.html
-        +(ob.rest.length?`<div class="m-thead"><span>${both?"Остальные детали":"Деталь"}</span>${both?expBtn(`data-rexp="${esc(k)}"`,restIds,"все"):expBtn(`data-gexp="${esc(k)}"`,restIds,"все")}</div><div class="g-items" data-sortable="parts"${byUnit?' data-scope="unit"':""}>${ob.rest.map((p,i)=>miniRow(p,i+1,k)).join("")}</div>`:"")+foot})()}</section>`;
+        +(ob.rest.length?`<div class="m-thead"><span>${both?"Остальные детали":"Деталь"}</span>${both?expBtn(`data-rexp="${esc(k)}"`,restIds,"все"):expBtn(`data-gexp="${esc(k)}"`,restIds,"все")}</div><div class="g-items" data-sortable="parts"${byUnit&&st!=="ordered"?' data-scope="unit"':""}>${ob.rest.map((p,i)=>miniRow(p,i+1,k)).join("")}</div>`:"")+foot})()}</section>`;
   }).join("");
 }
 
@@ -1833,17 +1876,19 @@ function orderedBlocks(rows,st,gk){
   for(const p of rows){const ab=activeBundle(p);if(ab){if(!map.has(ab.id))map.set(ab.id,{b:ab,items:[]});map.get(ab.id).items.push(p)}else rest.push(p)}
   const html=[...map.values()].map(({b,items})=>{
     const ix=new Map((b.parts||[]).map((id,i)=>[id,i]));items.sort((x,y)=>unitCmp(x,y)||(ix.get(x.id)??999)-(ix.get(y.id)??999));
+    const bTrack=String((b.delivery||{}).track||"").replace(/\s/g,"");
     const d=b.delivery||{},late=st==="ordered"?daysLate(d.eta):0,miss=bundleMissing(b);
     const sum=items.reduce((s,p)=>s+unitPrice(p)*qtyOf(p),0),all=items.length===(b.parts||[]).filter(partById).length;
     const ship=st==="ordered"&&(d.carrier||d.from||d.eta||d.track)?`<span class="ship${late>0?" late":""}">${carrierBadge(d.carrier)}${[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:late===0?"ждём сегодня":"ждём "+fmtDate(d.eta)):""].filter(Boolean).map(x=>" "+esc(x)).join(" ·")}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button>`:""}</span>`:"";
     const rowsHtml=items.map((p,i)=>{const oem=normOem(p.oem),v=unitPrice(p)*qtyOf(p);
       const status=canEdit()?`<select class="status" data-st="${esc(p.status)}" data-status-for="${esc(p.id)}" aria-label="Статус: ${esc(p.name)}">${STATUSES.map(x=>`<option value="${x.id}"${x.id===p.status?" selected":""}>${x.label}</option>`).join("")}</select>`:`<span class="s-pill" data-st="${esc(p.status)}">${esc(ST_LABEL[p.status]||p.status)}</span>`;
       const op=isExp(p);
-      return `<tr class="${op?"open":""}" data-xp="${esc(p.id)}"><td class="ob-n">${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${op?`<small class="ob-sub${S.justOpened===p.id?" anim":""}">${oem?esc(oem):""}<span class="ob-mst">${status}</span></small>`:""}</td><td class="ob-p">${v?rub(v):"—"}</td>${ARRIVED.has(st)?`<td class="ob-arr">${op?(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")):""}</td>`:""}<td class="ob-st">${op?status:""}</td><td class="ob-x"><button class="m-arrow" type="button" data-exp="${esc(p.id)}" aria-expanded="${op}" aria-label="${op?"Скрыть":"Показать"} подробности">${chevR}</button></td></tr>`}).join("");
+      return `<tr class="${op?"open":""}" data-xp="${esc(p.id)}"><td class="ob-n">${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${op?`<small class="ob-sub${S.justOpened===p.id?" anim":""}"><span class="ob-mst">${status}</span>${[oem?esc(oem):"",st==="ordered"&&bTrack?`трек …${esc(bTrack.slice(-4))}`:""].filter(Boolean).join(" · ")}</small>`:""}</td><td class="ob-p">${v?rub(v):"—"}</td>${ARRIVED.has(st)?`<td class="ob-arr">${op?(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")):""}</td>`:""}<td class="ob-st">${op?status:""}</td><td class="ob-x"><button class="m-arrow" type="button" data-exp="${esc(p.id)}" aria-expanded="${op}" aria-label="${op?"Скрыть":"Показать"} подробности">${chevR}</button></td></tr>`}).join("");
     const nx=NEXT_ST[st];
-    return `<div class="ob"><div class="ob-head"><div class="ob-who"><span class="ob-title">Комплект «${esc(b.name||b.seller||"комплект")}»</span><span class="pl-sub">${esc(b.seller||"продавец не указан")} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}${all?"":" здесь"}${st==="installed"&&(items.find(x=>x.installedAt)||{}).installedAt?` · установлено ${esc(fmtDate(items.find(x=>x.installedAt).installedAt))}`:""}</span>${ship}</div>
-      <div class="ob-act"><b class="ob-sum">${rub(sum+(all?bundleShip(b):0))}</b>${canEdit()&&ARRIVED.has(st)?arrInput(`data-arrbundle="${esc(b.id)}|${st}"`,(items.find(x=>x.arrivedAt)||{}).arrivedAt,"приехало всё"):""}${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}${canEdit()&&nx?`<button class="btn sm" type="button" data-bstatus="${esc(b.id)}|${st}|${nx}">${nx==="arrived"?"Пришло всё":"Установлено всё"}</button>`:""}${canEdit()?`<button class="btn sm" type="button" data-bedit="${esc(b.id)}">Изменить</button>`:""}${expBtn(`data-bexp="${esc(b.id)}|${esc(gk)}"`,items.map(p=>p.id),"комплект")}${canEdit()?`<label class="ob-all">весь комплект<select class="status" data-st="${esc(st)}" data-status-for="" data-bundle-all="${esc(b.id)}" aria-label="Статус всего комплекта"><option value="">${esc(ST_LABEL[st])}</option>${STATUSES.filter(x=>x.id!==st).map(x=>`<option value="${x.id}">${x.label}</option>`).join("")}</select></label>`:""}</div></div>
-      <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Цена</th>${ARRIVED.has(st)?"<th>Приехало</th>":""}<th>Статус</th><th></th></tr></thead><tbody>${rowsHtml}</tbody>${all&&bundleShip(b)?`<tfoot><tr><td>в том числе доставка</td><td>${rub(bundleShip(b))}</td>${ARRIVED.has(st)?"<td></td>":""}<td></td><td></td></tr></tfoot>`:""}</table></div></div>`;
+    const shipTxt=st==="ordered"?[d.carrier?carrierTitle(d.carrier)||d.carrier:"",d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:"ждём "+fmtDate(d.eta)):""].filter(Boolean).join(" · "):st==="installed"&&(items.find(x=>x.installedAt)||{}).installedAt?"установлено "+fmtDate(items.find(x=>x.installedAt).installedAt):"";
+    return `<div class="ob obx" data-bid="${esc(b.id)}"><div class="obx-top"><span class="obx-legend"><b>${esc(b.seller||"продавец не указан")}</b> · комплект «${esc(b.name||"комплект")}»${all?"":" · часть"}${shipTxt?`<span class="geo"> · ${esc(shipTxt)}</span>`:""}</span>${canEdit()?`<button class="obx-more" type="button" data-bmenu="${esc(b.id)}|${esc(st)}|${esc(gk)}" aria-label="Действия с комплектом">⋯</button>`:""}</div>
+      ${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip obx-fix" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}
+      <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Цена</th>${ARRIVED.has(st)?"<th>Приехало</th>":""}<th>Статус</th><th></th></tr></thead><tbody>${rowsHtml}</tbody>${all&&bundleShip(b)?`<tfoot><tr><td>в том числе доставка</td><td>${rub(bundleShip(b))}</td>${ARRIVED.has(st)?"<td></td>":""}<td></td><td></td></tr></tfoot>`:""}</table></div><span class="obx-sum">${rub(sum+(all?bundleShip(b):0))}</span></div>`;
   }).join("");
   return {html,rest};
 }
@@ -2191,14 +2236,17 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&DRAG.el){DRAG.to=DR
 document.addEventListener("click",async e=>{
   const t=e.target.closest("button,a");if(!t)return;
   const d=t.dataset;
+  if(t.closest("#carSheet")&&!t.hasAttribute("data-close")&&(d.bstatus||d.bexp||d.bedit))$("carSheet").close();
+  if(d.bmenu){const [bid,st,gk]=d.bmenu.split("|");openBundleSheet(bid,st,gk);return}
   if(d.car){S.carId=d.car;store("rimonta.car",S.carId);render();return}
   if(d.exp){const id=d.exp,open=S.exp.has(id);open?S.exp.delete(id):S.exp.add(id);S.justOpened=open?null:id;
     keepPos(`[data-exp="${CSS.escape(id)}"]`,()=>{renderGroups();renderToolbar()});S.justOpened=null;return}
   if(d.gexp!==undefined||d.rexp!==undefined||d.bexp!==undefined){
-    const box=d.bexp!==undefined?t.closest(".ob"):d.rexp!==undefined?t.closest(".group").querySelector(".g-items"):t.closest(".group");
+    const box=d.bexp!==undefined?document.querySelector(`.ob[data-bid="${CSS.escape(d.bexp.split("|")[0])}"]`):d.rexp!==undefined?t.closest(".group").querySelector(".g-items"):t.closest(".group");
     const ids=[...box.querySelectorAll("[data-xp]")].map(x=>x.dataset.xp),all=allOpen(ids);
     ids.forEach(id=>all?S.exp.delete(id):S.exp.add(id));
     const sel=d.bexp!==undefined?`[data-bexp="${CSS.escape(d.bexp)}"]`:d.rexp!==undefined?`[data-rexp="${CSS.escape(d.rexp)}"]`:`[data-gexp="${CSS.escape(d.gexp)}"]`;
+    if(d.bexp!==undefined){const anc=`.ob[data-bid="${CSS.escape(d.bexp.split("|")[0])}"]`;keepPos(anc,()=>{renderGroups();renderToolbar()});return}
     keepPos(sel,()=>{renderGroups();renderToolbar()});return}
   if(t.id==="expAllBtn"){const ids=scopeParts().filter(matches).map(p=>p.id),all=allOpen(ids);ids.forEach(id=>all?S.exp.delete(id):S.exp.add(id));keepPos("#expAllBtn",()=>{renderGroups();renderToolbar()});return}
   if(d.caract){const [act,id]=d.caract.split("|");if($("carSheet").open)$("carSheet").close();carAction(act,id);return}
@@ -2304,7 +2352,7 @@ document.addEventListener("change",async e=>{
   const sel=e.target.closest("[data-status-for]");if(!sel||!S.db)return;
   const id=sel.dataset.statusFor,status=sel.value;sel.dataset.st=status;
   const p=partById(id);
-  if(sel.dataset.bundleAll){const b=bundleById(sel.dataset.bundleAll);sel.value="";if(b&&status)openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(partById),to:status});return}
+  if(sel.dataset.bundleAll){const b=bundleById(sel.dataset.bundleAll);sel.value="";if($("carSheet").open)$("carSheet").close();if(b&&status)openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(partById),to:status});return}
   if(p&&BACK(p.status,status)){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
   if(status==="ordered"&&p&&p.status!=="ordered"){sel.value=p.status;sel.dataset.st=p.status;openOrder(p);return}
   /* any other status change on a single part asks first */
@@ -2707,7 +2755,7 @@ $("bdDelete").addEventListener("click",async e=>{
 /* owner summary — formatted the way the user writes it for car owners */
 function ownerText(o){
   const M=n=>o.th?tys(n):rub(n);
-  const cars=S.carId===ALL?S.cars:[carById(S.carId)].filter(Boolean);
+  const cars=S.carId===ALL?liveCars():[carById(S.carId)].filter(Boolean);
   const byCreated=(a,b)=>String(a.created||"").localeCompare(String(b.created||""));
   const nm=p=>cap(p.name)+(qtyOf(p)>1?` (${qtyOf(p)} шт)`:"");
   const cmt=x=>[o.sellers&&x.seller,x.cond&&COND[x.cond]?COND[x.cond].toLowerCase():"",x.warranty===true?"даёт гарантию":x.warranty===false?"не даёт гарантию":"",num(x.ship)?"доставка "+M(num(x.ship)):"",x.days,x.note].filter(Boolean).join(", ");
@@ -2733,6 +2781,19 @@ function ownerText(o){
     return out;
   };
   const res=[];
+  if(o.mode==="ordered"||o.mode==="arrived"){
+    const title=o.mode==="ordered"?"Заказано":"Пришло";
+    for(const car of cars){
+      const ps=S.parts.filter(p=>p.car===car.id&&p.status===o.mode).sort(byCreated);if(!ps.length)continue;
+      if(cars.length>1)res.push(`${car.name}:`);
+      res.push(`${title}:`,"");
+      let sum=0;ps.forEach((p,i)=>{const v=partCost(p);sum+=v;res.push(`${i+1}. ${nm(p)} — ${v?M(v):"цена уточняется"}`)});
+      const bs=new Set(ps.map(activeBundle).filter(Boolean));let ship=0;bs.forEach(b=>{if((b.parts||[]).map(partById).filter(Boolean).every(x=>x.status===o.mode))ship+=bundleShip(b)});
+      if(ship)res.push(`Доставка комплекта — ${M(ship)}`);
+      res.push("",`Итого: ${M(sum+ship)}`,"");
+    }
+    return res.join("\n").trim()||`${title}: пока ничего нет.`;
+  }
   for(const car of cars){
     const parts=S.parts.filter(p=>p.car===car.id).sort(byCreated),bundles=S.bundles.filter(b=>b.car===car.id);
     if(!parts.length)continue;
@@ -2757,10 +2818,13 @@ function ownerText(o){
   }
   return res.join("\n").trim()||"Деталей пока нет.";
 }
-const ownerOpts=()=>({th:$("od-th").checked,sellers:$("od-sellers").checked,bought:$("od-bought").checked});
+const ownerMode=()=>(document.querySelector('#odMode input:checked')||{}).value||"todo";
+const ownerOpts=()=>({th:$("od-th").checked,sellers:$("od-sellers").checked,bought:$("od-bought").checked,mode:ownerMode()});
+document.querySelectorAll('#odMode input').forEach(i=>i.addEventListener("change",()=>{const m=ownerMode();$("od-sellers").closest(".check").hidden=$("od-bought").closest(".check").hidden=m!=="todo";$("od-text").value=ownerText(ownerOpts())}));
 function openOwner(){
   $("od-th").checked=load("rimonta.ownerTh")!=="0";$("od-sellers").checked=load("rimonta.ownerSellers")==="1";$("od-bought").checked=load("rimonta.ownerBought")==="1";
-  $("od-text").value=ownerText(ownerOpts());$("ownerDialog").showModal();
+  const m=ownerMode();$("od-sellers").closest(".check").hidden=$("od-bought").closest(".check").hidden=m!=="todo";
+  $("od-text").value=ownerText(ownerOpts());$("ownerDialog").showModal();$("ownerDialog").querySelector("[data-close]").focus();
 }
 [["od-th","rimonta.ownerTh"],["od-sellers","rimonta.ownerSellers"],["od-bought","rimonta.ownerBought"]].forEach(([id,k])=>$(id).addEventListener("change",e=>{store(k,e.target.checked?"1":"0");$("od-text").value=ownerText(ownerOpts())}));
 $("od-copy").addEventListener("click",()=>{const ta=$("od-text");const text=ta.value;
@@ -2807,6 +2871,16 @@ async function carAction(act,id){
       const keep=new Set(S.parts.filter(p=>p.car!==id).flatMap(p=>[...photosOf(p),...offersOf(p).flatMap(photosOf)]));dropAssets([...new Set(ph)].filter(x=>!keep.has(x)));render()}
   }
 }
+function openBundleSheet(bid,st,gk){
+  const b=bundleById(bid);if(!b||!canEdit())return;
+  const ids=(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===st}),nx=NEXT_ST[st],allOn=allOpen(ids);
+  $("csTitle").textContent=`Комплект «${b.name||b.seller||"комплект"}»`;
+  $("csList").innerHTML=(nx?`<button type="button" class="sheet-btn" data-bstatus="${esc(b.id)}|${esc(st)}|${nx}">${nx==="arrived"?"Пришло всё":"Установлено всё"}<small>с подтверждением${nx==="arrived"?", датой и суммой доставки":" и датой"}</small></button>`:"")
+    +`<button type="button" class="sheet-btn" data-bexp="${esc(b.id)}|${esc(gk)}">${allOn?"Свернуть":"Раскрыть"} все детали комплекта</button>`
+    +`<button type="button" class="sheet-btn" data-bedit="${esc(b.id)}">Изменить комплект<small>продавец, цены, доставка, трек</small></button>`
+    +`<label class="sheet-btn sheet-sel">Статус всего комплекта<select class="status" data-st="${esc(st)}" data-status-for="" data-bundle-all="${esc(b.id)}" aria-label="Статус всего комплекта"><option value="">${esc(ST_LABEL[st])}</option>${STATUSES.filter(x=>x.id!==st).map(x=>`<option value="${x.id}">${x.label}</option>`).join("")}</select></label>`;
+  $("carSheet").showModal();
+}
 function openCarSheet(id){
   const c=carById(id);if(!c||!canEdit())return;
   $("csTitle").textContent=c.name||"Без названия";
@@ -2844,7 +2918,7 @@ function closePanel(){
   d.classList.add("closing");setTimeout(()=>{d.classList.remove("closing");d.close()},190);
 }
 $("panel").addEventListener("cancel",e=>{e.preventDefault();closePanel()});
-$("pnOwner").addEventListener("click",()=>{closePanel();setTimeout(()=>$("ownerBtn").click(),200)});
+document.querySelectorAll('#themeSeg input').forEach(i=>{i.checked=i.value===THEME;i.addEventListener("change",()=>{THEME=applyTheme(i.value);try{localStorage.setItem("rimonta.theme",THEME)}catch(e){}toast("Тема: "+THEMES[THEME])})});
 $("panelBtn").addEventListener("click",()=>openPanel("archive"));
 $("trashBtn").addEventListener("click",()=>openPanel(S.panelView==="trash"?"archive":"trash"));
 $("pnBack").addEventListener("click",()=>openPanel("archive"));
@@ -2910,7 +2984,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261021131335";let lastCheck=0;
+const APP_VER="20261021212458";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
