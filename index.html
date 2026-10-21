@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261021120339">
+<meta name="app-ver" content="20261021125136">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2076,12 +2076,16 @@ function mainPlan(p){
   else if(num(p.price)>0)kind="own";
   else{const bo=bestOffer(p);if(!bo)return null;kind="offer";removed=bo}
   if(removed)offers=offers.filter(o=>o.id!==removed.id);
-  return {kind,offers,own,removed,preview:promoteCheapest(p,offers,own)};
+  /* variants that are still there replace the main one even without a price */
+  const rest=offers.filter(o=>!o.fromBundle&&!coveredByBundle(p,o));
+  let preview=promoteCheapest(p,offers,own);
+  if(!(preview.price>0)&&rest.length){const o=rest[0];preview={offers:offers.map(x=>({...x,picked:x.id===o.id})),price:0,supplier:o.seller||"",label:offerTitle(o)+" (цена не указана)"}}
+  return {kind,offers,own,removed,rest,preview};
 }
 async function removeMain(p){
-  const plan=mainPlan(p);if(!plan)return null;
+  p=partById(p.id)||p;const plan=mainPlan(p);if(!plan)return null;
   if(plan.kind==="bundle")await removeFromBundles(p);
-  const pr=promoteCheapest(partById(p.id)||p,plan.offers,plan.own);
+  const pr=plan.preview;
   const patch={offers:pr.offers,price:pr.price,supplier:pr.supplier};
   await updPart(p.id,patch);
   if(plan.removed)dropUnused(photosOf(plan.removed),p.id,plan.removed.id);
@@ -2444,24 +2448,26 @@ function setupDeleteButtons(p){
   const del=$("pdDelete"),all=$("pdDeleteAll");
   del.dataset.armed="";all.dataset.armed="";del.hidden=!p;all.hidden=true;
   if(!p)return;
-  const plan=mainPlan(p),repl=plan&&plan.preview.price>0;
+  const plan=mainPlan(p),repl=!!plan&&(plan.preview.price>0||plan.rest.length>0||!!plan.own);
   del.dataset.mode=repl?"main":"part";
   del.textContent=repl?"Удалить основное":"Удалить деталь";
-  del.title=repl?`Убрать ${plan.kind==="bundle"?"комплект":plan.kind==="own"?"цену детали":"основной вариант"}, основным станет самый дешёвый из оставшихся`:"";
-  all.hidden=!repl;all.textContent="Удалить деталь целиком";
+  del.title=repl?`Убрать ${plan.kind==="bundle"?"комплект":plan.kind==="own"?"цену детали":"основной вариант"}, вместо него встанет вариант. Остальные варианты сохранятся`:"У детали нет других вариантов — удалится вся деталь";
+  all.hidden=!repl;all.textContent="Удалить деталь со всеми вариантами";
 }
 $("pdDelete").addEventListener("click",async e=>{
   const b=e.currentTarget,p=S.editing;if(!p)return;
   const main=b.dataset.mode==="main";
-  if(!b.dataset.armed){b.dataset.armed="1";b.textContent=main?`Заменить на ${mainPlan(p).preview.label}?`:"Точно удалить?";return}
+  if(!b.dataset.armed){b.dataset.armed="1";b.textContent=main?`Заменить на: ${mainPlan(p).preview.label||"следующий вариант"}?`:"Других вариантов нет. Удалить деталь?";return}
   b.disabled=true;
-  const ok=await guarded(async()=>{if(main){const pr=await removeMain(p);toast("Основным стал "+((pr&&pr.label)||"следующий вариант"))}else{await deletePart(p);toast("Деталь удалена")}});
+  const ok=await guarded(async()=>{if(main){const plan=mainPlan(p),left=Math.max(0,plan.rest.length-1),pr=await removeMain(p);
+      toast(`Основное удалено. Теперь основной: ${(pr&&pr.label)||"следующий вариант"}${left?` · вариантов осталось: ${left}`:""}`)}
+    else{await deletePart(p);toast("Деталь удалена")}});
   b.disabled=false;
   if(ok)$("partDialog").close();
 });
 $("pdDeleteAll").addEventListener("click",async e=>{
   const b=e.currentTarget,p=S.editing;if(!p)return;
-  if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Точно удалить со всеми вариантами?";return}
+  if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Точно удалить деталь и все варианты?";return}
   b.disabled=true;const ok=await guarded(()=>deletePart(p),"Деталь удалена");b.disabled=false;
   if(ok)$("partDialog").close();
 });
@@ -2864,7 +2870,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261021120339";let lastCheck=0;
+const APP_VER="20261021125136";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
