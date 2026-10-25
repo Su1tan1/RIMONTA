@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261023145534">
+<meta name="app-ver" content="20261026015000">
 <script>try{var t=localStorage.getItem("rimonta.theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex">
@@ -26,7 +26,7 @@
   --st-verify-fg:#7A5B00; --st-verify-bg:#FCEFC4;
   --st-need-fg:#A83C08;   --st-need-bg:#FFE2D1;
   --st-ordered-fg:#1F57D6;--st-ordered-bg:#DFE8FB;
-  --st-intk-fg:#6E35D5;--st-intk-bg:#EFE7FF;
+  --st-intk-fg:#6024C8;--st-intk-bg:#D4BFFF;
    --st-picked-fg:#087E8B;--st-picked-bg:#D8F3F5;
    --st-arrived-fg:#0B6F57;--st-arrived-bg:#D2F0E6;
   --st-installed-fg:#3E4954;--st-installed-bg:#E3E7EC;
@@ -43,7 +43,7 @@
   --st-verify-fg:#F2CE5C; --st-verify-bg:#3A3112;
   --st-need-fg:#FF9E6B;   --st-need-bg:#43230F;
   --st-ordered-fg:#8FB0FF;--st-ordered-bg:#1C2B4D;
-  --st-intk-fg:#E0CEFF;--st-intk-bg:#3B285E;
+  --st-intk-fg:#E2D0FF;--st-intk-bg:#3B205B;
    --st-picked-fg:#6FE2E5;--st-picked-bg:#15383D;
   --st-arrived-fg:#5FD3AE;--st-arrived-bg:#123A2F;
   --st-installed-fg:#B4C0CB;--st-installed-bg:#26313B;
@@ -58,7 +58,7 @@
   --st-verify-fg:#F2CE5C; --st-verify-bg:#3A3112;
   --st-need-fg:#FF9E6B;   --st-need-bg:#43230F;
   --st-ordered-fg:#8FB0FF;--st-ordered-bg:#1C2B4D;
-  --st-intk-fg:#E0CEFF;--st-intk-bg:#3B285E;
+  --st-intk-fg:#E2D0FF;--st-intk-bg:#512D80;
    --st-picked-fg:#6FE2E5;--st-picked-bg:#15383D;
   --st-arrived-fg:#5FD3AE;--st-arrived-bg:#123A2F;
   --st-installed-fg:#B4C0CB;--st-installed-bg:#26313B;
@@ -764,6 +764,10 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
 .plus{border:0;background:var(--accent);color:var(--accent-ink);border-radius:50%}
 .plus:hover{filter:brightness(1.08)}
 .plus[hidden]{display:none}
+/* Floating quick-add button */
+#addPartBtn{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));top:auto;z-index:60;width:58px;height:58px;border-radius:50%;box-shadow:0 5px 18px rgba(0,0,0,.24)}
+#addPartBtn svg{width:25px;height:25px}
+@media(max-width:420px){#addPartBtn{width:56px;height:56px;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
 .dr-quick{padding:12px 16px 0}
 .dr-quick .sheet-btn{width:100%}
 .drawer[open]{animation:drIn .28s cubic-bezier(.2,.8,.2,1)}
@@ -854,6 +858,8 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 .cal-d{position:relative;min-height:46px;border:1px solid var(--line);border-radius:9px;background:var(--sunken);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:4px 2px;font-size:13px;color:var(--ink)}
 .cal-d.out{opacity:.4}
 .cal-d.today{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.cal-d.has-deadline{background:color-mix(in srgb,var(--st-returned-bg) 36%,var(--sunken));border-color:color-mix(in srgb,var(--st-returned-fg) 42%,var(--line))}
+.cal-d.has-deadline.sel{background:color-mix(in srgb,var(--st-returned-bg) 38%,var(--accent-soft))}
 .cal-d.sel{background:var(--accent-soft)}
 .cal-d .dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
 .cal-d i{width:7px;height:7px;border-radius:50%;display:block}
@@ -868,6 +874,26 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 .cal-ev small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
 .cal-ev .k{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .cal-ev .k.e{color:var(--st-ordered-fg)}.cal-ev .k.l{color:var(--st-returned-fg)}.cal-ev .k.t{color:var(--st-intk-fg)}
+.track-row{display:flex;align-items:stretch;gap:6px;min-width:0}
+.track-row input{flex:1 1 0;width:0;min-width:0}
+.track-open{flex:0 0 auto;padding-inline:10px!important;white-space:nowrap}
+.cal-notify{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--sunken)}
+.cal-notify .hint{font-size:12px;color:var(--muted);flex:1 1 180px}
+#calEventDialog{width:min(540px,calc(100vw - 24px))}
+#calEventForm{max-height:calc(100dvh - 32px);overflow:auto}
+.ce-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px;margin-top:9px}
+.ce-edit-grid .field{min-width:0}
+.ce-edit-grid .field label{font-size:11px}
+.ce-edit-grid input{font-variant-numeric:tabular-nums}
+.ce-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ce-status .status{width:auto;max-width:100%;min-width:0}
+@media(max-width:420px){.ce-edit-grid{grid-template-columns:1fr}.ce-track-row{flex-wrap:wrap}.ce-track-row input{flex-basis:100%}}
+.ce-fields{display:flex;flex-direction:column;gap:12px}
+.ce-detail{background:var(--sunken);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
+.ce-label{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px}
+.ce-track-row{display:flex;gap:6px;align-items:center}
+.ce-track-row input{min-width:0;flex:1;border:1px solid var(--line);background:var(--sunken);border-radius:9px;padding:9px 11px;font-family:var(--f-mono)}
+.part-link{display:inline-flex;align-items:center;gap:3px;font-size:12.5px;color:var(--accent)}
 </style>
 
 <div class="wrap">
@@ -881,10 +907,10 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
     <div class="top-actions">
       <button class="btn owner-top" id="ownerBtn" type="button" aria-label="Сводка для владельца" title="Сводка для владельца"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 1.8h7l3.2 3.2v11.2H4z M11 1.8V5h3.2 M6.5 9h5M6.5 12h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg><span>Сводка для владельца</span></button>
       <button class="btn owner-top" id="calBtn" type="button" aria-label="Календарь прибытия" title="Календарь прибытия"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 7.5h13M6 2v3M12 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="calBadge" class="cal-badge" hidden aria-hidden="true"></span><span>Календарь</span></button>
-      <button class="plus" id="addPartBtn" type="button" aria-label="Добавить деталь" title="Добавить деталь"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     </div>
   </header>
 
+  <button class="plus" id="addPartBtn" type="button" aria-label="Добавить деталь" title="Добавить деталь"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
   <div id="notice" class="notice" hidden></div>
   <section id="ghReport" class="gh-report" hidden aria-live="polite"></section>
   <section class="gh-setup" id="ghSetup" hidden>
@@ -948,6 +974,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
     </div>
     <div class="grid">
       <div class="field wide"><label for="f-name">Деталь</label><input id="f-name" required placeholder="Крыло переднее"></div>
+      <div class="field wide"><label for="f-link">Ссылка на деталь</label><input id="f-link" type="url" inputmode="url" placeholder="https://…"></div>
       <div class="field"><label for="f-oem">Номер оригинала</label><input id="f-oem" class="mono" placeholder="41007497113" autocomplete="off" spellcheck="false"></div>
       <div class="field"><span class="lbl">Сторона</span>
         <div class="seg" role="radiogroup" aria-label="Сторона">
@@ -959,7 +986,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
       <div class="field"><label for="f-price">Цена за шт., ₽</label><input id="f-price" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><span class="hint" id="f-price-hint"></span></div>
       <div class="field"><label for="f-status">Статус</label><select id="f-status"></select></div>
       <div class="field" id="f-arrived-wrap"><label for="f-arrived">Приехало к мастеру</label><input id="f-arrived" type="date"></div>
-      <div class="field" id="f-picked-wrap" hidden><label for="f-picked">Забрано из ТК</label><input id="f-picked" type="date"></div>
+      <div class="field" id="f-picked-wrap" hidden><label for="f-picked">Получено из ТК</label><input id="f-picked" type="date"></div>
       <div class="field" id="f-tkat-wrap"><label for="f-tkat">Приехало в ТК <span class="req">*</span></label><input id="f-tkat" type="date"></div>
       <div class="field" id="f-tkuntil-wrap"><label for="f-tkuntil">Хранится в ТК до <span class="req">*</span></label><input id="f-tkuntil" type="date"></div>
       <div class="field"><label for="f-supplier">Продавец</label><input id="f-supplier" placeholder="HAN Parts, Москва"></div>
@@ -976,7 +1003,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
         <div class="fs-title"><b>Доставка</b><span id="f-ship-hint">после заказа</span></div>
         <div class="field"><label for="f-carrier">Транспортная компания</label><input id="f-carrier" list="carriers" placeholder="СДЭК"></div>
         <div class="field"><label for="f-from">Откуда</label><input id="f-from" placeholder="Москва"></div>
-        <div class="field"><label for="f-track">Трек-номер</label><input id="f-track" class="mono" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="f-track">Трек-номер</label><div class="track-row"><input id="f-track" class="mono" autocomplete="off" spellcheck="false"><button type="button" class="btn sm track-open" data-track-open="f-track|f-carrier">↗ ТК</button></div></div>
         <div class="field"><label for="f-eta">Ждём к</label><input id="f-eta" type="date"></div>
         <div class="field"><label for="f-shipcost">Стоимость доставки, ₽</label><input id="f-shipcost" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
       </div>
@@ -1017,7 +1044,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
         <div class="fs-title"><b>Доставка</b><span>после заказа</span></div>
         <div class="field"><label for="b-carrier">Транспортная компания</label><input id="b-carrier" list="carriers" placeholder="СДЭК"></div>
         <div class="field"><label for="b-from">Откуда</label><input id="b-from" placeholder="Москва"></div>
-        <div class="field"><label for="b-track">Трек-номер</label><input id="b-track" class="mono" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="b-track">Трек-номер</label><div class="track-row"><input id="b-track" class="mono" autocomplete="off" spellcheck="false"><button type="button" class="btn sm track-open" data-track-open="b-track|b-carrier">↗ ТК</button></div></div>
         <div class="field"><label for="b-eta">Ждём к</label><input id="b-eta" type="date"></div>
       </div>
     </div>
@@ -1119,7 +1146,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
       <div class="field"><label for="or-ship">Доставка, ₽</label><input id="or-ship" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
       <div class="field"><label for="or-eta">Ждём к</label><input id="or-eta" type="date"></div>
       <div class="field wide" id="or-items-wrap" hidden><span class="lbl">Окончательные цены <span class="req">*</span></span><div class="or-items" id="or-items"></div><span class="hint">Доставка учтётся один раз, у первой детали</span></div>
-      <div class="field wide"><label for="or-track">Трек-номер</label><input id="or-track" class="mono" autocomplete="off" spellcheck="false" placeholder="можно добавить позже"></div>
+      <div class="field wide"><label for="or-track">Трек-номер</label><div class="track-row"><input id="or-track" class="mono" autocomplete="off" spellcheck="false" placeholder="можно добавить позже"><button type="button" class="btn sm track-open" data-track-open="or-track|or-carrier">↗ ТК</button></div></div>
     </div>
     <div class="err" id="orErr" hidden></div>
     <div class="d-foot"><span class="small"><span class="req" style="color:var(--danger)">*</span> обязательно</span><div class="right">
@@ -1142,8 +1169,19 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
     <div class="cal-nav"><button type="button" class="btn sm" id="calPrev" aria-label="Предыдущий месяц">‹</button><b id="calMonth"></b><button type="button" class="btn sm" id="calNext" aria-label="Следующий месяц">›</button></div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-legend"><span><i style="background:var(--st-ordered-fg)"></i>ждём доставку</span><span><i style="background:var(--st-returned-fg)"></i>опаздывает</span><span><i style="background:var(--st-intk-fg)"></i>крайний срок ТК</span><span><i style="background:var(--st-picked-fg)"></i>получено из ТК</span><span><i style="background:var(--muted)"></i>прошлая дата ожидания</span></div>
+    <div class="cal-notify"><button type="button" class="btn sm" id="calNotifyBtn">Включить напоминание на 9:00</button><span class="hint" id="calNotifyHint">Уведомление о событиях на сегодня. Сработает, пока сайт открыт в браузере.</span></div>
     <div class="cal-list" id="calList"></div>
   </div>
+</dialog>
+
+<dialog id="calEventDialog" aria-labelledby="calEventTitle">
+  <form class="d-form" id="calEventForm" novalidate>
+    <div class="d-head"><h2 id="calEventTitle">Событие календаря</h2><button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="ce-fields" id="calEventBody"></div>
+    <input id="calEventCarrier" type="hidden">
+    <div class="err" id="calEventErr" hidden></div>
+    <div class="d-foot"><button type="button" class="btn" data-close>Закрыть</button><div class="right"><button type="button" class="btn" id="calEventEdit">Открыть карточку</button><button type="submit" class="btn primary" id="calEventSave">Сохранить</button></div></div>
+  </form>
 </dialog>
 
 <dialog id="confirmDialog" aria-labelledby="cfTitle">
@@ -1196,7 +1234,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 <script>
 const STATUSES=[
   {id:"verify",label:"Уточнить"},{id:"need",label:"Нужно"},{id:"ordered",label:"Заказано"},
-  {id:"intk",label:"Ждёт в ТК"},{id:"picked",label:"Забрано из ТК"},{id:"arrived",label:"У мастера"},{id:"installed",label:"Установлено"},{id:"returned",label:"Возврат"}];
+  {id:"intk",label:"Ждёт в ТК"},{id:"picked",label:"Получено из ТК"},{id:"arrived",label:"У мастера"},{id:"installed",label:"Установлено"},{id:"returned",label:"Возврат"}];
 const ST_ORDER=Object.fromEntries(STATUSES.map((s,i)=>[s.id,i]));
 const ST_LABEL=Object.fromEntries(STATUSES.map(s=>[s.id,s.label]));
 const SPENT=new Set(["ordered","intk","picked","arrived","installed"]);
@@ -1222,7 +1260,7 @@ function loadSet(k,def){try{const v=localStorage.getItem(k);return new Set(v?JSO
 
 const S={exp:new Set(),justOpened:null,db:null,cars:[],parts:[],bundles:[],carsLoaded:false,partsLoaded:false,canWrite:true,editing:null,editingBundle:null,
   carId:load("rimonta.car")||null,filter:"all",q:"",groupBy:load("rimonta.group")||"status",
-  collapsed:new Set(["status:ordered","status:arrived","status:installed","status:returned"]),
+  collapsed:loadSet("rimonta.collapsed2",["status:ordered","status:arrived","status:installed","status:returned"]),
   open:loadSet("rimonta.open",[]),planSort:load("rimonta.plsort")||"manual",bundlesOpen:load("rimonta.bopen")!=="0",oedit:null,oadd:null,odel:null,bdel:null,busy:false,assets:null,fp:{},sel:new Set()};
 function focusForm(pid,oid){
   const f=document.querySelector(`[data-oform="${CSS.escape(pid)}"]${oid?`[data-oid="${CSS.escape(oid)}"]`:":not([data-oid])"}`);
@@ -1261,6 +1299,8 @@ const truckIcon=`<svg width="13" height="11" viewBox="0 0 16 13" aria-hidden="tr
 const TKC={"СДЭК":["#12913A","#4CD36F"],"ПЭК":["#0B4EA2","#6FA8F5"],"Деловые Линии":["#B58900","#FFD200"],"Байкал Сервис":["#1460AA","#6AAEF0"],"КИТ":["#D9730D","#FFA040"],
   "Энергия":["#D3161C","#FF7077"],"Почта России":["#0055A6","#6FA8F5"],"Яндекс Доставка":["#E8391D","#FF7A5F"],"Boxberry":["#E4005B","#FF6FA6"],"DPD":["#DC0032","#FF6B86"]};
 const carrierOf=name=>{const n=String(name||"").trim(),l=n.toLowerCase();return n&&CARRIERS.find(c=>c.k.some(k=>k.length<3?l===k:l.includes(k)))||null};
+const TRACK_URLS={"СДЭК":"https://www.cdek.ru/ru/tracking/","ПЭК":"https://pecom.ru/services-are/order-status/","Деловые Линии":"https://www.dellin.ru/tracker/","Байкал Сервис":"https://www.baikalsr.ru/tools/tracking/","КИТ":"https://tk-kit.ru/tracking","Энергия":"https://nrg-tk.pro/client/tracking/","Почта России":"https://www.pochta.ru/tracking","Яндекс Доставка":"https://dostavka.yandex.ru/ndd/tracking","Boxberry":"https://boxberry.ru/tracking/","DPD":"https://www.dpd.ru/"};
+const trackingUrl=name=>{const c=carrierOf(name);return c?(TRACK_URLS[c.t]||"https://www.17track.net/ru"):"https://www.17track.net/ru"};
 const tkStyle=name=>{const c=carrierOf(name),v=c&&TKC[c.t];return v?` style="--tk-l:${v[0]};--tk-d:${v[1]}"`:""};
 const impChip=t=>t?`<span class="imp">${esc(t)}</span>`:"";
 const tkLeft=p=>p.tkUntil?-daysLate(p.tkUntil):null;
@@ -1605,6 +1645,8 @@ function worstOffer(p){let w=null,wv=-1;for(const o of offersOf(p)){if(num(o.pri
 const partEst=p=>{if(unitPrice(p)>0)return partCost(p);const w=worstOffer(p);return w?offerTotal(p,w):0};
 const deliveryOf=p=>{const b=activeBundle(p);return (b?b.delivery:p.delivery)||{}};
 const bundleShip=b=>num(b.ship);
+const bundleShipKnown=b=>!!(b&&(b.shipKnown===true||num(b.ship)>0));
+const partShipKnown=p=>!!(p&&((p.delivery||{}).costKnown===true||num((p.delivery||{}).cost)>0||num(pickedOf(p)&&pickedOf(p).ship)>0));
 
 /* "по отдельности" for a part = what you'd pay buying it on its own:
    the picked variant, else the part's own price, else the cheapest variant.
@@ -1722,7 +1764,7 @@ function renderSummary(){
   const info=car?`<div class="carinfo"><h2 class="car-name">${esc(car.name)}${car.archivedAt?`<span class="arch-badge">архив</span>`:""}</h2><div class="car-sub">${car.spec?esc(car.spec):""}${car.vin?`<span class="vin">${esc(car.vin)}</span><button class="icon-btn" type="button" data-copy="${esc(car.vin)}" aria-label="Скопировать VIN">${copyIcon}</button>`:""}</div>${acts}</div>`
     :`<div class="carinfo"><h2 class="car-name">${liveCars().length?"Все машины":"Машин пока нет"}</h2><div class="car-sub">${parts.length} ${plural(parts.length,"деталь","детали","деталей")}</div></div>`;
   $("summary").innerHTML=info+
-    `<div class="metric"><div class="label">Потрачено</div><div class="value">${rub(spent)}</div><div class="hint">с доставкой: заказано, забрано из ТК, у мастера, установлено</div></div>`+
+    `<div class="metric"><div class="label">Потрачено</div><div class="value">${rub(spent)}</div><div class="hint">с доставкой: заказано, получено из ТК, у мастера, установлено</div></div>`+
     `<div class="metric"><div class="label">Ещё нужно</div><div class="value">≈ ${rub(todo)}</div><div class="hint">${noPrice?`и ${noPrice} ${plural(noPrice,"деталь","детали","деталей")} без цены`:"по выбранным и лучшим ценам"}</div></div>`+
     `<div class="bar"><div class="bar-track" aria-hidden="true">${STATUSES.map(s=>counts[s.id]?`<span style="width:${counts[s.id]/total*100}%;background:var(--st-${s.id}-fg)"></span>`:"").join("")}</div>`+
     `<div class="legend">${STATUSES.map(s=>`<span><i class="dot" style="background:var(--st-${s.id}-fg)"></i>${s.label} <b>${counts[s.id]}</b></span>`).join("")}</div>`+
@@ -1764,9 +1806,10 @@ function rowHtml(p,n){
   const meta=[];
   if(S.carId===ALL){const c=carById(p.car);meta.push(`<span class="carname">${esc(c?.name||"Без машины")}</span>`)}
   if(qty>1)meta.push(`<span>${qty} шт.</span>`);
+  if(safeUrl(p.link))meta.push(`<a class="icon-btn part-link" href="${esc(safeUrl(p.link))}" target="_blank" rel="noopener" title="Открыть ссылку на деталь" aria-label="Открыть ссылку на деталь">${extIcon}<span>Ссылка</span></a>`);
   const sc=shipChip(p);if(sc)meta.push(sc);
   if(p.info&&p.status!=="installed"&&p.status!=="returned")meta.push(impChip(p.info));
-  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)meta.push(`<span class="inst">забрано из ТК ${esc(fmtDate(p.pickedAt))}</span>`);
+  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)meta.push(`<span class="inst">получено из ТК ${esc(fmtDate(p.pickedAt))}</span>`);
   if(ARRIVED.has(p.status))meta.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?`<span class="arr"><span>приехало ${esc(fmtDate(p.arrivedAt))}</span></span>`:"");
   if(p.status==="installed"&&p.installedAt)meta.push(`<span class="inst">установлено ${esc(fmtDate(p.installedAt))}</span>`);
   if(ab)meta.push(`<button class="chip-btn bundle on" type="button" data-goto="${esc(ab.id)}">Комплект «${esc(ab.name||ab.seller||"комплект")}»${ab.seller&&ab.name?` · ${esc(ab.seller)}`:""}</button>`);
@@ -1839,7 +1882,7 @@ function noteRow(p,n){
     if(p.status==="ordered"&&d.eta)sub.push(late>0?`<span class="late">опаздывает на ${late} ${plural(late,"день","дня","дней")}</span>`:late===0?"ждём сегодня":"ждём "+esc(fmtDate(d.eta)));
     if(p.status==="intk")sub.push(tkChip(p));
     if(p.info)sub.push(impChip(p.info));if(ab&&ab.info)sub.push(impChip(ab.info))}
-  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)sub.push("забрано из ТК "+esc(fmtDate(p.pickedAt)));
+  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)sub.push("получено из ТК "+esc(fmtDate(p.pickedAt)));
   if(ARRIVED.has(p.status))sub.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?"приехало "+esc(fmtDate(p.arrivedAt)):"");
   if(p.status==="installed"&&p.installedAt)sub.push("установлено "+esc(fmtDate(p.installedAt)));
   const miss=orderMissing(p);
@@ -2017,7 +2060,7 @@ function orderedBlocks(rows,st,gk){
     return `<div class="ob obx" data-bid="${esc(b.id)}"><div class="obx-top"><span class="obx-legend"><b>${esc(b.seller||"продавец не указан")}</b> · комплект «${esc(b.name||"комплект")}»${all?"":" · часть"}</span>${canEdit()?`<button class="obx-more" type="button" data-bmenu="${esc(b.id)}|${esc(st)}|${esc(gk)}" aria-label="Действия с комплектом">⋯</button>`:""}</div>
       ${d.carrier||shipTxt||(inTkB&&bTrack)||(inTkB&&b.info)?`<div class="obx-ship">${d.carrier?carrierBadge(d.carrier):""}${[shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).length?`<span>${esc([shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).join(" · "))}</span>`:""}${inTkB&&b.info?` ${impChip(b.info)}`:""}</div>`:""}
       ${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip obx-fix" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}
-      <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Цена</th>${HAS_DATE_COL.has(st)?(st==="picked"?"<th>Забрано из ТК</th>":"<th>Приехало</th>"):""}<th></th></tr></thead><tbody>${rowsHtml}</tbody></table></div><span class="obx-sum"><b>${rub(sum)}</b>${all&&bundleShip(b)?`<small>(+${rub(bundleShip(b))}) доставка</small>`:""}</span></div>`;
+      <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Цена</th>${HAS_DATE_COL.has(st)?(st==="picked"?"<th>Получено из ТК</th>":"<th>Приехало</th>"):""}<th></th></tr></thead><tbody>${rowsHtml}</tbody></table></div><span class="obx-sum"><b>${rub(sum)}</b>${all&&bundleShip(b)?`<small>(+${rub(bundleShip(b))}) доставка</small>`:""}</span></div>`;
   }).join("");
   return {html,rest};
 }
@@ -2387,6 +2430,10 @@ document.addEventListener("click",async e=>{
   if(d.group){S.collapsed.has(d.group)?S.collapsed.delete(d.group):S.collapsed.add(d.group);store("rimonta.collapsed2",JSON.stringify([...S.collapsed]));renderGroups();return}
   if(t.hasAttribute("data-btoggle")){S.bundlesOpen=!S.bundlesOpen;store("rimonta.bopen",S.bundlesOpen?"1":"0");renderBundles();return}
   if(d.copy!==undefined){copy(d.copy);return}
+  if(d.trackOpen){const [trackId,carrierId]=d.trackOpen.split("|");const track=$(trackId)?.value.trim()||"",carrier=$(carrierId)?.value.trim()||"";if(track)copy(track);const w=window.open(trackingUrl(carrier),"_blank");if(!w){toast("Браузер заблокировал новую вкладку");return}try{w.opener=null}catch(e){}if(!track)toast("Открыл сайт отслеживания · трек-номер не указан");return}
+  if(d.calevent!==undefined){openCalendarEvent(CAL.items[Number(d.calevent)]);return}
+  if(d.caleditPart!==undefined){const id=d.caleditPart;$("calEventDialog").close();if(id)openPart(partById(id));return}
+  if(d.caleditBundle!==undefined){const id=d.caleditBundle;$("calEventDialog").close();if(id)openBundle(bundleById(id));return}
   if(d.edit){openPart(partById(d.edit));return}
   if(d.goto){if(!S.bundlesOpen){S.bundlesOpen=true;store("rimonta.bopen","1");renderBundles()}
     const card=$("b-"+d.goto);if(card){card.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});card.classList.add("flash");setTimeout(()=>card.classList.remove("flash"),1400)}return}
@@ -2489,7 +2536,7 @@ document.addEventListener("change",async e=>{
   const id=sel.dataset.statusFor,status=sel.value;sel.dataset.st=status;
   const p=partById(id);
   if(sel.dataset.bundleAll){const b=bundleById(sel.dataset.bundleAll);sel.value="";if($("carSheet").open)$("carSheet").close();if(b&&status)openStatusConfirm({bid:b.id,pids:(b.parts||[]).filter(partById),to:status});return}
-  if(p&&(status==="intk"||status==="picked")){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
+  if(p&&["intk","picked","arrived","installed"].includes(status)){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
   if(p&&BACK(p.status,status)){sel.value=p.status;sel.dataset.st=p.status;openStatusConfirm({pids:[p.id],to:status});return}
   if(status==="ordered"&&p&&p.status!=="ordered"){sel.value=p.status;sel.dataset.st=p.status;openOrder(p);return}
   /* any other status change on a single part asks first */
@@ -2558,7 +2605,7 @@ document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&
   const end=e=>{
     if(!LB.ptr.has(e.pointerId))return;LB.ptr.delete(e.pointerId);if(LB.ptr.size<2)LB.pinch=null;
     if(LB.ptr.size===0&&LB.start&&LB.start.s<=LB.base*1.01&&LB.s<=LB.base*1.01){
-      const dx=e.clientX-LB.start.x,dy=e.clientY-LB.start.y;if(Math.abs(dx)>60&&Math.abs(dy)<80)navLB(dx<0?1:-1)}
+      const dx=e.clientX-LB.start.x,dy=e.clientY-LB.start.y;if(dy>90&&dy>Math.abs(dx)*1.2){$("photoDialog").close()}else if(Math.abs(dx)>60&&Math.abs(dy)<80)navLB(dx<0?1:-1)}
     if(LB.ptr.size===0)LB.start=null;
   };
   lb.addEventListener("pointerup",end);lb.addEventListener("pointercancel",end);
@@ -2581,7 +2628,7 @@ document.addEventListener("submit",async e=>{
   let offers,patch;
   if(editingId){offers=offersOf(p).map(o=>o.id===editingId?{...o,...data}:o);const ed=offers.find(o=>o.id===editingId);
     patch=ed&&ed.picked?{offers,price:ed.price,supplier:ed.seller}:{offers}}
-  else{offers=[...offersOf(p),{id:newId(),...data,picked:false}];patch={offers}}
+  else{const makeMain=!visibleOffers(p).length&&!activeBundle(p)&&!(num(p.price)>0)&&num(data.price)>0;offers=[...offersOf(p),{id:newId(),...data,picked:makeMain}];patch=makeMain?{offers,price:num(data.price),supplier:data.seller||""}:{offers}}
   const btn=f.querySelector('button[type="submit"]');btn.disabled=true;
   const ok=await guarded(()=>updPart(pid,patch),editingId?"Вариант сохранён":"Вариант добавлен");
   btn.disabled=false;
@@ -2605,7 +2652,7 @@ function showErr(id,msg){const el=$(id);el.textContent=msg;el.hidden=false}
 
 
 /* leaving a card by tapping outside (or Esc, or ✕): if something changed, ask whether to save */
-const GUARDED={partDialog:1,bundleDialog:1,carDialog:1,orderDialog:1};
+const GUARDED={partDialog:1,bundleDialog:1,carDialog:1,orderDialog:1,calEventDialog:1};
 const formState=d=>[...d.querySelectorAll("input,select,textarea")].map(e=>e.type==="file"?"":e.type==="checkbox"||e.type==="radio"?(e.checked?1:0):e.value).join("\u0001")
   +"|"+(d.id==="partDialog"&&S.pkey&&S.fp[S.pkey]?S.fp[S.pkey].ids.join(","):"")+(d.id==="carDialog"&&CED?"|"+(CED.photo||""):"");
 {const showModal0=HTMLDialogElement.prototype.showModal;
@@ -2628,7 +2675,7 @@ for(const id of Object.keys(GUARDED)){const d=$(id);let down=false;
 }
 
 /* calendar of expected arrivals and last pick-up days in a transport company */
-const CAL={y:0,m:0,sel:""};
+const CAL={y:0,m:0,sel:"",items:[]};
 const pad2=n=>String(n).padStart(2,"0"),ymd=(y,m,d)=>y+"-"+pad2(m+1)+"-"+pad2(d);
 function calEvents(){
   const ev=new Map(),add=(k,e)=>{if(!k)return;if(!ev.has(k))ev.set(k,[]);ev.get(k).push(e)},seen=new Set();
@@ -2640,15 +2687,104 @@ function calEvents(){
       if(!seen.has(key)){seen.add(key);
         const stillOrdered=ab?(ab.parts||[]).some(id=>{const x=partById(id);return x&&x.status==="ordered"&&deliveryOf(x).eta===d.eta}):p.status==="ordered";
         const kind=stillOrdered?(daysLate(d.eta)>0?"l":"e"):"h";
-        add(d.eta,{kind,pid:p.id,title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.status!=="returned").map(x=>x.name).join(", "):"",d,history:!stillOrdered})}}
-    if(TK_HISTORY.has(p.status)&&p.tkUntil){const key="tk:"+(ab?"b"+ab.id:p.id)+p.tkUntil;
-      if(!seen.has(key)){seen.add(key);add(p.tkUntil,{kind:"t",pid:p.id,title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&TK_HISTORY.has(x.status)&&x.tkUntil===p.tkUntil).map(x=>x.name).join(", "):"",d,until:true,history:p.status!=="intk"})}}
+        add(d.eta,{kind,pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.status!=="returned").map(x=>x.name).join(", "):"",d,history:!stillOrdered})}}
+    if(p.status==="intk"&&p.tkUntil){const key="tk:"+(ab?"b"+ab.id:p.id)+p.tkUntil;
+      if(!seen.has(key)){seen.add(key);add(p.tkUntil,{kind:"t",pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.status==="intk"&&x.tkUntil===p.tkUntil).map(x=>x.name).join(", "):"",d,until:true,history:false})}}
     /* The pickup date is a completed event, not a pending action, and remains in the calendar afterwards. */
-    if(p.pickedAt){const key="pickup:"+(ab?"b"+ab.id:p.id)+p.pickedAt;
-      if(!seen.has(key)){seen.add(key);add(p.pickedAt,{kind:"p",pid:p.id,title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.pickedAt===p.pickedAt).map(x=>x.name).join(", "):"",d,history:true})}}
+    if(PICKUP_HISTORY.has(p.status)&&p.pickedAt){const key="pickup:"+(ab?"b"+ab.id:p.id)+p.pickedAt;
+      if(!seen.has(key)){seen.add(key);add(p.pickedAt,{kind:"p",pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.pickedAt===p.pickedAt).map(x=>x.name).join(", "):"",d,history:true})}}
   }
   return ev;
 }
+function openCalendarEvent(e){
+  if(!e)return;
+  const p=partById(e.pid),b=e.bid?bundleById(e.bid):null,d=e.d||deliveryOf(p)||{};
+  const members=b?(b.parts||[]).map(partById).filter(Boolean):p?[p]:[];
+  const names=members.map(x=>`${x.name||"Без названия"}${x.side?" · "+x.side:""}${qtyOf(x)>1?" · "+qtyOf(x)+" шт.":""}`).join(", ");
+  const kind=e.kind==="t"?"Крайний срок хранения в ТК":e.kind==="p"?"Получено из ТК":e.kind==="l"?"Ожидаемая доставка просрочена":e.kind==="h"?"Прошлая дата ожидания":"Ожидаемая доставка";
+  const editable=canEdit()&&!!p;
+  const statusControl=p?`<div class="ce-detail"><div class="ce-label">Статус товара</div><div class="ce-status"><select id="calEventStatus" class="status" data-st="${esc(p.status)}" aria-label="Статус товара" ${editable?"":"disabled"}>${STATUSES.map(st=>`<option value="${st.id}"${st.id===p.status?" selected":""}>${esc(st.label)}</option>`).join("")}</select></div></div>`:"";
+  const tkInfo=p?`<div class="ce-detail"><div class="ce-label">Информация о ТК</div>${d.carrier?carrierBadge(d.carrier):"Транспортная компания не указана"}
+    <div class="ce-edit-grid">
+      <div class="field"><label for="calEventFrom">Откуда</label><input id="calEventFrom" value="${esc(d.from||"")}" placeholder="Город / отправитель" ${editable?"":"disabled"}></div>
+      <div class="field"><label for="calEventEta">Ожидаемая дата доставки</label><input id="calEventEta" type="date" value="${esc(d.eta||"")}" ${editable?"":"disabled"}></div>
+      <div class="field"><label for="calEventTkAt">Дата прибытия</label><input id="calEventTkAt" type="date" value="${esc(p.tkAt||"")}" max="${todayStr()}" ${editable?"":"disabled"}></div>
+      <div class="field"><label for="calEventTkUntil">Бесплатное хранение до</label><input id="calEventTkUntil" type="date" value="${esc(p.tkUntil||"")}" ${editable?"":"disabled"}></div>
+      <div class="field"><label for="calEventPickedAt">Дата получения из ТК</label><input id="calEventPickedAt" type="date" value="${esc(p.pickedAt||(p.status==="intk"?todayStr():"") )}" max="${todayStr()}" ${editable?"":"disabled"}></div>
+    </div>
+    ${p.arrivedAt?`<div style="margin-top:8px;color:var(--muted);font-size:12.5px">У мастера: ${esc(fmtDate(p.arrivedAt))}</div>`:""}
+  </div>`:"";
+  $("calEventTitle").textContent=b?(b.name||b.seller||"Комплект"):((p&&p.name)||e.title||"Событие календаря");
+  const dateText=fmtDate(CAL.sel)||"";
+  $("calEventBody").innerHTML=`<div class="ce-detail"><div class="ce-label">Событие · ${esc(dateText)}</div><b>${esc(kind)}</b></div>${b?`<div class="ce-detail"><div class="ce-label">Комплект</div><b>${esc(b.name||b.seller||"Комплект")}</b>${b.seller?`<div>${esc(b.seller)}</div>`:""}<div>${esc(names)}</div></div>`:p?`<div class="ce-detail"><div class="ce-label">Деталь</div><b>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}</b>${p.oem?`<div>Номер: ${esc(normOem(p.oem))}</div>`:""}</div>`:`<div class="ce-detail">${esc(e.title||"")}</div>`}${statusControl}${tkInfo}<div class="ce-detail"><div class="ce-label">Трек-номер</div><div class="ce-track-row"><input id="calEventTrack" readonly value="${esc(d.track||"")}" placeholder="Не указан" aria-label="Трек-номер"><button type="button" class="btn sm" data-copy="${esc(d.track||"")}" ${d.track?"":"disabled"}>Копировать</button><button type="button" class="btn sm" data-track-open="calEventTrack|calEventCarrier">↗ ТК</button></div></div>`;
+  $("calEventCarrier").value=d.carrier||"";
+  $("calEventErr").hidden=true;
+  $("calEventSave").hidden=!canEdit();
+  const eb=$("calEventEdit");eb.removeAttribute("data-caledit-part");eb.removeAttribute("data-caledit-bundle");if(b)eb.dataset.caleditBundle=b.id;else if(p)eb.dataset.caleditPart=p.id;
+  eb.hidden=!canEdit();
+  if(!$("calEventDialog").open)$("calEventDialog").showModal();
+}
+$("calEventForm").addEventListener("change",e=>{
+  if(e.target&&e.target.id==="calEventStatus")e.target.dataset.st=e.target.value;
+  if(e.target&&["calEventFrom","calEventEta","calEventTkAt","calEventTkUntil","calEventPickedAt"].includes(e.target.id))$("calEventErr").hidden=true;
+});
+$("calEventForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!canEdit()){toast("Только просмотр");return}
+  const eb=$("calEventEdit"),p=partById(eb.dataset.caleditPart),b=eb.dataset.caleditBundle?bundleById(eb.dataset.caleditBundle):null;
+  if(!p){toast("Не удалось найти деталь для изменения");return}
+  const targetStatus=$("calEventStatus")?.value||p.status;
+  const from=$("calEventFrom")?.value.trim()||"",eta=$("calEventEta")?.value||"",tkAt=$("calEventTkAt")?.value||"",tkUntil=$("calEventTkUntil")?.value||"",pickedAt=$("calEventPickedAt")?.value||"";
+  const needsTkDates=targetStatus==="intk"&&(p.status!=="intk"||tkAt!==String(p.tkAt||"")||tkUntil!==String(p.tkUntil||""));
+  if(needsTkDates&&(!tkAt||!tkUntil||tkAt>todayStr()||tkUntil<tkAt)){
+    showErr("calEventErr","Укажите дату прибытия не позже сегодня и срок бесплатного хранения не раньше даты прибытия.");return;
+  }
+  if(targetStatus==="picked"&&(!pickedAt||pickedAt>todayStr())){
+    showErr("calEventErr","Укажите дату получения из ТК не позже сегодняшнего дня.");return;
+  }
+  const special=new Set(["intk","picked","arrived","installed"]);
+  const saveDelivery=async()=>{
+    if(b)await updBundle(b.id,{delivery:{...(b.delivery||{}),from,eta}});
+    else await updPart(p.id,{delivery:{...(p.delivery||{}),from,eta}});
+  };
+  const saveTkDates=async status=>{
+    if(TK_HISTORY.has(p.status)||TK_HISTORY.has(status))await updPart(p.id,{tkAt:tkAt||p.tkAt||"",tkUntil:tkUntil||p.tkUntil||""});
+  };
+  if(targetStatus!==p.status&&special.has(targetStatus)){
+    const ok=await guarded(async()=>{await saveDelivery();await saveTkDates(targetStatus)},"Данные ТК сохранены");
+    if(!ok)return;
+    const seedDate=targetStatus==="intk"?tkAt:targetStatus==="picked"?pickedAt:targetStatus==="arrived"?(p.arrivedAt||todayStr()):(p.installedAt||todayStr());
+    $("calEventDialog").close();
+    openStatusConfirm({bid:b?b.id:"",pids:[p.id],to:targetStatus,seedDate,seedUntil:tkUntil,seedPickupDate:pickedAt,calEvent:true});
+    return;
+  }
+  if(targetStatus!==p.status&&!special.has(targetStatus)){
+    if(!await askConfirm({title:`Поменять статус «${p.name||"деталь"}»?`,text:`Сейчас: «${ST_LABEL[p.status]||p.status}». Новый статус: «${ST_LABEL[targetStatus]||targetStatus}».`,ok:"Сохранить изменения"}))return;
+  }
+  const btn=$("calEventSave");btn.disabled=true;
+  const ok=await guarded(async()=>{
+    await saveDelivery();
+    let patch=targetStatus!==p.status?statusPatch(p,targetStatus):{};
+    if(TK_HISTORY.has(targetStatus)){patch.tkAt=tkAt||p.tkAt||"";patch.tkUntil=tkUntil||p.tkUntil||""}
+    if(PICKUP_HISTORY.has(targetStatus)){
+      if(pickedAt)patch.pickedAt=pickedAt;
+      else patch.pickedAt=p.pickedAt||(targetStatus==="picked"?todayStr():"");
+    }
+    if(targetStatus==="arrived"&&!patch.arrivedAt)patch.arrivedAt=p.arrivedAt||todayStr();
+    if(targetStatus==="installed"&&!patch.installedAt)patch.installedAt=p.installedAt||todayStr();
+    if(Object.keys(patch).length)await updPart(p.id,patch);
+  },targetStatus!==p.status?`Статус: ${ST_LABEL[targetStatus]||targetStatus}`:"Данные календаря сохранены");
+  btn.disabled=false;
+  if(ok){
+    let focusDate="";
+    if(targetStatus==="intk")focusDate=tkUntil;
+    else if(PICKUP_HISTORY.has(targetStatus))focusDate=pickedAt||partById(p.id)?.pickedAt||"";
+    else if(targetStatus==="ordered")focusDate=eta;
+    if(focusDate){const [yy,mm]=focusDate.split("-").map(Number);if(yy&&mm){CAL.y=yy;CAL.m=mm-1;CAL.sel=focusDate}}
+    $("calEventDialog").close();
+    if($("calDialog").open)renderCal();else renderCalendarBadge();
+  }
+});
 function renderCalendarBadge(){
   const badge=$("calBadge"),btn=$("calBtn");if(!badge||!btn)return;
   const today=todayStr(),ev=calEvents();let count=0;
@@ -2657,28 +2793,55 @@ function renderCalendarBadge(){
   btn.setAttribute("aria-label",count?`Календарь прибытия, действий на сегодня и просрочено: ${count}`:"Календарь прибытия");
   btn.title=count?`Календарь прибытия · сегодня и просрочено: ${count}`:"Календарь прибытия";
 }
-function openCal(){const n=new Date();if(!CAL.sel){CAL.y=n.getFullYear();CAL.m=n.getMonth();CAL.sel=todayStr()}renderCal();if(!$("calDialog").open)$("calDialog").showModal()}
+function openCal(){const n=new Date();if(!CAL.sel){CAL.y=n.getFullYear();CAL.m=n.getMonth();CAL.sel=todayStr()}renderCal();syncCalNotifyButton();if(!$("calDialog").open)$("calDialog").showModal()}
 function renderCal(){
   const ev=calEvents(),first=new Date(CAL.y,CAL.m,1),shift=(first.getDay()+6)%7,days=new Date(CAL.y,CAL.m+1,0).getDate(),today=todayStr();
   $("calMonth").textContent=first.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
   let h=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="cal-wd">${x}</div>`).join("");
   for(let i=0;i<shift;i++)h+=`<div></div>`;
   for(let d=1;d<=days;d++){const k=ymd(CAL.y,CAL.m,d),es=ev.get(k)||[],kinds=[...new Set(es.map(e=>e.kind))];
-    h+=`<button type="button" class="cal-d${k===today?" today":""}${k===CAL.sel?" sel":""}" data-calday="${k}" aria-label="${d} ${es.length?", событий: "+es.length:""}"><span>${d}</span><span class="dots">${kinds.map(x=>`<i class="${x}"></i>`).join("")}</span></button>`}
+    const deadlineDay=es.some(e=>e.kind==="t"&&!e.history);
+    h+=`<button type="button" class="cal-d${k===today?" today":""}${k===CAL.sel?" sel":""}${deadlineDay?" has-deadline":""}" data-calday="${k}" aria-label="${d} ${deadlineDay?", крайний срок хранения ТК":""}${es.length?", событий: "+es.length:""}"><span>${d}</span><span class="dots">${kinds.map(x=>`<i class="${x}"></i>`).join("")}</span></button>`}
   $("calGrid").innerHTML=h;
-  const list=(ev.get(CAL.sel)||[]).slice().sort((a,b)=>({t:0,l:1,e:2,p:3,h:4}[a.kind]??9)-({t:0,l:1,e:2,p:3,h:4}[b.kind]??9));
+  const list=(ev.get(CAL.sel)||[]).slice().sort((a,b)=>({t:0,l:1,e:2,p:3,h:4}[a.kind]??9)-({t:0,l:1,e:2,p:3,h:4}[b.kind]??9));CAL.items=list;
   const head=`<b>${esc(fmtDate(CAL.sel))}</b>`;
   const noDate=scopeParts().filter(p=>p.status==="ordered"&&!deliveryOf(p).eta).length;
   $("calList").innerHTML=head+(list.length?list.map(e=>{const d=e.d;
       const sub=[d.carrier?carrierTitle(d.carrier)||d.carrier:"",d.from?"из "+d.from:"",d.track?"трек …"+String(d.track).replace(/\s/g,"").slice(-4):"",e.more].filter(Boolean);
       const lbl=e.kind==="t"?(e.history?"Срок хранения ТК":"КРАЙНИЙ СРОК · ЗАБРАТЬ ИЗ ТК"):e.kind==="l"?"Опаздывает":e.kind==="p"?"Получено из ТК":e.kind==="h"?"Плановая дата доставки":"Ждём доставку";
       const deadline=e.kind==="t"&&!e.history?" deadline":"";
-      return `<button type="button" class="cal-ev${deadline}" data-edit="${esc(e.pid)}"><span class="k ${e.kind}">${lbl}</span><span>${esc(e.title)}</span>${sub.length?`<small class="tkc"${tkStyle(d.carrier)}>${esc(sub.join(" · "))}</small>`:""}</button>`}).join(""):`<small style="color:var(--muted)">В этот день ничего не ожидается.</small>`)
+      return `<button type="button" class="cal-ev${deadline}" data-calevent="${list.indexOf(e)}"><span class="k ${e.kind}">${lbl}</span><span>${esc(e.title)}</span>${sub.length?`<small class="tkc"${tkStyle(d.carrier)}>${esc(sub.join(" · "))}</small>`:""}</button>`}).join(""):`<small style="color:var(--muted)">В этот день ничего не ожидается.</small>`)
     +(noDate?`<small style="color:var(--muted)">Без даты ожидания: ${noDate} ${plural(noDate,"деталь","детали","деталей")} в «Заказано».</small>`:"");
   renderCalendarBadge();
 }
 $("calPrev").addEventListener("click",()=>{CAL.m--;if(CAL.m<0){CAL.m=11;CAL.y--}renderCal()});
 $("calNext").addEventListener("click",()=>{CAL.m++;if(CAL.m>11){CAL.m=0;CAL.y++}renderCal()});
+const CAL_NOTIFY_KEY="rimonta.calnotify";
+function syncCalNotifyButton(){
+  const on=load(CAL_NOTIFY_KEY)==="1",b=$("calNotifyBtn"),h=$("calNotifyHint");if(!b||!h)return;
+  b.textContent=on?"Выключить напоминание на 9:00":"Включить напоминание на 9:00";
+  h.textContent=on?"Включено: напомним о событиях на сегодня, пока сайт открыт. Для уведомлений браузера нужно разрешение.":"Уведомление о событиях на сегодня. Сработает, пока сайт открыт в браузере.";
+}
+async function toggleCalNotify(){
+  if(load(CAL_NOTIFY_KEY)==="1"){store(CAL_NOTIFY_KEY,"0");syncCalNotifyButton();toast("Напоминание выключено");return}
+  if(!("Notification" in window)){toast("Этот браузер не поддерживает уведомления");return}
+  let perm=Notification.permission;
+  if(perm!=="granted")try{perm=await Notification.requestPermission()}catch(e){perm="denied"}
+  if(perm!=="granted"){toast("Разрешите уведомления для сайта в настройках браузера");return}
+  store(CAL_NOTIFY_KEY,"1");syncCalNotifyButton();toast("Напоминание на 9:00 включено");checkCalNotification();
+}
+function checkCalNotification(){
+  if(load(CAL_NOTIFY_KEY)!=="1"||!("Notification" in window)||Notification.permission!=="granted")return;
+  const now=new Date(),day=todayStr();if(now.getHours()<9)return;
+  const key="rimonta.calnotified."+day;if(load(key)==="1")return;
+  const ev=calEvents().get(day)||[];if(!ev.length)return;
+  const actionable=ev.filter(x=>x.kind!=="h"),titles=(actionable.length?actionable:ev).slice(0,3).map(x=>x.title).filter(Boolean);
+  store(key,"1");
+  try{const n=new Notification("RIMONTA · события на сегодня",{body:titles.join("; ")+(ev.length>3?` и ещё ${ev.length-3}`:""),tag:"rimonta-calendar-"+day});n.onclick=()=>{window.focus();openCal();n.close()}}catch(e){}
+}
+$("calNotifyBtn").addEventListener("click",toggleCalNotify);syncCalNotifyButton();
+checkCalNotification();setInterval(checkCalNotification,30000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkCalNotification()});
 $("calDialog").addEventListener("close",()=>{CAL.sel=""});
 {const d=$("calDialog");let downOutside=false;d.addEventListener("pointerdown",e=>{downOutside=e.target===d&&outsideBox(e,d)});d.addEventListener("click",e=>{const backDrop=e.target===d&&downOutside&&outsideBox(e,d);const blankCell=e.target.matches&&e.target.matches("#calGrid > div");const blankList=!!(e.target.closest&&e.target.closest("#calList"))&&!e.target.closest("button,a,input,select,textarea");downOutside=false;if(backDrop||blankCell||blankList)d.close()});}
 
@@ -2692,14 +2855,15 @@ function openPart(p){
   $("f-status").innerHTML=STATUSES.map(s=>`<option value="${s.id}">${s.label}</option>`).join("");
   const d=p||{car:S.carId!==ALL?S.carId:S.cars[0]?.id,status:"need",qty:1,side:""};
   const ab=p?activeBundle(p):null,dv=(p&&p.delivery)||{};
-  $("f-name").value=d.name||"";$("f-car").value=d.car||(S.carId!==ALL?S.carId:"")||liveCars()[0]?.id||"";$("f-unit").value=d.unit||"";$("f-qty").value=d.qty||1;
+  $("f-name").value=d.name||"";$("f-link").value=d.link||"";$("f-car").value=d.car||(S.carId!==ALL?S.carId:"")||liveCars()[0]?.id||"";$("f-unit").value=d.unit||"";$("f-qty").value=d.qty||1;
   $("f-oem").value=normOem(d.oem);$("f-status").value=d.status||"need";$("f-arrived").value=d.arrivedAt||"";$("f-arrived").max=todayStr();$("f-arrived-wrap").hidden=!ARRIVED.has(d.status||"need");$("f-picked").value=d.pickedAt||"";$("f-picked").max=todayStr();$("f-price").value=num(d.price)>0?Math.round(num(d.price)):"";
   $("f-supplier").value=d.supplier||"";$("f-note").value=d.note||"";$("f-info").value=d.info||"";$("f-tkat").value=d.tkAt||"";$("f-tkuntil").value=d.tkUntil||"";syncTkFields();syncPickupFields();
   $("f-price").disabled=$("f-supplier").disabled=false;
   $("f-price-hint").textContent=ab?`В комплекте: ${rub(unitPrice(p)*qtyOf(p))}. Здесь — цена по отдельности`:p&&offersOf(p).length?"Если выбран вариант, цена берётся из него":"";
   $("f-ship").hidden=!!ab;
   $("f-carrier").value=dv.carrier||"";$("f-from").value=dv.from||"";$("f-track").value=dv.track||"";$("f-eta").value=dv.eta||"";
-  $("f-shipcost").value=num(dv.cost)>0?num(dv.cost):"";$("f-shipcost").placeholder=p&&pickedOf(p)&&num(pickedOf(p).ship)?String(num(pickedOf(p).ship)):"0";
+  const currentBundle=p?activeBundle(p):null,shipValue=currentBundle?bundleShip(currentBundle):Math.max(num(dv.cost),num(pickedOf(p)&&pickedOf(p).ship));
+  $("f-shipcost").value=(currentBundle?bundleShipKnown(currentBundle):p?partShipKnown(p):false)||shipValue>0?shipValue:"";$("f-shipcost").placeholder="0";
   [...pf.querySelectorAll('input[name="side"]')].forEach(r=>r.checked=r.value===(d.side||""));
   $("pdErr").hidden=true;setupDeleteButtons(p);
   $("pdStamp").textContent=p&&p.updated?"изменено "+new Date(p.updated).toLocaleDateString("ru-RU",{day:"numeric",month:"short"}):"";
@@ -2716,13 +2880,16 @@ pf.addEventListener("submit",async e=>{
   if(!$("f-car").value){showErr("pdErr","Сначала добавьте машину кнопкой «+ Машина»");return}
   if($("f-status").value==="intk"&&(!$("f-tkat").value||!$("f-tkuntil").value||$("f-tkuntil").value<$("f-tkat").value)){showErr("pdErr","Для «Ждёт в ТК» укажите, когда приехало и до какого числа хранится");(!$("f-tkat").value?$("f-tkat"):$("f-tkuntil")).focus();return}
   const now=nowIso(),ed=S.editing,ab=ed?activeBundle(ed):null;
-  const data={name,car:$("f-car").value,unit:$("f-unit").value.trim(),side:(pf.querySelector('input[name="side"]:checked')||{}).value||"",
+  const enteredShip=$("f-shipcost").value.trim(),needsShipStatus=["picked","arrived","installed"].includes($("f-status").value)&&(!ed||ed.status!==$("f-status").value);
+  const knownShip=ab?bundleShipKnown(ab):ed?partShipKnown(ed):false;
+  if(needsShipStatus&&!knownShip&&!enteredShip){showErr("pdErr","Перед этим статусом укажите стоимость доставки, даже если она 0 ₽. Раскройте «Ещё: … доставка».");$("f-more").open=true;$("f-shipcost").focus();return}
+  const data={name,link:fixUrl($("f-link").value),car:$("f-car").value,unit:$("f-unit").value.trim(),side:(pf.querySelector('input[name="side"]:checked')||{}).value||"",
     qty:Math.max(1,Math.round(num($("f-qty").value))||1),oem:normOem($("f-oem").value),status:$("f-status").value,
     arrivedAt:ARRIVED.has($("f-status").value)?($("f-arrived").value||(ed&&ed.arrivedAt)||todayStr()):($("f-status").value==="returned"?$("f-arrived").value:""),
     pickedAt:PICKUP_HISTORY.has($("f-status").value)?($("f-picked").value||(ed&&ed.pickedAt)||($("f-status").value==="picked"?todayStr():"")):"",
     tkAt:TK_HISTORY.has($("f-status").value)?$("f-tkat").value:"",tkUntil:TK_HISTORY.has($("f-status").value)?$("f-tkuntil").value:"",info:$("f-info").value.trim(),
     price:Math.max(0,Math.round(num($("f-price").value))),supplier:$("f-supplier").value.trim(),note:$("f-note").value.trim(),
-    delivery:ab?(ed.delivery||{}):{carrier:$("f-carrier").value.trim(),from:$("f-from").value.trim(),track:$("f-track").value.trim(),eta:$("f-eta").value,cost:Math.max(0,Math.round(num($("f-shipcost").value)))},
+    delivery:ab?(ed.delivery||{}):{carrier:$("f-carrier").value.trim(),from:$("f-from").value.trim(),track:$("f-track").value.trim(),eta:$("f-eta").value,cost:Math.max(0,Math.round(num($("f-shipcost").value))),costKnown:enteredShip!==""||(ed&&partShipKnown(ed))},
     updated:now};
   const btn=$("pdSave");btn.disabled=true;
   try{
@@ -2732,7 +2899,7 @@ pf.addEventListener("submit",async e=>{
     const wantOrder=data.status==="ordered"&&!(ed&&ed.status==="ordered");
     if(wantOrder)data.status=ed?ed.status:"need";
     let saved;
-    if(ed){saved={...data,offers:offersOf(ed),created:ed.created||now};await S.db.doc("parts/"+ed.id).set(saved);saved.id=ed.id;
+    if(ed){if(ab&&enteredShip!==""&&(!bundleShipKnown(ab)||num(enteredShip)!==bundleShip(ab)))await updBundle(ab.id,{ship:Math.max(0,Math.round(num(enteredShip))),shipKnown:true});saved={...data,offers:offersOf(ed),created:ed.created||now};await S.db.doc("parts/"+ed.id).set(saved);saved.id=ed.id;
       const lp=partById(ed.id);if(lp)Object.assign(lp,saved);bump()}
     else{saved={...data,offers:[],created:now};const ref=await S.db.collection("parts").add(saved);saved.id=ref.id}
     if(pst){dropUnused(pst.removed,saved.id,"part");delete S.fp[pk_]}
@@ -2801,7 +2968,8 @@ function openOrder(p,b,g){
   }
   $("orSub").textContent=sub;$("or-price-l").innerHTML=esc(priceLabel)+' <span class="req">*</span>';$("or-price-h").textContent=hint;
   $("or-seller").value=seller;$("or-from").value=from;$("or-carrier").value=carrier;$("or-price").value=price>0?Math.round(price):"";
-  $("or-ship").value=ship>0?ship:"";$("or-eta").value=eta;$("or-track").value=track;
+  const initialShipKnown=g?false:b?bundleShipKnown(b):p?partShipKnown(p):false;
+  $("or-ship").value=(ship>0||initialShipKnown)?ship:"";$("or-eta").value=eta;$("or-track").value=track;
   $("or-badge").innerHTML=carrier?carrierBadge(carrier):"";
   of_.querySelectorAll(".field.invalid").forEach(x=>x.classList.remove("invalid"));$("orErr").hidden=true;
   $("orderDialog").showModal();
@@ -2826,18 +2994,18 @@ of_.addEventListener("submit",async e=>{
   if(ORD.group){
     ok=await guarded(async()=>{let i=0;
       for(const inp of items){const p=partById(inp.dataset.oprice);if(!p)continue;
-        await updPart(p.id,{status:"ordered",supplier:seller,price:Math.round(num(inp.value)),delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:i===0?ship:0}});i++}
+        await updPart(p.id,{status:"ordered",supplier:seller,price:Math.round(num(inp.value)),delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:i===0?ship:0,costKnown:i===0&&$("or-ship").value.trim()!==""}});i++}
     },`${msg} · ${items.length} ${plural(items.length,"деталь","детали","деталей")}`);
   }else if(ORD.bid){const b=bundleById(ORD.bid);if(!b){btn.disabled=false;return}
     ok=await guarded(async()=>{
-      const nb={...b,seller,total:price,ship,delivery:{carrier,from,track,eta}};
-      await updBundle(b.id,{seller,total:price,ship,delivery:nb.delivery,picked:true});
+      const nb={...b,seller,total:price,ship,shipKnown:$("or-ship").value.trim()!==""||bundleShipKnown(b),delivery:{carrier,from,track,eta}};
+      await updBundle(b.id,{seller,total:price,ship,shipKnown:nb.shipKnown,delivery:nb.delivery,picked:true});
       await applyBundle(nb);
       for(const id of (b.parts||[])){const p=partById(id);if(p&&p.status!=="ordered"&&TODO.has(p.status))await updPart(id,{status:"ordered"})}
     },msg);
   }else{
     const p=partById(ORD.pid)||ORD.part;
-    ok=await guarded(()=>updPart(p.id,{status:"ordered",supplier:seller,price,delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:ship}}),msg);
+    ok=await guarded(()=>updPart(p.id,{status:"ordered",supplier:seller,price,delivery:{...(p.delivery||{}),carrier,from,track,eta,cost:ship,costKnown:$("or-ship").value.trim()!==""||partShipKnown(p)}}),msg);
   }
   btn.disabled=false;
   if(ok){$("orderDialog").close();ORD=null}
@@ -2852,10 +3020,11 @@ function openStatusConfirm(o){
   if(!canEdit())return;
   const ms=o.pids.map(partById).filter(p=>p&&p.status!==o.to);if(!ms.length){toast("Все уже в статусе «"+ST_LABEL[o.to]+"»");return}
   const b=o.bid?bundleById(o.bid):null,d=(b&&b.delivery)||{},to=o.to;
-  const tk=to==="intk",picked=to==="picked",back=!tk&&ms.some(p=>BACK(p.status,to)),dated=tk||picked&&!back||!back&&(to==="arrived"||to==="installed"),askShip=!back&&to==="arrived"&&!!b;
-  ARR={bid:o.bid||"",pids:ms.map(p=>p.id),to,back,dated,askShip,tk};
+  const tk=to==="intk",picked=to==="picked",back=!tk&&ms.some(p=>BACK(p.status,to)),dated=tk||picked&&!back||!back&&(to==="arrived"||to==="installed"),seedDate=o.seedDate||"",seedUntil=o.seedUntil||"",seedPickupDate=o.seedPickupDate||"",calEvent=!!o.calEvent;
+  const costBundle=b||(ms.length===1?activeBundle(ms[0]):null),needShip=!back&&["picked","arrived","installed"].includes(to),knownShip=costBundle?bundleShipKnown(costBundle):ms.every(partShipKnown),askShip=needShip&&!knownShip;
+  ARR={bid:o.bid||"",pids:ms.map(p=>p.id),to,back,dated,askShip,tk,shipBid:costBundle?costBundle.id:"",shipPid:!costBundle&&ms.length===1?ms[0].id:"",calEvent,seedDate,seedUntil,seedPickupDate};
   const what=b?`Комплект «${b.name||b.seller||"комплект"}»`:ms.length===1?`«${ms[0].name}»`:`${ms.length} ${plural(ms.length,"деталь","детали","деталей")}`;
-  $("arTitle").textContent=back?`Вернуть в «${ST_LABEL[to]}»?`:tk?`${what} ${b||ms.length>1?"приехал":"приехала"} в ТК?`:picked?(b?`Комплект «${b.name||b.seller||"комплект"}»: забрать из ТК?`:`«${ms[0].name}»: забрано из ТК?`):to==="arrived"?`${what} ${b||ms.length>1?"передан мастеру":"передана мастеру"}?`:to==="installed"?`${what} ${b||ms.length>1?"установлен":"установлена"}?`:`Поставить статус «${ST_LABEL[to]}»?`;
+  $("arTitle").textContent=back?`Вернуть в «${ST_LABEL[to]}»?`:tk?`${what} ${b||ms.length>1?"приехал":"приехала"} в ТК?`:picked?(b?`Комплект «${b.name||b.seller||"комплект"}»: забрать из ТК?`:`«${ms[0].name}»: получено из ТК?`):to==="arrived"?`${what} ${b||ms.length>1?"передан мастеру":"передана мастеру"}?`:to==="installed"?`${what} ${b||ms.length>1?"установлен":"установлена"}?`:`Поставить статус «${ST_LABEL[to]}»?`;
   $("arSub").textContent=b?[b.seller,d.carrier,d.from?"из "+d.from:"",d.track?"трек "+d.track:""].filter(Boolean).join(" · "):"";
   $("arListL").textContent=back||!dated?(b?"Затронет все детали комплекта:":"Деталь:"):to==="installed"?"Проверьте, что установлены все детали:":picked?"Проверьте, что все детали забрали из ТК:":"Проверьте, что пришли все детали:";
   const pick=dated&&!!b&&ms.length>1;
@@ -2867,21 +3036,23 @@ function openStatusConfirm(o){
   $("arText").textContent=txt;$("arText").hidden=!txt;
   $("arGrid").hidden=!dated;$("ar-ship-f").hidden=!askShip;$("ar-until-f").hidden=!tk;
   $("ar-date-l").innerHTML=(to==="installed"?"Дата установки":tk?"Приехало в ТК":picked?"Дата получения из ТК":"Дата прихода к мастеру")+' <span class="req">*</span>';
-  $("ar-date").value=todayStr();$("ar-date").max=todayStr();$("ar-ship").value="";$("ar-until").value="";
-  const was=b?bundleShip(b):0;
-  $("ar-ship-h").textContent=was?`при заказе указали ${rub(was)}. Если доставка бесплатная, впишите 0`:"Если доставка бесплатная, впишите 0";
-  $("arSave").textContent=back?`Да, вернуть в «${ST_LABEL[to]}»`:tk?"Да, ждёт в ТК":picked?"Да, забрано из ТК":to==="arrived"?"Да, всё у мастера":to==="installed"?"Да, всё установлено":`Да, поставить «${ST_LABEL[to]}»`;
+  const existingDate=tk?(ms.find(p=>p.tkAt)||{}).tkAt:picked?(ms.find(p=>p.pickedAt)||{}).pickedAt:to==="arrived"?(ms.find(p=>p.arrivedAt)||{}).arrivedAt:to==="installed"?(ms.find(p=>p.installedAt)||{}).installedAt:"";
+  const existingUntil=(ms.find(p=>p.tkUntil)||{}).tkUntil;
+  $("ar-date").value=seedDate||existingDate||todayStr();$("ar-date").max=todayStr();$("ar-ship").value="";$("ar-until").value=seedUntil||existingUntil||"";
+  const was=costBundle?bundleShip(costBundle):0;
+  $("ar-ship-h").textContent=was?`Ранее указали ${rub(was)}. Если это верная сумма, можно вписать её; если доставка бесплатная, впишите 0`:"Укажите полную стоимость доставки. Если бесплатно, впишите 0";
+  $("arSave").textContent=back?`Да, вернуть в «${ST_LABEL[to]}»`:tk?"Да, ждёт в ТК":picked?"Да, получено из ТК":to==="arrived"?"Да, всё у мастера":to==="installed"?"Да, всё установлено":`Да, поставить «${ST_LABEL[to]}»`;
   $("arSave").className="btn "+(back?"primary":"good");
   af.querySelectorAll(".field.invalid").forEach(x=>x.classList.remove("invalid"));$("arErr").hidden=true;
   $("arriveDialog").showModal();
   if(dated)$(askShip?"ar-ship":"ar-date").focus();else $("arSave").focus();
 }
 /* the select is put back until the change is confirmed */
-$("arriveDialog").addEventListener("close",()=>{ARR=null;render()});
+$("arriveDialog").addEventListener("close",()=>{ARR=null;render();if($("calDialog").open)renderCal()});
 af.addEventListener("input",e=>{const f=e.target.closest(".field");if(f&&e.target.value!=="")f.classList.remove("invalid")});
 af.addEventListener("submit",async e=>{
   e.preventDefault();if(!ARR)return;
-  const {to,back,dated,askShip,tk}=ARR,b=ARR.bid?bundleById(ARR.bid):null;
+  const {to,back,dated,askShip,tk,shipBid,shipPid,calEvent,seedPickupDate}=ARR,b=ARR.bid?bundleById(ARR.bid):null;
   let ms=ARR.pids.map(partById).filter(p=>p&&p.status!==to);
   const chk=[...$("arList").querySelectorAll("input[data-arpid]")];
   if(chk.length){const on=new Set(chk.filter(c=>c.checked).map(c=>c.dataset.arpid));
@@ -2898,15 +3069,23 @@ af.addEventListener("submit",async e=>{
   const ship=Math.round(num(shipRaw)),n=`${ms.length} ${plural(ms.length,"деталь","детали","деталей")}`;
   const btn=$("arSave");btn.disabled=true;
   const ok=await guarded(async()=>{
-    if(askShip&&b&&ship!==bundleShip(b))await updBundle(b.id,{ship});
+    if(askShip&&shipBid)await updBundle(shipBid,{ship,shipKnown:true});
+    else if(askShip&&shipPid){const sp=partById(shipPid);if(sp)await updPart(shipPid,{delivery:{...(sp.delivery||{}),cost:ship,costKnown:true}})}
     for(const p of ms){const x=statusPatch(p,to);
       if(dated&&to==="arrived")x.arrivedAt=date;
       if(dated&&to==="picked")x.pickedAt=date;
+      else if(calEvent&&PICKUP_HISTORY.has(to)&&seedPickupDate&&!p.pickedAt)x.pickedAt=seedPickupDate;
       if(tk){x.tkAt=date;x.tkUntil=until}
       if(dated&&to==="installed")x.installedAt=date;
       await updPart(p.id,x)}
-  },back?`Возвращено в «${ST_LABEL[to]}»: ${n}`:tk?`Ждёт в ТК: ${n} · хранение до ${fmtDate(until)}`:to==="picked"?`Забрано из ТК: ${n} · ${fmtDate(date)}`:to==="arrived"?`У мастера: ${n} · ${fmtDate(date)}${askShip?` · доставка ${ship?rub(ship):"бесплатно"}`:""}${missed>0?` · не пришло: ${missed}, остались в «Заказано»`:""}`:to==="installed"?`Установлено: ${n} · ${fmtDate(date)}`:`${ST_LABEL[to]}: ${n}`);
+  },back?`Возвращено в «${ST_LABEL[to]}»: ${n}`:tk?`Ждёт в ТК: ${n} · хранение до ${fmtDate(until)}`:to==="picked"?`Получено из ТК: ${n} · ${fmtDate(date)}`:to==="arrived"?`У мастера: ${n} · ${fmtDate(date)}${askShip?` · доставка ${ship?rub(ship):"бесплатно"}`:""}${missed>0?` · не пришло: ${missed}, остались в «Заказано»`:""}`:to==="installed"?`Установлено: ${n} · ${fmtDate(date)}`:`${ST_LABEL[to]}: ${n}`);
   btn.disabled=false;
+  if(ok&&calEvent&&$("calDialog").open){
+    let focusDate=tk?until:picked?date:"";
+    if(!focusDate&&PICKUP_HISTORY.has(to)){const hp=ms.find(p=>p.pickedAt)||{};focusDate=hp.pickedAt||date}
+    if(focusDate){const [yy,mm]=focusDate.split("-").map(Number);if(yy&&mm){CAL.y=yy;CAL.m=mm-1;CAL.sel=focusDate}}
+    renderCal();
+  }
   if(ok)$("arriveDialog").close();
 });
 
@@ -2926,7 +3105,7 @@ function openBundle(b){
     :`<span class="small" style="padding:6px">У этой машины пока нет деталей для комплекта.</span>`;
   const v=b||{},dv=v.delivery||{};
   $("b-name").value=v.name||"";
-  $("b-seller").value=v.seller||"";$("b-total").value=num(v.total)>0?num(v.total):"";$("b-cond").value=v.cond||"";$("b-ship").value=num(v.ship)>0?num(v.ship):"";
+  $("b-seller").value=v.seller||"";$("b-total").value=num(v.total)>0?num(v.total):"";$("b-cond").value=v.cond||"";$("b-ship").value=(v.shipKnown===true||num(v.ship)>0)?num(v.ship):"";
   $("b-info").value=v.info||"";$("b-days").value=v.days||"";$("b-contact").value=v.contact||"";$("b-link").value=v.link||"";$("b-note").value=v.note||"";
   $("b-carrier").value=dv.carrier||"";$("b-from").value=dv.from||"";$("b-track").value=dv.track||"";$("b-eta").value=dv.eta||"";
   bf.dataset.car=carId;
@@ -2957,7 +3136,7 @@ bf.addEventListener("submit",async e=>{
   const now=nowIso(),old=S.editingBundle;
   const data={car:bf.dataset.car,name,seller,total,prices,cond:$("b-cond").value,ship:Math.max(0,Math.round(num($("b-ship").value))),days:$("b-days").value.trim(),
     contact:$("b-contact").value.trim(),link:fixUrl($("b-link").value),note:$("b-note").value.trim(),info:$("b-info").value.trim(),parts:ids,
-    delivery:{carrier:$("b-carrier").value.trim(),from:$("b-from").value.trim(),track:$("b-track").value.trim(),eta:$("b-eta").value},updated:now};
+    delivery:{carrier:$("b-carrier").value.trim(),from:$("b-from").value.trim(),track:$("b-track").value.trim(),eta:$("b-eta").value},shipKnown:$("b-ship").value.trim()!==""||(old&&old.shipKnown===true)||num(old&&old.ship)>0,updated:now};
   const btn=$("bdSave");btn.disabled=true;
   const ok=await guarded(async()=>{
     let nb;
@@ -3029,7 +3208,7 @@ function ownerText(o){
     items.forEach((it,i)=>{const multi=it.lines.length>1;if(i>0&&(multi||prevMulti))res.push("");res.push(...it.lines);prevMulti=multi});
     if(!items.length)res.push("Заказывать больше нечего.");
     if(o.bought){
-      const secs=[["Заказано, в пути",["ordered"]],["Ждёт в ТК",["intk"]],["Забрано из ТК",["picked"]],["У мастера, ждёт установки",["arrived"]],["Установлено",["installed"]]];
+      const secs=[["Заказано, в пути",["ordered"]],["Ждёт в ТК",["intk"]],["Получено из ТК",["picked"]],["У мастера, ждёт установки",["arrived"]],["Установлено",["installed"]]];
       for(const [title,sts] of secs){const ps=parts.filter(p=>sts.includes(p.status));if(!ps.length)continue;
         res.push("",title+":");
         ps.forEach(p=>{const d=deliveryOf(p),ab=activeBundle(p);
@@ -3098,7 +3277,7 @@ function openBundleSheet(bid,st,gk){
   const b=bundleById(bid);if(!b||!canEdit())return;
   const ids=(b.parts||[]).filter(id=>{const p=partById(id);return p&&p.status===st}),nx=NEXT_ST[st],allOn=allOpen(ids);
   $("csTitle").textContent=`Комплект «${b.name||b.seller||"комплект"}»`;
-  const NXL={intk:["Приехало в ТК (всё)","с датой и сроком хранения"],picked:["Забрано из ТК (всё)","с подтверждением и датой получения"],arrived:["Передано мастеру (всё)",", датой и суммой доставки"],installed:["Установлено всё","с подтверждением и датой"]};
+  const NXL={intk:["Приехало в ТК (всё)","с датой и сроком хранения"],picked:["Получено из ТК (всё)","с подтверждением и датой получения"],arrived:["Передано мастеру (всё)",", датой и суммой доставки"],installed:["Установлено всё","с подтверждением и датой"]};
   $("csList").innerHTML=(nx?`<button type="button" class="sheet-btn" data-bstatus="${esc(b.id)}|${esc(st)}|${nx}">${NXL[nx][0]}<small>${NXL[nx][1].replace(/^, /,"с подтверждением, ")}</small></button>`:"")
     +(st==="ordered"?`<button type="button" class="sheet-btn" data-bstatus="${esc(b.id)}|${esc(st)}|arrived">У мастера сразу (всё)<small>если ТК не было: с датой и суммой доставки</small></button>`:"")
     +`<button type="button" class="sheet-btn" data-bexp="${esc(b.id)}|${esc(gk)}">${allOn?"Свернуть":"Раскрыть"} все детали комплекта</button>`
@@ -3209,7 +3388,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261023145534";let lastCheck=0;
+const APP_VER="20261026015000";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
@@ -3227,7 +3406,7 @@ render();
     if(DRAG.el){setTimeout(ghSchedule,300);return}
     const a=document.activeElement,typing=a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName);
     const inOffer=typing&&a.closest("[data-oform]"),inPlan=typing&&a.closest("#plan"),inDate=typing&&a.type==="date"&&a.closest("#groups");
-    renderCars();renderSummary();renderToolbar();if(!inOffer&&!inDate)renderGroups();renderBundles();if(!inPlan)renderPlan();$("addPartBtn").hidden=!canEdit();
+    renderCars();renderSummary();renderToolbar();if(!inOffer&&!inDate)renderGroups();renderBundles();if(!inPlan)renderPlan();renderCalendarBadge();$("addPartBtn").hidden=!canEdit();
   };
   let rq=0;const ghSchedule=()=>{bump();if(rq)return;rq=requestAnimationFrame(()=>{rq=0;ghRefresh()})};
   const notice=t=>{const n=$("notice");n.textContent=t||"";n.hidden=!t};
