@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261026015000">
+<meta name="app-ver" content="20261026020000">
 <script>try{var t=localStorage.getItem("rimonta.theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex">
@@ -668,6 +668,11 @@ dialog::backdrop{background:rgba(9,14,20,.5)}
 .sheet-btn{text-align:left;border:1px solid var(--line);background:var(--sunken);border-radius:10px;padding:12px 14px;font-weight:600;font-size:15px;color:var(--ink)}
 .sheet-btn small{display:block;font-weight:500;font-size:12.5px;color:var(--muted);margin-top:2px}
 .sheet-btn.danger{color:var(--danger)}
+/* Muted action surfaces, tinted by roughly 35% rather than solid colour. */
+.sheet-btn.action-edit{background:color-mix(in srgb,var(--accent) 36%,var(--surface));border-color:color-mix(in srgb,var(--accent) 48%,var(--line));color:var(--accent)}
+.sheet-btn.action-archive{background:color-mix(in srgb,var(--good) 36%,var(--surface));border-color:color-mix(in srgb,var(--good) 48%,var(--line));color:var(--good)}
+.sheet-btn.action-delete{background:color-mix(in srgb,var(--danger) 36%,var(--surface));border-color:color-mix(in srgb,var(--danger) 48%,var(--line));color:var(--ink)}
+.car-acts .btn.good{background:color-mix(in srgb,var(--good) 36%,var(--surface));border-color:color-mix(in srgb,var(--good) 48%,var(--line));color:var(--ink)}
 .car-chip{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .car-chip.arch{border-style:dashed}
 .car-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -863,7 +868,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 .cal-d.sel{background:var(--accent-soft)}
 .cal-d .dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
 .cal-d i{width:7px;height:7px;border-radius:50%;display:block}
-.cal-d i.e{background:var(--st-ordered-fg)}.cal-d i.l{background:var(--st-returned-fg)}.cal-d i.t{background:var(--st-intk-fg)}.cal-d i.p{background:var(--st-picked-fg)}.cal-d i.h{background:var(--muted)}
+.cal-d i.e{background:var(--st-ordered-fg)}.cal-d i.l{background:var(--st-returned-fg)}.cal-d i.t{background:var(--st-intk-fg)}.cal-d i.k{background:var(--st-intk-fg)}.cal-d i.p{background:var(--st-picked-fg)}.cal-d i.a{background:var(--good)}.cal-d i.i{background:var(--st-installed-fg)}.cal-d i.h{background:var(--muted)}
 .cal-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
 .cal-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
 .cal-list{display:flex;flex-direction:column;gap:6px}
@@ -873,7 +878,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 .cal-ev .k.p{color:var(--st-picked-fg)}.cal-ev .k.h{color:var(--muted)}
 .cal-ev small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
 .cal-ev .k{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.cal-ev .k.e{color:var(--st-ordered-fg)}.cal-ev .k.l{color:var(--st-returned-fg)}.cal-ev .k.t{color:var(--st-intk-fg)}
+.cal-ev .k.e{color:var(--st-ordered-fg)}.cal-ev .k.l{color:var(--st-returned-fg)}.cal-ev .k.t,.cal-ev .k.k{color:var(--st-intk-fg)}.cal-ev .k.p{color:var(--st-picked-fg)}.cal-ev .k.a{color:var(--good)}.cal-ev .k.i{color:var(--st-installed-fg)}.cal-ev.history{opacity:.8}.cal-ev.history:not(.deadline){background:var(--sunken);border-color:var(--line);box-shadow:none}
 .track-row{display:flex;align-items:stretch;gap:6px;min-width:0}
 .track-row input{flex:1 1 0;width:0;min-width:0}
 .track-open{flex:0 0 auto;padding-inline:10px!important;white-space:nowrap}
@@ -887,6 +892,13 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
 .ce-edit-grid input{font-variant-numeric:tabular-nums}
 .ce-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ce-status .status{width:auto;max-width:100%;min-width:0}
+.ce-status-slot{display:flex;align-items:center;gap:8px;flex:1 1 100%;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ce-status-slot .ce-label{margin:0;flex:0 0 auto}
+.ce-status-slot .status{width:auto;flex:0 1 auto;min-width:130px}.ce-status-control{display:flex;align-items:center;gap:8px;min-width:0}.ce-status-control .ce-label{margin:0;flex:0 0 auto}.ce-status-control .status{min-width:130px}
+.ce-picked-field{background:color-mix(in srgb,var(--good) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--good) 48%,var(--line));border-radius:9px;padding:8px}
+.ce-picked-field input{background:var(--surface)!important;border-color:color-mix(in srgb,var(--good) 45%,var(--line))!important}
+.ce-picked-field label{color:var(--good)!important}
+.cal-event-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1 1 100%;flex-wrap:wrap}
 @media(max-width:420px){.ce-edit-grid{grid-template-columns:1fr}.ce-track-row{flex-wrap:wrap}.ce-track-row input{flex-basis:100%}}
 .ce-fields{display:flex;flex-direction:column;gap:12px}
 .ce-detail{background:var(--sunken);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
@@ -961,9 +973,10 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
       <li><b>Заказали</b>: выберите статус «Заказано», откроется окно заказа. Обязательно: продавец, откуда, транспортная компания и окончательная цена. Трек и дату можно добавить позже. Комплект заказывается кнопкой «Оформить заказ» в его карточке. Если у заказа чего-то не хватает, в строке будет жёлтая плашка «Дополните заказ».</li>
       <li><b>Фото</b>: значок фотоаппарата с числом в строке детали открывает все её фото во весь экран. Увеличение колёсиком мыши, щипком или двойным нажатием, перетаскивание при увеличении, листание стрелками или свайпом.</li>
       <li><b>Сводка для владельца</b>: готовый текст, что куплено, что едет, что осталось и сколько стоит. Скопируйте и отправьте в мессенджер. Продавцов можно не показывать.</li>
-    </ol>
+        <li><b>Резервная копия</b>: регулярно скачивайте полную копию внизу страницы и храните отдельно от устройства. В JSON входят машины, детали, комплекты и фотографии; для восстановления используйте импорт этого файла.</li>
+  </ol>
   </details>
-  <p class="gh-foot" id="ghFoot" hidden><span id="ghSync"></span><button type="button" id="ghDrop" hidden> (отменить неотправленные)</button> · <a href="https://github.com/Su1tan1/rimonta-data/commits" target="_blank" rel="noopener">история изменений на GitHub</a> · <button type="button" id="ghReload">обновить трекер</button> · <button type="button" id="ghLogout">убрать ключ с устройства</button></p>
+  <p class="gh-foot" id="ghFoot" hidden><span id="ghSync"></span><button type="button" id="ghDrop" hidden> (отменить неотправленные)</button> · <button type="button" id="ghBackup">Скачать полную резервную копию</button> · <a href="https://github.com/Su1tan1/rimonta-data/commits" target="_blank" rel="noopener">история изменений на GitHub</a> · <button type="button" id="ghReload">обновить трекер</button> · <button type="button" id="ghLogout">убрать ключ с устройства</button></p>
 </div>
 
 <dialog id="partDialog" aria-labelledby="pdTitle">
@@ -1168,7 +1181,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
     <div class="d-head"><h2 id="calTitle">Календарь прибытия</h2><button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
     <div class="cal-nav"><button type="button" class="btn sm" id="calPrev" aria-label="Предыдущий месяц">‹</button><b id="calMonth"></b><button type="button" class="btn sm" id="calNext" aria-label="Следующий месяц">›</button></div>
     <div class="cal-grid" id="calGrid"></div>
-    <div class="cal-legend"><span><i style="background:var(--st-ordered-fg)"></i>ждём доставку</span><span><i style="background:var(--st-returned-fg)"></i>опаздывает</span><span><i style="background:var(--st-intk-fg)"></i>крайний срок ТК</span><span><i style="background:var(--st-picked-fg)"></i>получено из ТК</span><span><i style="background:var(--muted)"></i>прошлая дата ожидания</span></div>
+    <div class="cal-legend"><span><i style="background:var(--st-ordered-fg)"></i>ждём доставку</span><span><i style="background:var(--st-returned-fg)"></i>опаздывает</span><span><i style="background:var(--st-intk-fg)"></i>даты ТК / хранение</span><span><i style="background:var(--st-picked-fg)"></i>получено из ТК</span><span><i style="background:var(--good)"></i>у мастера</span><span><i style="background:var(--muted)"></i>установлено / прошлая дата</span></div>
     <div class="cal-notify"><button type="button" class="btn sm" id="calNotifyBtn">Включить напоминание на 9:00</button><span class="hint" id="calNotifyHint">Уведомление о событиях на сегодня. Сработает, пока сайт открыт в браузере.</span></div>
     <div class="cal-list" id="calList"></div>
   </div>
@@ -1179,8 +1192,9 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:10
     <div class="d-head"><h2 id="calEventTitle">Событие календаря</h2><button type="button" class="icon-btn" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
     <div class="ce-fields" id="calEventBody"></div>
     <input id="calEventCarrier" type="hidden">
+    <input id="calEventEta" type="hidden">
     <div class="err" id="calEventErr" hidden></div>
-    <div class="d-foot"><button type="button" class="btn" data-close>Закрыть</button><div class="right"><button type="button" class="btn" id="calEventEdit">Открыть карточку</button><button type="submit" class="btn primary" id="calEventSave">Сохранить</button></div></div>
+    <div class="d-foot"><div id="calEventStatusSlot" class="ce-status-slot"></div><div class="cal-event-actions"><button type="button" class="btn" data-close>Закрыть</button><button type="button" class="btn" id="calEventEdit">Открыть карточку</button><button type="submit" class="btn primary" id="calEventSave">Сохранить</button></div></div>
   </form>
 </dialog>
 
@@ -1258,9 +1272,9 @@ function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function loadSet(k,def){try{const v=localStorage.getItem(k);return new Set(v?JSON.parse(v):def)}catch(e){return new Set(def)}}
 
-const S={exp:new Set(),justOpened:null,db:null,cars:[],parts:[],bundles:[],carsLoaded:false,partsLoaded:false,canWrite:true,editing:null,editingBundle:null,
+const S={exp:new Set(),justOpened:null,db:null,cars:[],parts:[],bundles:[],carsLoaded:false,partsLoaded:false,bundlesLoaded:false,canWrite:true,editing:null,editingBundle:null,
   carId:load("rimonta.car")||null,filter:"all",q:"",groupBy:load("rimonta.group")||"status",
-  collapsed:loadSet("rimonta.collapsed2",["status:ordered","status:arrived","status:installed","status:returned"]),
+  collapsed:(()=>{const v=loadSet("rimonta.collapsed2",["status:ordered","status:arrived","status:installed","status:returned"]);if(!load("rimonta.arrivedDefaultV1")){v.add("status:arrived");store("rimonta.collapsed2",JSON.stringify([...v]));store("rimonta.arrivedDefaultV1","1")}return v})(),
   open:loadSet("rimonta.open",[]),planSort:load("rimonta.plsort")||"manual",bundlesOpen:load("rimonta.bopen")!=="0",oedit:null,oadd:null,odel:null,bdel:null,busy:false,assets:null,fp:{},sel:new Set()};
 function focusForm(pid,oid){
   const f=document.querySelector(`[data-oform="${CSS.escape(pid)}"]${oid?`[data-oid="${CSS.escape(oid)}"]`:":not([data-oid])"}`);
@@ -1809,7 +1823,7 @@ function rowHtml(p,n){
   if(safeUrl(p.link))meta.push(`<a class="icon-btn part-link" href="${esc(safeUrl(p.link))}" target="_blank" rel="noopener" title="Открыть ссылку на деталь" aria-label="Открыть ссылку на деталь">${extIcon}<span>Ссылка</span></a>`);
   const sc=shipChip(p);if(sc)meta.push(sc);
   if(p.info&&p.status!=="installed"&&p.status!=="returned")meta.push(impChip(p.info));
-  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)meta.push(`<span class="inst">получено из ТК ${esc(fmtDate(p.pickedAt))}</span>`);
+  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)meta.push(`<span class="inst">Получено из ${deliveryOf(p).carrier?carrierBadge(deliveryOf(p).carrier):"ТК"} · ${esc(fmtDate(p.pickedAt))}</span>`);
   if(ARRIVED.has(p.status))meta.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?`<span class="arr"><span>приехало ${esc(fmtDate(p.arrivedAt))}</span></span>`:"");
   if(p.status==="installed"&&p.installedAt)meta.push(`<span class="inst">установлено ${esc(fmtDate(p.installedAt))}</span>`);
   if(ab)meta.push(`<button class="chip-btn bundle on" type="button" data-goto="${esc(ab.id)}">Комплект «${esc(ab.name||ab.seller||"комплект")}»${ab.seller&&ab.name?` · ${esc(ab.seller)}`:""}</button>`);
@@ -1882,7 +1896,7 @@ function noteRow(p,n){
     if(p.status==="ordered"&&d.eta)sub.push(late>0?`<span class="late">опаздывает на ${late} ${plural(late,"день","дня","дней")}</span>`:late===0?"ждём сегодня":"ждём "+esc(fmtDate(d.eta)));
     if(p.status==="intk")sub.push(tkChip(p));
     if(p.info)sub.push(impChip(p.info));if(ab&&ab.info)sub.push(impChip(ab.info))}
-  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)sub.push("получено из ТК "+esc(fmtDate(p.pickedAt)));
+  if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)sub.push(`Получено из ${d.carrier?carrierBadge(d.carrier):"ТК"} · ${esc(fmtDate(p.pickedAt))}`);
   if(ARRIVED.has(p.status))sub.push(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt):p.arrivedAt?"приехало "+esc(fmtDate(p.arrivedAt)):"");
   if(p.status==="installed"&&p.installedAt)sub.push("установлено "+esc(fmtDate(p.installedAt)));
   const miss=orderMissing(p);
@@ -2056,9 +2070,9 @@ function orderedBlocks(rows,st,gk){
       return `<tr class="${op?"open":""}" data-xp="${esc(p.id)}"><td class="ob-n">${numTag(i+1)}<button class="linkish" type="button" data-edit="${esc(p.id)}" title="Открыть всю информацию">${esc(p.name)}${p.side?` · ${esc(p.side)}`:""}${qtyOf(p)>1?` · ${qtyOf(p)} шт.`:""}</button>${op?`<small class="ob-sub${S.justOpened===p.id?" anim":""}">${[oem?esc(oem):"",(st==="ordered"||st==="intk"||st==="picked")&&bTrack?`трек …${esc(bTrack.slice(-4))}`:"",p.info?impChip(p.info):""].filter(Boolean).join(" · ")}</small>`:""}</td><td class="ob-p">${v?rub(v):"—"}${op?`<div class="ob-mst">${status}</div>`:""}</td>${HAS_DATE_COL.has(st)?`<td class="ob-arr">${op?(st==="picked"?(canEdit()?arrInput(`data-pickupfor="${esc(p.id)}"`,p.pickedAt,"из ТК"):esc(fmtDate(p.pickedAt)||"—")):op?(canEdit()?arrInput(`data-arrfor="${esc(p.id)}"`,p.arrivedAt,""):esc(fmtDate(p.arrivedAt)||"—")):""):""}</td>`:""}<td class="ob-x"><button class="m-arrow" type="button" data-exp="${esc(p.id)}" aria-expanded="${op}" aria-label="${op?"Скрыть":"Показать"} подробности">${chevR}</button></td></tr>`}).join("");
     const nx=NEXT_ST[st];
     const inTkB=st==="ordered"||st==="intk"||st==="picked",tk0=st==="intk"?(items.find(x=>x.tkUntil)||items[0]||{}):{};
-    const shipTxt=st==="intk"?[d.from?"из "+d.from:"",tk0.tkAt?"в ТК с "+fmtDate(tk0.tkAt):"",tk0.tkUntil?"хранение до "+fmtDate(tk0.tkUntil):""].filter(Boolean).join(" · "):st==="ordered"?[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:"ждём "+fmtDate(d.eta)):""].filter(Boolean).join(" · "):st==="picked"&&(items.find(x=>x.pickedAt)||{}).pickedAt?"забрано "+fmtDate(items.find(x=>x.pickedAt).pickedAt):st==="installed"&&(items.find(x=>x.installedAt)||{}).installedAt?"установлено "+fmtDate(items.find(x=>x.installedAt).installedAt):"";
+    const shipTxt=st==="intk"?(d.from?"из "+d.from:""):st==="ordered"?[d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:"ждём "+fmtDate(d.eta)):""].filter(Boolean).join(" · "):st==="picked"&&(items.find(x=>x.pickedAt)||{}).pickedAt?"забрано "+fmtDate(items.find(x=>x.pickedAt).pickedAt):st==="installed"&&(items.find(x=>x.installedAt)||{}).installedAt?"установлено "+fmtDate(items.find(x=>x.installedAt).installedAt):"";
     return `<div class="ob obx" data-bid="${esc(b.id)}"><div class="obx-top"><span class="obx-legend"><b>${esc(b.seller||"продавец не указан")}</b> · комплект «${esc(b.name||"комплект")}»${all?"":" · часть"}</span>${canEdit()?`<button class="obx-more" type="button" data-bmenu="${esc(b.id)}|${esc(st)}|${esc(gk)}" aria-label="Действия с комплектом">⋯</button>`:""}</div>
-      ${d.carrier||shipTxt||(inTkB&&bTrack)||(inTkB&&b.info)?`<div class="obx-ship">${d.carrier?carrierBadge(d.carrier):""}${[shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).length?`<span>${esc([shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).join(" · "))}</span>`:""}${inTkB&&b.info?` ${impChip(b.info)}`:""}</div>`:""}
+      ${d.carrier||shipTxt||(st==="intk"&&(tk0.tkAt||tk0.tkUntil))||(inTkB&&bTrack)||(inTkB&&b.info)?`<div class="obx-ship">${d.carrier?carrierBadge(d.carrier):""}${st==="intk"&&(tk0.tkAt||tk0.tkUntil)?`<span>${esc(tkChip({...tk0,status:"intk"}).replace(/<[^>]*>/g,""))}</span>`:""}${[shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).length?`<span>${esc([shipTxt,inTkB&&bTrack?"трек …"+bTrack.slice(-4):""].filter(Boolean).join(" · "))}</span>`:""}${inTkB&&b.info?` ${impChip(b.info)}`:""}</div>`:""}
       ${canEdit()&&miss.length&&st==="ordered"?`<button class="fix-chip obx-fix" type="button" data-bedit="${esc(b.id)}">Дополните заказ: ${esc(miss.join(", "))}</button>`:""}
       <div class="b-scroll"><table class="b-table ob-table"><thead><tr><th>Деталь</th><th>Цена</th>${HAS_DATE_COL.has(st)?(st==="picked"?"<th>Получено из ТК</th>":"<th>Приехало</th>"):""}<th></th></tr></thead><tbody>${rowsHtml}</tbody></table></div><span class="obx-sum"><b>${rub(sum)}</b>${all&&bundleShip(b)?`<small>(+${rub(bundleShip(b))}) доставка</small>`:""}</span></div>`;
   }).join("");
@@ -2233,7 +2247,7 @@ async function splitFromSeller(ids){
   return n;
 }
 
-function render(){renderCars();renderSummary();renderToolbar();renderGroups();renderBundles();renderPlan();renderCalendarBadge();$("addPartBtn").hidden=!canEdit()}
+function render(){renderCars();renderSummary();renderToolbar();renderGroups();renderBundles();renderPlan();renderCalendarBadge();$("addPartBtn").hidden=!(canEdit()&&S.carsLoaded&&S.partsLoaded&&S.bundlesLoaded)}
 
 /* writes */
 async function guarded(fn,okMsg){
@@ -2510,7 +2524,7 @@ document.addEventListener("click",async e=>{
   if(t.id==="calBtn"){openCal();return}
   if(d.calday){CAL.sel=d.calday;renderCal();return}
 });
-$("addPartBtn").addEventListener("click",()=>openPart(null));
+$("addPartBtn").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();if(!canEdit()){toast("Подключите GitHub, чтобы добавлять детали");return}if(!S.carsLoaded||!S.partsLoaded){toast("Данные ещё загружаются, попробуйте через секунду");return}try{openPart(null)}catch(err){console.error("Не удалось открыть форму новой детали",err);toast("Не удалось открыть форму. Обновите трекер и повторите.")}});
 $("ownerBtn").addEventListener("click",openOwner);
 $("q").addEventListener("input",e=>{S.q=e.target.value.trim();renderGroups()});
 document.addEventListener("change",async e=>{
@@ -2680,19 +2694,23 @@ const pad2=n=>String(n).padStart(2,"0"),ymd=(y,m,d)=>y+"-"+pad2(m+1)+"-"+pad2(d)
 function calEvents(){
   const ev=new Map(),add=(k,e)=>{if(!k)return;if(!ev.has(k))ev.set(k,[]);ev.get(k).push(e)},seen=new Set();
   const orderedHistory=new Set(["ordered","intk","picked","arrived","installed","returned"]);
+  const eventTitle=(p,ab)=>ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name;
+  const eventMore=(ab,field,date,statuses)=>ab?(ab.parts||[]).map(partById).filter(x=>x&&(field==="eta"?deliveryOf(x).eta:x[field])===date&&(!statuses||statuses.has(x.status))).map(x=>x.name).join(", "):"";
+  const addOnce=(date,keyPrefix,kind,p,ab,d,extra={})=>{
+    if(!date)return;const key=keyPrefix+":"+(ab?"b"+ab.id:p.id)+":"+date;if(seen.has(key))return;seen.add(key);
+    add(date,{kind,pid:p.id,bid:ab?ab.id:"",title:eventTitle(p,ab),d,...extra,more:extra.more!==undefined?extra.more:eventMore(ab,extra.field||"",date,extra.statuses)});
+  };
   for(const p of scopeParts()){
     const d=deliveryOf(p),ab=activeBundle(p);
-    /* Keep the planned delivery date visible after the shipment has moved to later stages. */
-    if(orderedHistory.has(p.status)&&d.eta){const key=(ab?"b"+ab.id:p.id)+d.eta;
-      if(!seen.has(key)){seen.add(key);
-        const stillOrdered=ab?(ab.parts||[]).some(id=>{const x=partById(id);return x&&x.status==="ordered"&&deliveryOf(x).eta===d.eta}):p.status==="ordered";
-        const kind=stillOrdered?(daysLate(d.eta)>0?"l":"e"):"h";
-        add(d.eta,{kind,pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.status!=="returned").map(x=>x.name).join(", "):"",d,history:!stillOrdered})}}
-    if(p.status==="intk"&&p.tkUntil){const key="tk:"+(ab?"b"+ab.id:p.id)+p.tkUntil;
-      if(!seen.has(key)){seen.add(key);add(p.tkUntil,{kind:"t",pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.status==="intk"&&x.tkUntil===p.tkUntil).map(x=>x.name).join(", "):"",d,until:true,history:false})}}
-    /* The pickup date is a completed event, not a pending action, and remains in the calendar afterwards. */
-    if(PICKUP_HISTORY.has(p.status)&&p.pickedAt){const key="pickup:"+(ab?"b"+ab.id:p.id)+p.pickedAt;
-      if(!seen.has(key)){seen.add(key);add(p.pickedAt,{kind:"p",pid:p.id,bid:ab?ab.id:"",title:ab?`Комплект «${ab.name||ab.seller||"комплект"}»`:p.name,more:ab?(ab.parts||[]).map(partById).filter(x=>x&&x.pickedAt===p.pickedAt).map(x=>x.name).join(", "):"",d,history:true})}}
+    if(orderedHistory.has(p.status)&&d.eta){
+      const stillOrdered=ab?(ab.parts||[]).some(id=>{const x=partById(id);return x&&x.status==="ordered"&&deliveryOf(x).eta===d.eta}):p.status==="ordered";
+      addOnce(d.eta,"eta",stillOrdered?(daysLate(d.eta)>0?"l":"e"):"h",p,ab,d,{history:!stillOrdered,more:ab?eventMore(ab,"eta",d.eta,new Set(["ordered","intk","picked","arrived","installed","returned"])):""});
+    }
+    if(p.status==="intk"&&p.tkUntil)addOnce(p.tkUntil,"tk-deadline","t",p,ab,d,{until:true,history:false,more:ab?eventMore(ab,"tkUntil",p.tkUntil,new Set(["intk"])):""});
+    if(TK_HISTORY.has(p.status)&&p.tkAt)addOnce(p.tkAt,"tk-arrival","k",p,ab,d,{history:true,more:ab?eventMore(ab,"tkAt",p.tkAt,TK_HISTORY):""});
+    if(PICKUP_HISTORY.has(p.status)&&p.pickedAt)addOnce(p.pickedAt,"pickup","p",p,ab,d,{history:true,more:ab?eventMore(ab,"pickedAt",p.pickedAt,PICKUP_HISTORY):""});
+    if(ARRIVED.has(p.status)&&p.arrivedAt)addOnce(p.arrivedAt,"at-mechanic","a",p,ab,d,{history:true,more:ab?eventMore(ab,"arrivedAt",p.arrivedAt,ARRIVED):""});
+    if(p.status==="installed"&&p.installedAt)addOnce(p.installedAt,"installed","i",p,ab,d,{history:true,more:ab?eventMore(ab,"installedAt",p.installedAt,new Set(["installed"])):""});
   }
   return ev;
 }
@@ -2701,23 +2719,25 @@ function openCalendarEvent(e){
   const p=partById(e.pid),b=e.bid?bundleById(e.bid):null,d=e.d||deliveryOf(p)||{};
   const members=b?(b.parts||[]).map(partById).filter(Boolean):p?[p]:[];
   const names=members.map(x=>`${x.name||"Без названия"}${x.side?" · "+x.side:""}${qtyOf(x)>1?" · "+qtyOf(x)+" шт.":""}`).join(", ");
-  const kind=e.kind==="t"?"Крайний срок хранения в ТК":e.kind==="p"?"Получено из ТК":e.kind==="l"?"Ожидаемая доставка просрочена":e.kind==="h"?"Прошлая дата ожидания":"Ожидаемая доставка";
+  const kind=e.kind==="t"?"Бесплатное хранение до":e.kind==="k"?"Прибыло в ТК":e.kind==="p"?"Получено из ТК":e.kind==="a"?"У мастера":e.kind==="i"?"Установлено":e.kind==="l"?"Ожидаемая доставка просрочена":e.kind==="h"?"Плановая дата доставки":"Ожидаемая доставка";
   const editable=canEdit()&&!!p;
-  const statusControl=p?`<div class="ce-detail"><div class="ce-label">Статус товара</div><div class="ce-status"><select id="calEventStatus" class="status" data-st="${esc(p.status)}" aria-label="Статус товара" ${editable?"":"disabled"}>${STATUSES.map(st=>`<option value="${st.id}"${st.id===p.status?" selected":""}>${esc(st.label)}</option>`).join("")}</select></div></div>`:"";
-  const tkInfo=p?`<div class="ce-detail"><div class="ce-label">Информация о ТК</div>${d.carrier?carrierBadge(d.carrier):"Транспортная компания не указана"}
+  const statusControl=p?`<label class="ce-status-control"><span class="ce-label">Статус</span><select id="calEventStatus" class="status" data-st="${esc(p.status)}" aria-label="Статус товара" ${editable?"":"disabled"}>${STATUSES.map(st=>`<option value="${st.id}"${st.id===p.status?" selected":""}>${esc(st.label)}</option>`).join("")}</select></label>`:"";
+  const pickedDate=p&&PICKUP_HISTORY.has(p.status)?`<div class="field ce-picked-field"><label for="calEventPickedAt">Дата получения из ТК</label><input id="calEventPickedAt" type="date" value="${esc(p.pickedAt||"")}" max="${todayStr()}" ${editable?"":"disabled"}></div>`:"";
+  const tkInfo=p?`<div class="ce-detail"><div class="ce-label">ТК</div><div class="ce-carrier">${d.carrier?carrierBadge(d.carrier):"Транспортная компания не указана"}</div>
     <div class="ce-edit-grid">
       <div class="field"><label for="calEventFrom">Откуда</label><input id="calEventFrom" value="${esc(d.from||"")}" placeholder="Город / отправитель" ${editable?"":"disabled"}></div>
-      <div class="field"><label for="calEventEta">Ожидаемая дата доставки</label><input id="calEventEta" type="date" value="${esc(d.eta||"")}" ${editable?"":"disabled"}></div>
       <div class="field"><label for="calEventTkAt">Дата прибытия</label><input id="calEventTkAt" type="date" value="${esc(p.tkAt||"")}" max="${todayStr()}" ${editable?"":"disabled"}></div>
       <div class="field"><label for="calEventTkUntil">Бесплатное хранение до</label><input id="calEventTkUntil" type="date" value="${esc(p.tkUntil||"")}" ${editable?"":"disabled"}></div>
-      <div class="field"><label for="calEventPickedAt">Дата получения из ТК</label><input id="calEventPickedAt" type="date" value="${esc(p.pickedAt||(p.status==="intk"?todayStr():"") )}" max="${todayStr()}" ${editable?"":"disabled"}></div>
+      ${pickedDate}
     </div>
-    ${p.arrivedAt?`<div style="margin-top:8px;color:var(--muted);font-size:12.5px">У мастера: ${esc(fmtDate(p.arrivedAt))}</div>`:""}
+    ${p.arrivedAt?`<div class="small" style="margin-top:8px">У мастера: ${esc(fmtDate(p.arrivedAt))}</div>`:""}${p.installedAt?`<div class="small" style="margin-top:4px">Установлено: ${esc(fmtDate(p.installedAt))}</div>`:""}
   </div>`:"";
   $("calEventTitle").textContent=b?(b.name||b.seller||"Комплект"):((p&&p.name)||e.title||"Событие календаря");
   const dateText=fmtDate(CAL.sel)||"";
-  $("calEventBody").innerHTML=`<div class="ce-detail"><div class="ce-label">Событие · ${esc(dateText)}</div><b>${esc(kind)}</b></div>${b?`<div class="ce-detail"><div class="ce-label">Комплект</div><b>${esc(b.name||b.seller||"Комплект")}</b>${b.seller?`<div>${esc(b.seller)}</div>`:""}<div>${esc(names)}</div></div>`:p?`<div class="ce-detail"><div class="ce-label">Деталь</div><b>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}</b>${p.oem?`<div>Номер: ${esc(normOem(p.oem))}</div>`:""}</div>`:`<div class="ce-detail">${esc(e.title||"")}</div>`}${statusControl}${tkInfo}<div class="ce-detail"><div class="ce-label">Трек-номер</div><div class="ce-track-row"><input id="calEventTrack" readonly value="${esc(d.track||"")}" placeholder="Не указан" aria-label="Трек-номер"><button type="button" class="btn sm" data-copy="${esc(d.track||"")}" ${d.track?"":"disabled"}>Копировать</button><button type="button" class="btn sm" data-track-open="calEventTrack|calEventCarrier">↗ ТК</button></div></div>`;
+  $("calEventBody").innerHTML=`<div class="ce-detail"><div class="ce-label">Событие · ${esc(dateText)}</div><b>${esc(kind)}</b></div>${b?`<div class="ce-detail"><div class="ce-label">Комплект</div><b>${esc(b.name||b.seller||"Комплект")}</b>${b.seller?`<div>${esc(b.seller)}</div>`:""}<div>${esc(names)}</div></div>`:p?`<div class="ce-detail"><div class="ce-label">Деталь</div><b>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}</b></div>`:`<div class="ce-detail">${esc(e.title||"")}</div>`}${tkInfo}`;
+  $("calEventStatusSlot").innerHTML=statusControl;
   $("calEventCarrier").value=d.carrier||"";
+  $("calEventEta").value=d.eta||"";
   $("calEventErr").hidden=true;
   $("calEventSave").hidden=!canEdit();
   const eb=$("calEventEdit");eb.removeAttribute("data-caledit-part");eb.removeAttribute("data-caledit-bundle");if(b)eb.dataset.caleditBundle=b.id;else if(p)eb.dataset.caleditPart=p.id;
@@ -2726,7 +2746,7 @@ function openCalendarEvent(e){
 }
 $("calEventForm").addEventListener("change",e=>{
   if(e.target&&e.target.id==="calEventStatus")e.target.dataset.st=e.target.value;
-  if(e.target&&["calEventFrom","calEventEta","calEventTkAt","calEventTkUntil","calEventPickedAt"].includes(e.target.id))$("calEventErr").hidden=true;
+  if(e.target&&["calEventFrom","calEventTkAt","calEventTkUntil","calEventPickedAt"].includes(e.target.id))$("calEventErr").hidden=true;
 });
 $("calEventForm").addEventListener("submit",async e=>{
   e.preventDefault();
@@ -2803,14 +2823,14 @@ function renderCal(){
     const deadlineDay=es.some(e=>e.kind==="t"&&!e.history);
     h+=`<button type="button" class="cal-d${k===today?" today":""}${k===CAL.sel?" sel":""}${deadlineDay?" has-deadline":""}" data-calday="${k}" aria-label="${d} ${deadlineDay?", крайний срок хранения ТК":""}${es.length?", событий: "+es.length:""}"><span>${d}</span><span class="dots">${kinds.map(x=>`<i class="${x}"></i>`).join("")}</span></button>`}
   $("calGrid").innerHTML=h;
-  const list=(ev.get(CAL.sel)||[]).slice().sort((a,b)=>({t:0,l:1,e:2,p:3,h:4}[a.kind]??9)-({t:0,l:1,e:2,p:3,h:4}[b.kind]??9));CAL.items=list;
+  const order={t:0,l:1,e:2,k:3,p:4,a:5,i:6,h:7};const list=(ev.get(CAL.sel)||[]).slice().sort((a,b)=>(order[a.kind]??9)-(order[b.kind]??9));CAL.items=list;
   const head=`<b>${esc(fmtDate(CAL.sel))}</b>`;
   const noDate=scopeParts().filter(p=>p.status==="ordered"&&!deliveryOf(p).eta).length;
   $("calList").innerHTML=head+(list.length?list.map(e=>{const d=e.d;
       const sub=[d.carrier?carrierTitle(d.carrier)||d.carrier:"",d.from?"из "+d.from:"",d.track?"трек …"+String(d.track).replace(/\s/g,"").slice(-4):"",e.more].filter(Boolean);
-      const lbl=e.kind==="t"?(e.history?"Срок хранения ТК":"КРАЙНИЙ СРОК · ЗАБРАТЬ ИЗ ТК"):e.kind==="l"?"Опаздывает":e.kind==="p"?"Получено из ТК":e.kind==="h"?"Плановая дата доставки":"Ждём доставку";
-      const deadline=e.kind==="t"&&!e.history?" deadline":"";
-      return `<button type="button" class="cal-ev${deadline}" data-calevent="${list.indexOf(e)}"><span class="k ${e.kind}">${lbl}</span><span>${esc(e.title)}</span>${sub.length?`<small class="tkc"${tkStyle(d.carrier)}>${esc(sub.join(" · "))}</small>`:""}</button>`}).join(""):`<small style="color:var(--muted)">В этот день ничего не ожидается.</small>`)
+      const lbl=e.kind==="t"?(e.history?"Срок хранения ТК":"КРАЙНИЙ СРОК · ЗАБРАТЬ ИЗ ТК"):e.kind==="k"?"Прибыло в ТК":e.kind==="l"?"Опаздывает":e.kind==="p"?"Получено из ТК":e.kind==="a"?"У мастера":e.kind==="i"?"Установлено":e.kind==="h"?"Плановая дата доставки":"Ждём доставку";
+      const deadline=e.kind==="t"&&!e.history?" deadline":"",history=e.history?" history":"";
+      return `<button type="button" class="cal-ev${deadline}${history}" data-calevent="${list.indexOf(e)}"><span class="k ${e.kind}">${lbl}</span><span>${esc(e.title)}</span>${sub.length?`<small class="tkc"${tkStyle(d.carrier)}>${esc(sub.join(" · "))}</small>`:""}</button>`}).join(""):`<small style="color:var(--muted)">В этот день ничего не ожидается.</small>`)
     +(noDate?`<small style="color:var(--muted)">Без даты ожидания: ${noDate} ${plural(noDate,"деталь","детали","деталей")} в «Заказано».</small>`:"");
   renderCalendarBadge();
 }
@@ -3281,7 +3301,7 @@ function openBundleSheet(bid,st,gk){
   $("csList").innerHTML=(nx?`<button type="button" class="sheet-btn" data-bstatus="${esc(b.id)}|${esc(st)}|${nx}">${NXL[nx][0]}<small>${NXL[nx][1].replace(/^, /,"с подтверждением, ")}</small></button>`:"")
     +(st==="ordered"?`<button type="button" class="sheet-btn" data-bstatus="${esc(b.id)}|${esc(st)}|arrived">У мастера сразу (всё)<small>если ТК не было: с датой и суммой доставки</small></button>`:"")
     +`<button type="button" class="sheet-btn" data-bexp="${esc(b.id)}|${esc(gk)}">${allOn?"Свернуть":"Раскрыть"} все детали комплекта</button>`
-    +`<button type="button" class="sheet-btn" data-bedit="${esc(b.id)}">Изменить комплект<small>продавец, цены, доставка, трек</small></button>`
+    +`<button type="button" class="sheet-btn action-edit" data-bedit="${esc(b.id)}">Изменить комплект<small>продавец, цены, доставка, трек</small></button>`
     +`<label class="sheet-btn sheet-sel">Статус всего комплекта<select class="status" data-st="${esc(st)}" data-status-for="" data-bundle-all="${esc(b.id)}" aria-label="Статус всего комплекта"><option value="">${esc(ST_LABEL[st])}</option>${STATUSES.filter(x=>x.id!==st).map(x=>`<option value="${x.id}">${x.label}</option>`).join("")}</select></label>`;
   $("carSheet").showModal();
 }
@@ -3289,9 +3309,9 @@ function openCarSheet(id){
   const c=carById(id);if(!c||!canEdit())return;
   $("csTitle").textContent=c.name||"Без названия";
   const b=(act,t,sub,cls)=>`<button type="button" class="sheet-btn${cls?" "+cls:""}" data-caract="${act}|${esc(id)}">${t}${sub?`<small>${sub}</small>`:""}</button>`;
-  $("csList").innerHTML=b("edit","Изменить","название, VIN, комплектация, фото")
-    +(c.archivedAt?b("restore","Вернуть в работу","машина снова будет на главном экране"):b("done","✓ Готово — в архив","уйдёт в боковую панель со всеми данными"))
-    +b("del","Удалить в корзину","можно будет вернуть","danger");
+  $("csList").innerHTML=b("edit","Изменить","название, VIN, комплектация, фото","action-edit")
+    +(c.archivedAt?b("restore","Вернуть в работу","машина снова будет на главном экране","action-archive"):b("done","✓ Готово — в архив","уйдёт в боковую панель со всеми данными","action-archive"))
+    +b("del","Удалить в корзину","можно будет вернуть","action-delete");
   $("carSheet").showModal();
 }
 /* side panel: archive of finished cars, trash pinned at the bottom */
@@ -3388,7 +3408,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261026015000";let lastCheck=0;
+const APP_VER="20261026020000";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
@@ -3406,7 +3426,7 @@ render();
     if(DRAG.el){setTimeout(ghSchedule,300);return}
     const a=document.activeElement,typing=a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName);
     const inOffer=typing&&a.closest("[data-oform]"),inPlan=typing&&a.closest("#plan"),inDate=typing&&a.type==="date"&&a.closest("#groups");
-    renderCars();renderSummary();renderToolbar();if(!inOffer&&!inDate)renderGroups();renderBundles();if(!inPlan)renderPlan();renderCalendarBadge();$("addPartBtn").hidden=!canEdit();
+    renderCars();renderSummary();renderToolbar();if(!inOffer&&!inDate)renderGroups();renderBundles();if(!inPlan)renderPlan();renderCalendarBadge();$("addPartBtn").hidden=!(canEdit()&&S.carsLoaded&&S.partsLoaded&&S.bundlesLoaded);
   };
   let rq=0;const ghSchedule=()=>{bump();if(rq)return;rq=requestAnimationFrame(()=>{rq=0;ghRefresh()})};
   const notice=t=>{const n=$("notice");n.textContent=t||"";n.hidden=!t};
@@ -3459,7 +3479,7 @@ render();
     S.db=store.db;S.assets=store.assets;S.canWrite=true;
     store.db.collection("cars").onSnapshot(s=>{S.cars=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.created||"").localeCompare(String(b.created||"")));S.carsLoaded=true;ghSchedule()});
     store.db.collection("parts").onSnapshot(s=>{S.parts=s.docs.map(d=>({id:d.id,...d.data()}));S.partsLoaded=true;ghSchedule()});
-    store.db.collection("bundles").onSnapshot(s=>{S.bundles=s.docs.map(d=>({id:d.id,...d.data()}));ghSchedule()});
+    store.db.collection("bundles").onSnapshot(s=>{S.bundles=s.docs.map(d=>({id:d.id,...d.data()}));S.bundlesLoaded=true;ghSchedule()});
     render();
     await store.start();
     clearInterval(poll);
@@ -3498,6 +3518,51 @@ render();
     if(!confirm((n?`На этом устройстве ${changes(n)} ещё не отправлены — они пропадут.\n\n`:"")+"Убрать ключ GitHub с этого устройства? Данные на GitHub останутся, ключ нужно будет вставить заново."))return;
     ["rimonta.ghtoken","rimonta.cache","rimonta.outbox",REP].forEach(k=>lsSet(k,""));try{caches.delete("rimonta-photos")}catch(e){}
     location.reload();
+  });
+
+  async function downloadFullBackup(){
+    if(!store||!S.db)throw new Error("Сначала подключите GitHub.");
+    if(!S.carsLoaded||!S.partsLoaded||!S.bundlesLoaded)throw new Error("Данные ещё загружаются. Дождитесь их загрузки и повторите.");
+    sync("обновляю данные перед копированием…");
+    const st=await store.pull(true);
+    if(st!=="ok")throw new Error("Не удалось проверить последнюю версию на GitHub. Проверьте интернет и доступ, затем повторите копирование.");
+    const asMap=rows=>Object.fromEntries(rows.map(({id,...record})=>[id,record]));
+    const db={cars:asMap(S.cars),parts:asMap(S.parts),bundles:asMap(S.bundles)};
+    const photoIds=new Set();
+    const scanPhotos=value=>{
+      if(!value||typeof value!=="object")return;
+      for(const [key,item] of Object.entries(value)){
+        if(key==="photo"&&typeof item==="string"&&item)photoIds.add(item);
+        else if(key==="photos"&&Array.isArray(item))item.forEach(id=>{if(typeof id==="string"&&id)photoIds.add(id)});
+        else if(item&&typeof item==="object")scanPhotos(item);
+      }
+    };
+    scanPhotos(db);
+    const ids=[...photoIds],photos={};
+    for(let i=0;i<ids.length;i++){
+      const id=ids[i];sync(`копирую фото ${i+1} из ${ids.length}…`);
+      try{
+        const url=await ensureBlob(id),r=await fetch(url);
+        if(!r.ok)throw new Error("HTTP "+r.status);
+        photos[id]={b64:bytesToB64(new Uint8Array(await r.arrayBuffer()))};
+      }catch(err){throw new Error(`Не удалось добавить фото ${id} в копию. Проверьте интернет или откройте карточку с этим фото и повторите.`)}
+    }
+    const payload={format:"rimonta-backup",version:1,exportedAt:new Date().toISOString(),db,photos};
+    const blob=new Blob([JSON.stringify(payload)],{type:"application/json;charset=utf-8"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download=`rimonta-backup-${todayStr()}.json`;a.style.display="none";document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    const n=store.outbox();
+    sync(n?`копия скачана · ${changes(n)} ещё не отправлены на GitHub`:`копия скачана · ${S.cars.length} машин, ${S.parts.length} деталей, ${S.bundles.length} комплектов, ${ids.length} фото`);
+    toast(n?`Копия скачана; ${changes(n)} ещё не отправлены на GitHub`:`Полная резервная копия скачана · фото: ${ids.length}`);
+  }
+  const backupBtn=$("ghBackup");
+  backupBtn.addEventListener("click",async()=>{
+    if(backupBtn.disabled)return;
+    backupBtn.disabled=true;const old=backupBtn.textContent;backupBtn.textContent="Готовлю копию…";
+    try{await downloadFullBackup()}
+    catch(err){const msg=err&&err.message||"Не удалось создать резервную копию";sync(msg);toast(msg)}
+    finally{backupBtn.disabled=false;backupBtn.textContent=old}
   });
 
   const impMsg=(t,bad)=>{const e=$("ghImpMsg");e.textContent=t||"";e.hidden=!t;e.classList.toggle("bad",!!bad)};
