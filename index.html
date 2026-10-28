@@ -2524,7 +2524,7 @@ document.addEventListener("click",async e=>{
   if(t.id==="calBtn"){openCal();return}
   if(d.calday){CAL.sel=d.calday;renderCal();return}
 });
-$("addPartBtn").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();if(!canEdit()){toast("Подключите GitHub, чтобы добавлять детали");return}if(!S.carsLoaded||!S.partsLoaded){toast("Данные ещё загружаются, попробуйте через секунду");return}try{openPart(null)}catch(err){console.error("Не удалось открыть форму новой детали",err);toast("Не удалось открыть форму. Обновите трекер и повторите.")}});
+$("addPartBtn").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();if(!canEdit()){toast("Подключите GitHub, чтобы добавлять детали");return}if(!S.carsLoaded||!S.partsLoaded){toast("Данные ещё загружаются, попробуйте через секунду");return}try{const d=$("partDialog");if(!d){throw new Error("Не найдено окно partDialog")}if(d.open)d.close();openPart(null);if(!d.open){d.showModal()}}catch(err){console.error("Не удалось открыть форму новой детали",err);toast("Не удалось открыть форму: "+(err&&err.message?err.message:"ошибка JavaScript"));}});
 $("ownerBtn").addEventListener("click",openOwner);
 $("q").addEventListener("input",e=>{S.q=e.target.value.trim();renderGroups()});
 document.addEventListener("change",async e=>{
@@ -2539,7 +2539,7 @@ document.addEventListener("change",async e=>{
 });
 function syncTkFields(){const tk=$("f-status").value==="intk";$("f-tkat-wrap").hidden=$("f-tkuntil-wrap").hidden=!tk;if(tk&&!$("f-tkat").value)$("f-tkat").value=todayStr()}
 function syncPickupFields(){const on=PICKUP_HISTORY.has($("f-status").value);$("f-picked-wrap").hidden=!on;if($("f-status").value==="picked"&&!$("f-picked").value)$("f-picked").value=todayStr()}
-$("f-status").addEventListener("change",e=>{const on=ARRIVED.has(e.target.value);$("f-arrived-wrap").hidden=!on;if(on&&!$("f-arrived").value)$("f-arrived").value=todayStr();syncTkFields();syncPickupFields()});
+$("f-status").addEventListener("change",e=>{const st=e.target.value,on=ARRIVED.has(st);$("f-arrived-wrap").hidden=!on;if(on&&!$("f-arrived").value)$("f-arrived").value=todayStr();if(st==="arrived"&&!$("f-arrived").value)$("f-arrived").value=todayStr();syncTkFields();syncPickupFields()});
 document.addEventListener("change",async e=>{const sel=e.target.closest&&e.target.closest("select[data-pickfor]");if(!sel)return;
   const p=partById(sel.dataset.pickfor),v=sel.value;sel.blur();if(!p||v==="own"){renderPlan();return}
   const ok=v?await pickOffer(p,v,true):await unchoosePart(p);
@@ -2702,9 +2702,11 @@ function calEvents(){
   };
   for(const p of scopeParts()){
     const d=deliveryOf(p),ab=activeBundle(p);
-    if(orderedHistory.has(p.status)&&d.eta){
-      const stillOrdered=ab?(ab.parts||[]).some(id=>{const x=partById(id);return x&&x.status==="ordered"&&deliveryOf(x).eta===d.eta}):p.status==="ordered";
-      addOnce(d.eta,"eta",stillOrdered?(daysLate(d.eta)>0?"l":"e"):"h",p,ab,d,{history:!stillOrdered,more:ab?eventMore(ab,"eta",d.eta,new Set(["ordered","intk","picked","arrived","installed","returned"])):""});
+    /* Planned delivery is an active reminder only while the part is still ordered.
+       Once it has reached the transport company or has been picked up, hide that reminder. */
+    if(p.status==="ordered"&&d.eta){
+      const stillOrdered=ab?(ab.parts||[]).some(id=>{const x=partById(id);return x&&x.status==="ordered"&&deliveryOf(x).eta===d.eta}):true;
+      if(stillOrdered)addOnce(d.eta,"eta",daysLate(d.eta)>0?"l":"e",p,ab,d,{history:false,more:ab?eventMore(ab,"eta",d.eta,new Set(["ordered"])):""});
     }
     if(p.status==="intk"&&p.tkUntil)addOnce(p.tkUntil,"tk-deadline","t",p,ab,d,{until:true,history:false,more:ab?eventMore(ab,"tkUntil",p.tkUntil,new Set(["intk"])):""});
     if(TK_HISTORY.has(p.status)&&p.tkAt)addOnce(p.tkAt,"tk-arrival","k",p,ab,d,{history:true,more:ab?eventMore(ab,"tkAt",p.tkAt,TK_HISTORY):""});
@@ -2882,7 +2884,7 @@ function openPart(p){
   $("f-price-hint").textContent=ab?`В комплекте: ${rub(unitPrice(p)*qtyOf(p))}. Здесь — цена по отдельности`:p&&offersOf(p).length?"Если выбран вариант, цена берётся из него":"";
   $("f-ship").hidden=!!ab;
   $("f-carrier").value=dv.carrier||"";$("f-from").value=dv.from||"";$("f-track").value=dv.track||"";$("f-eta").value=dv.eta||"";
-  const currentBundle=p?activeBundle(p):null,shipValue=currentBundle?bundleShip(currentBundle):Math.max(num(dv.cost),num(pickedOf(p)&&pickedOf(p).ship));
+  const currentBundle=p?activeBundle(p):null,shipValue=currentBundle?bundleShip(currentBundle):Math.max(num(dv.cost),num(p&&pickedOf(p)&&pickedOf(p).ship));
   $("f-shipcost").value=(currentBundle?bundleShipKnown(currentBundle):p?partShipKnown(p):false)||shipValue>0?shipValue:"";$("f-shipcost").placeholder="0";
   [...pf.querySelectorAll('input[name="side"]')].forEach(r=>r.checked=r.value===(d.side||""));
   $("pdErr").hidden=true;setupDeleteButtons(p);
