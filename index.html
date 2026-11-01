@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="20261102010000">
+<meta name="app-ver" content="20261102020000">
 <script>try{var t=localStorage.getItem("rimonta.theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex">
@@ -1302,7 +1302,7 @@ function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function loadSet(k,def){try{const v=localStorage.getItem(k);return new Set(v?JSON.parse(v):def)}catch(e){return new Set(def)}}
 
 const S={exp:new Set(),justOpened:null,db:null,cars:[],parts:[],bundles:[],carsLoaded:false,partsLoaded:false,bundlesLoaded:false,canWrite:true,editing:null,editingBundle:null,
-  carId:load("rimonta.car")||null,filter:"all",q:"",groupBy:load("rimonta.group")||"status",
+  carId:load("rimonta.car")||null,loadState:"idle",filter:"all",q:"",groupBy:load("rimonta.group")||"status",
   collapsed:(()=>{const v=loadSet("rimonta.collapsed2",["status:verify","status:ordered","status:picked","status:arrived","status:installed","status:returned"]);if(!load("rimonta.openNeedIntkDefaultV2")){v.delete("status:need");v.delete("status:intk");store("rimonta.collapsed2",JSON.stringify([...v]));store("rimonta.openNeedIntkDefaultV2","1")}return v})(),
   open:loadSet("rimonta.open",[]),planSort:load("rimonta.plsort")||"manual",bundlesOpen:load("rimonta.bopen")!=="0",oedit:null,oadd:null,odel:null,bdel:null,busy:false,assets:null,fp:{},sel:new Set()};
 function focusForm(pid,oid){
@@ -1734,9 +1734,11 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.style.opacity="1";cle
 const canEdit=()=>S.canWrite&&!!S.db;
 const isLive=c=>!!c&&!c.deletedAt&&!c.archivedAt;
 const liveCars=()=>S.cars.filter(isLive);
-const inLive=id=>{const c=carById(id);return !c||isLive(c)};
-const scopeParts=()=>S.carId===ALL?S.parts.filter(p=>inLive(p.car)):S.parts.filter(p=>p.car===S.carId);
-const scopeBundles=()=>S.carId===ALL?S.bundles.filter(b=>inLive(b.car)):S.bundles.filter(b=>b.car===S.carId);
+const visibleCars=()=>S.cars.filter(c=>c&&!c.deletedAt);
+/* In «Все машины» архивные автомобили тоже видны. Удалённые остаются в корзине. */
+const inAllCars=id=>{const c=carById(id);return !c||!c.deletedAt};
+const scopeParts=()=>S.carId===ALL?S.parts.filter(p=>inAllCars(p.car)):S.parts.filter(p=>p.car===S.carId);
+const scopeBundles=()=>S.carId===ALL?S.bundles.filter(b=>inAllCars(b.car)):S.bundles.filter(b=>b.car===S.carId);
 /* search: every word of the query must be found somewhere in the part;
    a city also matches its usual short names and other word endings (мск, Москвы), a carrier its Latin name (cdek, pecom) */
 const CITY_ALIASES=[["москва","мск","msk","moscow"],["санкт-петербург","петербург","питер","спб","spb"],["екатеринбург","екб"],["нижний новгород","нижний","нн"],
@@ -1784,11 +1786,14 @@ function selectCarScope(id){
   S.carId=id;store("rimonta.car",S.carId);render();
 }
 function renderCars(){
-  if(S.carsLoaded&&S.carId!==ALL){const c=carById(S.carId);if(!c||c.deletedAt)S.carId=liveCars()[0]?.id||ALL}
-  const live=liveCars(),cur=carById(S.carId);
+  if(S.carsLoaded&&S.carId!==ALL){
+    const c=carById(S.carId);
+    if(!S.carId||!c||c.deletedAt){S.carId=liveCars()[0]?.id||visibleCars()[0]?.id||ALL;store("rimonta.car",S.carId)}
+  }
+  const live=liveCars(),all=visibleCars(),cur=carById(S.carId);
   const chips=live.map(c=>`<button class="car-chip" type="button" data-car="${esc(c.id)}" data-carhold="${esc(c.id)}" aria-pressed="${c.id===S.carId}">${esc(c.name||"Без названия")}</button>`);
   if(cur&&cur.archivedAt)chips.push(`<button class="car-chip arch" type="button" data-carhold="${esc(cur.id)}" aria-pressed="true">${esc(cur.name||"Без названия")} · архив</button>`);
-  if(live.length>1)chips.push(`<button class="car-chip" type="button" data-car="${ALL}" aria-pressed="${S.carId===ALL}">Все машины</button>`);
+  if(all.length>1)chips.push(`<button class="car-chip" type="button" data-car="${ALL}" aria-pressed="${S.carId===ALL}">Все машины</button>`);
   if(canEdit())chips.push(`<button class="car-chip add" type="button" id="addCarBtn">+ Машина</button>`);
   $("cars").innerHTML=chips.join("");
   if($("panel").open)renderPanel();
@@ -1856,7 +1861,7 @@ function shipChip(p){
 function rowHtml(p,n){
   const oem=normOem(p.oem),qty=qtyOf(p),pk=pickedOf(p),offers=visibleOffers(p),open=S.open.has(p.id),ab=activeBundle(p),inB=bundlesOfPart(p);
   const meta=[];
-  if(S.carId===ALL){const c=carById(p.car);meta.push(`<span class="carname">${esc(c?.name||"Без машины")}</span>`)}
+  if(S.carId===ALL){const c=carById(p.car);meta.push(`<span class="carname">${esc(c?.name||"Без машины")}${c?.archivedAt?" · архив":""}</span>`)}
   if(qty>1)meta.push(`<span>${qty} шт.</span>`);
   if(safeUrl(p.link))meta.push(`<a class="icon-btn part-link" href="${esc(safeUrl(p.link))}" target="_blank" rel="noopener" title="Открыть ссылку на деталь" aria-label="Открыть ссылку на деталь">${extIcon}<span>Ссылка</span></a>`);
   const sc=shipChip(p);if(sc)meta.push(sc);
@@ -1925,7 +1930,7 @@ function noteRow(p,n){
   const d=deliveryOf(p),ab=activeBundle(p),pk=pickedOf(p),qty=qtyOf(p);
   const seller=ab?(ab.seller||""):(p.supplier||(pk&&pk.seller)||""),name0=seller.split(",")[0].trim(),city=d.from||cityOf(seller);
   const sub=[];
-  if(S.carId===ALL){const c=carById(p.car);if(c)sub.push(esc(c.name))}
+  if(S.carId===ALL){const c=carById(p.car);if(c)sub.push(esc(c.name)+(c.archivedAt?" · архив":""))}
   const inTkSt=p.status==="ordered"||p.status==="intk"||p.status==="picked",tks=inTkSt&&d.carrier?tkStyle(d.carrier):"";
   const geo=t=>`<span class="geo${tks?" tkc tkt":""}"${tks}>${t}</span>`;
   if(name0||city)sub.push(esc(name0)+(name0&&city?", ":"")+(city?geo("из "+esc(city)):""));
@@ -2013,7 +2018,19 @@ function groupOf(p){
 function renderGroups(){
   const el=$("groups");
   if(!S.db){el.innerHTML=`<div class="empty"><strong>Список деталей появится здесь</strong><span>Подключите GitHub выше, чтобы загрузить данные.</span></div>`;return}
-  if(!S.partsLoaded||!S.carsLoaded){el.innerHTML=`<div class="empty"><span>Загружаю детали…</span></div>`;return}
+  if(!S.partsLoaded||!S.carsLoaded){
+    const states={
+      offline:["Нет интернета","На этом устройстве нет сохранённой копии базы. Подключитесь к интернету, чтобы загрузить данные."],
+      auth:["Нет доступа к GitHub","Проверьте ключ GitHub. Локальная база не удалена; без доступа новые данные загрузить нельзя."],
+      norepo:["Нет доступа к хранилищу","Проверьте доступ к репозиторию RIMONTA на GitHub."],
+      nowrite:["Нет доступа к хранилищу","Проверьте права ключа GitHub для репозитория RIMONTA."],
+      missing:["Файл базы не найден","На GitHub не найден db.json. Не создавайте пустую базу — сначала проверьте историю репозитория или резервную копию."],
+      broken:["Не удалось прочитать базу","Файл db.json повреждён. Восстановите предыдущую версию из истории GitHub."],
+      failed:["Не удалось загрузить детали","GitHub не ответил корректно. Обновите страницу при стабильном соединении."]
+    };
+    const msg=states[S.loadState]||["Загружаю детали…","Подключаюсь к хранилищу RIMONTA."];
+    el.innerHTML=`<div class="empty"><strong>${esc(msg[0])}</strong><span>${esc(msg[1])}</span></div>`;return;
+  }
   const parts=scopeParts();
   if(!parts.length){el.innerHTML=`<div class="empty"><strong>Деталей пока нет</strong><span>Нажмите «Деталь», чтобы добавить первую: название, сторону и номер оригинала.</span></div>`;return}
   const list=parts.filter(matches);
@@ -2066,7 +2083,7 @@ function bundleCard(b){
   const shipLine=(d.carrier||d.eta||d.track||d.from||deliveryPaidBadge(d))&&ord?`<span class="ship tkc${late>0?" late":""}"${tkStyle(d.carrier)}>${esc([d.carrier||"Доставка",d.from?"из "+d.from:"",d.eta?(late>0?`опаздывает на ${late} ${plural(late,"день","дня","дней")}`:"ждём "+fmtDate(d.eta)):""].filter(Boolean).join(" · "))}${d.track?` <code>${esc(d.track)}</code><button class="icon-btn" type="button" data-copy="${esc(d.track)}" aria-label="Скопировать трек-номер">${copyIcon}</button><button class="icon-btn" type="button" data-track-value="${esc(d.track)}" data-track-carrier="${esc(d.carrier||"")}" aria-label="Открыть отслеживание в ТК">↗</button>`:""}${deliveryPaidBadge(d)}</span>`:"";
   return `<article class="b-card${b.picked?" picked":""}" id="b-${esc(b.id)}">
     <div class="b-top">
-      <div class="b-who"><div class="b-seller">${esc(b.name||"Комплект")}${b.seller?`<span class="small">${esc(b.seller)}</span>`:""}${b.cond&&COND[b.cond]?`<span class="cond">${COND[b.cond]}</span>`:""}${S.carId===ALL?`<span class="small">${esc(carById(b.car)?.name||"")}</span>`:""}</div>
+      <div class="b-who"><div class="b-seller">${esc(b.name||"Комплект")}${b.seller?`<span class="small">${esc(b.seller)}</span>`:""}${b.cond&&COND[b.cond]?`<span class="cond">${COND[b.cond]}</span>`:""}${S.carId===ALL?`<span class="small">${esc(carById(b.car)?.name||"")}${carById(b.car)?.archivedAt?" · архив":""}</span>`:""}</div>
         <div class="b-meta">${b.info?impChip(b.info):""}${b.contact?`<span class="o-contact">${esc(b.contact)}</span>`:""}${b.days?`<span>срок ${esc(b.days)}</span>`:""}${b.note?`<span>${esc(b.note)}</span>`:""}</div></div>
       <div class="b-total">${rub(c.bundleTotal)}<small>${bundleShip(b)?`${rub(bundleTotalOf(b))} + доставка ${rub(bundleShip(b))}`:"за комплект"}</small></div>
     </div>
@@ -3428,7 +3445,7 @@ cf.addEventListener("submit",async e=>{
 
 /* self-update, cheap: GitHub lets the phone keep the page up to 10 minutes, so ask the server for
    the first 1.5 KB of the live file (the version tag is on line 3), at most once in 5 minutes */
-const APP_VER="20261102010000";let lastCheck=0;
+const APP_VER="20261102020000";let lastCheck=0;
 async function checkUpdate(){
   if(Date.now()-lastCheck<300000)return;lastCheck=Date.now();
   try{const r=await fetch(location.pathname,{cache:"no-store",headers:{Range:"bytes=0-1500"}});if(!r.ok)return;
@@ -3460,6 +3477,7 @@ render();
 
   /* what the top line says depends on the connection and on edits still waiting on this device */
   function onStatus(st){
+    S.loadState=st;
     const n=store?store.outbox():0,wait=n?` Не отправлено: ${changes(n)}.`:"";
     if(st==="ok"||st==="saving"){notice("");if(st==="ok"&&$("ghKeyBox").hidden===false)setup(null);if(!$("ghImportBox").hidden&&st==="ok")setup(null);sync(n?"отправляю "+changes(n)+"…":"сохранено")}
     else if(st==="offline"){const at=store&&store.cachedAt();sync(n?"не отправлено: "+changes(n):"нет связи");
@@ -3470,6 +3488,7 @@ render();
     else if(st==="broken")notice("Файл db.json в репозитории повреждён. Откройте историю изменений на GitHub и верните прошлую версию.");
     else{sync(n?"не отправлено: "+changes(n):"нет связи с GitHub");notice("GitHub сейчас не отвечает."+(n?` ${changes(n)} сохранены на этом устройстве и отправятся сами.`:" Обновите страницу чуть позже."))}
     $("ghDrop").hidden=!n||st==="ok"||st==="saving";
+    if(!S.partsLoaded||!S.carsLoaded)renderGroups();
   }
 
   /* report of edits made without internet: stays on screen until "Понятно", even after reopening */
@@ -3611,7 +3630,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("./sw.js").then(()=>navigator.serviceWorker.ready).then(reg=>{
       const worker=navigator.serviceWorker.controller||reg.active;
-      if(worker)worker.postMessage({type:"CACHE_PAGE",url:location.href});
+      if(worker)worker.postMessage({type:"CACHE_SHELL",url:location.href,root:new URL("./",location.href).href});
     }).catch(()=>{});
   },{once:true});
 }
