@@ -1737,7 +1737,7 @@ const isLive=c=>!!c&&!c.deletedAt&&!c.archivedAt;
 const liveCars=()=>S.cars.filter(isLive);
 const visibleCars=()=>S.cars.filter(c=>c&&!c.deletedAt);
 /* In «Все машины» архивные автомобили тоже видны. Удалённые остаются в корзине. */
-const inAllCars=id=>{const c=carById(id);return !c||!c.deletedAt};
+const inAllCars=id=>{const c=carById(id);return !c||isLive(c)};
 const scopeParts=()=>S.carId===ALL?S.parts.filter(p=>inAllCars(p.car)):S.parts.filter(p=>p.car===S.carId);
 const scopeBundles=()=>S.carId===ALL?S.bundles.filter(b=>inAllCars(b.car)):S.bundles.filter(b=>b.car===S.carId);
 /* search: every word of the query must be found somewhere in the part;
@@ -1794,7 +1794,7 @@ function renderCars(){
   const live=liveCars(),all=visibleCars(),cur=carById(S.carId);
   const chips=live.map(c=>`<button class="car-chip" type="button" data-car="${esc(c.id)}" data-carhold="${esc(c.id)}" aria-pressed="${c.id===S.carId}">${esc(c.name||"Без названия")}</button>`);
   if(cur&&cur.archivedAt)chips.push(`<button class="car-chip arch" type="button" data-carhold="${esc(cur.id)}" aria-pressed="true">${esc(cur.name||"Без названия")} · архив</button>`);
-  if(all.length>1)chips.push(`<button class="car-chip" type="button" data-car="${ALL}" aria-pressed="${S.carId===ALL}">Все машины</button>`);
+  if(live.length>1)chips.push(`<button class="car-chip" type="button" data-car="${ALL}" aria-pressed="${S.carId===ALL}">Все машины</button>`);
   if(canEdit())chips.push(`<button class="car-chip add" type="button" id="addCarBtn">+ Машина</button>`);
   $("cars").innerHTML=chips.join("");
   if($("panel").open)renderPanel();
@@ -2802,6 +2802,7 @@ function openCalendarEvent(e){
   const dateText=fmtDate(CAL.sel)||"";
   $("calEventBody").innerHTML=`<div class="ce-detail"><div class="ce-label">Событие · ${esc(dateText)}</div><b>${esc(kind)}</b></div>${b?`<div class="ce-detail"><div class="ce-label">Комплект</div><b>${esc(b.name||b.seller||"Комплект")}</b>${b.seller?`<div>${esc(b.seller)}</div>`:""}<div>${esc(names)}</div></div>`:p?`<div class="ce-detail"><div class="ce-label">Деталь</div><b>${esc(p.name||"Без названия")}${p.side?` · ${esc(p.side)}`:""}</b></div>`:`<div class="ce-detail">${esc(e.title||"")}</div>`}${tkInfo}`;
   $("calEventStatusSlot").innerHTML=statusControl;
+  $("calEventForm").dataset.pid=p?p.id:"";$("calEventForm").dataset.bid=b?b.id:"";
   $("calEventErr").hidden=true;
   $("calEventSave").hidden=!canEdit();
   const eb=$("calEventEdit");eb.removeAttribute("data-caledit-part");eb.removeAttribute("data-caledit-bundle");if(b)eb.dataset.caleditBundle=b.id;else if(p)eb.dataset.caleditPart=p.id;
@@ -2818,7 +2819,7 @@ $("calEventForm").addEventListener("change",e=>{
 $("calEventForm").addEventListener("submit",async e=>{
   e.preventDefault();
   if(!canEdit()){toast("Только просмотр");return}
-  const eb=$("calEventEdit"),p=partById(eb.dataset.caleditPart),b=eb.dataset.caleditBundle?bundleById(eb.dataset.caleditBundle):null;
+  const fd=$("calEventForm").dataset,p=partById(fd.pid),b=fd.bid?bundleById(fd.bid):null;
   if(!p){toast("Не удалось найти деталь для изменения");return}
   const targetStatus=$("calEventStatus")?.value||p.status;
   const carrier=$("calEventCarrier")?.value.trim()||"",from=$("calEventFrom")?.value.trim()||"",track=$("calEventTrack")?.value.trim()||"",eta=$("calEventEta")?.value||"";
@@ -2847,12 +2848,16 @@ $("calEventForm").addEventListener("submit",async e=>{
       const delivery={...oldDelivery,carrier,from,track,eta,paid};
       if(b)await updBundle(b.id,{delivery});
       else await updPart(p.id,{delivery});
-      const patch=targetStatus!==p.status?statusPatch(p,targetStatus):{};
-      if(TK_HISTORY.has(targetStatus)){patch.tkAt=tkAt;patch.tkUntil=tkUntil}
-      if(PICKUP_HISTORY.has(targetStatus))patch.pickedAt=pickedAt||p.pickedAt||"";
-      if(targetStatus==="arrived")patch.arrivedAt=arrivedAt||p.arrivedAt||todayStr();
-      if(targetStatus==="installed")patch.installedAt=installedAt||p.installedAt||todayStr();
-      if(Object.keys(patch).length)await updPart(p.id,patch);
+      const group=b?(b.parts||[]).map(partById).filter(x=>x&&x.status===p.status):[p];
+      if(!group.includes(p))group.push(p);
+      for(const q of group){
+        const patch=targetStatus!==q.status?statusPatch(q,targetStatus):{};
+        if(TK_HISTORY.has(targetStatus)){patch.tkAt=tkAt;patch.tkUntil=tkUntil}
+        if(PICKUP_HISTORY.has(targetStatus))patch.pickedAt=pickedAt||q.pickedAt||"";
+        if(targetStatus==="arrived")patch.arrivedAt=arrivedAt||q.arrivedAt||todayStr();
+        if(targetStatus==="installed")patch.installedAt=installedAt||q.installedAt||todayStr();
+        if(Object.keys(patch).length)await updPart(q.id,patch);
+      }
     },targetStatus!==p.status?`Сохранено: ${ST_LABEL[targetStatus]||targetStatus}`:"Данные доставки сохранены");
   }finally{btn.disabled=false}
   if(ok){
